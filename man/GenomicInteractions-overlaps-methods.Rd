@@ -4,7 +4,8 @@
 \alias{findOverlaps}
 \alias{findOverlaps,GRanges,GenomicInteractions-method}
 \alias{findOverlaps,GenomicInteractions,GRanges-method}
-\title{Find overlaps between a GRanges and a GenomicInteractions object}
+\alias{findOverlaps,GenomicInteractions,GenomicInteractions-method}
+\title{Find overlaps between GRanges and GenomicInteractions objects}
 \usage{
 \S4method{findOverlaps}{GenomicInteractions,GRanges}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
@@ -13,6 +14,8 @@
 \S4method{findOverlaps}{GRanges,GenomicInteractions}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
   "equal"), select = c("all", "first", "last", "arbitrary"))
+
+\S4method{findOverlaps}{GenomicInteractions,GenomicInteractions}(query, subject)
 }
 \arguments{
 \item{query}{GenomicInteractions or GRanges}
@@ -22,11 +25,17 @@
 \item{maxgap,minoverlap,type,select}{See 'findOverlaps' in the IRanges package.}
 }
 \value{
-A list containing Hits objects for anchors one and two.
+A Hits object or a list containing Hits objects for both anchors.
 }
 \description{
-This function calls findOverlaps separately on each anchor and
-returns a list. See 'findOverlaps' in the GenomicRanges package for detailed
+When called with a GRanges and a GenomicInteractions object, this function
+calls findOverlaps separately on each anchor and returns a list.
+}
+\details{
+When
+
+See
+'findOverlaps' in the GenomicRanges package for detailed
 documentation for this function.
 }
 

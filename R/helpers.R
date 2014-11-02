@@ -2,34 +2,42 @@
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.pp",function(GIObject){standardGeneric ("is.pp")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.pd",function(GIObject){standardGeneric ("is.pd")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.pt",function(GIObject){standardGeneric ("is.pt")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.dd",function(GIObject){standardGeneric ("is.dd")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.dt",function(GIObject){standardGeneric ("is.dt")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.tt",function(GIObject){standardGeneric ("is.tt")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("isInteractionType",function(GIObject, x, y){standardGeneric ("isInteractionType")})
+
 #' @rdname InteractionHelpers
 #' @param x,y Names of annotated node classes
 #' @export
 setGeneric("is.trans",function(GIObject){standardGeneric ("is.trans")})
+
 #' @rdname InteractionHelpers
 #' @export
 setGeneric("is.cis",function(GIObject){standardGeneric ("is.cis")})
 
 #' Interaction Type Helpers
-#' 
+#'
 #' Functions to classify interactions within GenomicInteractions objects.
 #' \itemize{
 #'     \item "isInteractionType" takes two character arguments which are
@@ -38,7 +46,7 @@ setGeneric("is.cis",function(GIObject){standardGeneric ("is.cis")})
 #'     \describe{ \item{p}{promoter}
 #'                \item{d}{distal}
 #'                \item{t}{terminator} }
-#'     \item "is.trans" & "is.cis" select trans-chromosomal and 
+#'     \item "is.trans" & "is.cis" select trans-chromosomal and
 #'           intra-chromosomal interactions, respectively }
 #' @param GIObject A GenomicInteractions object
 #' @return A logical vector
@@ -48,87 +56,92 @@ NULL
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pp", "GenomicInteractions", 
-            function(GIObject){ 
-                return( GIObject@anchor_one$node.class == "promoter" & GIObject@anchor_two$node.class == "promoter") 
+setMethod("is.pp", "GenomicInteractions",
+            function(GIObject){
+                return( GIObject@anchor_one$node.class == "promoter" & GIObject@anchor_two$node.class == "promoter")
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pd", "GenomicInteractions", 
-            function(GIObject){ 
-                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "promoter" ) | 
-                        (GIObject@anchor_one$node.class == "promoter" & GIObject@anchor_two$node.class == "distal" )) 
+setMethod("is.pd", "GenomicInteractions",
+            function(GIObject){
+                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "promoter" ) |
+                        (GIObject@anchor_one$node.class == "promoter" & GIObject@anchor_two$node.class == "distal" ))
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pt", "GenomicInteractions", 
-            function(GIObject){ 
-                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) | 
-                        (GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "distal" )) 
+setMethod("is.pt", "GenomicInteractions",
+            function(GIObject){
+                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) |
+                        (GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "distal" ))
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.dd", "GenomicInteractions", 
-            function(GIObject){ 
-                return( GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "distal") 
+setMethod("is.dd", "GenomicInteractions",
+            function(GIObject){
+                return( GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "distal")
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.dt", "GenomicInteractions", 
-            function(GIObject){ 
-                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) | 
-                        (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" )) 
+setMethod("is.dt", "GenomicInteractions",
+            function(GIObject){
+                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) |
+                        (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ))
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.tt", "GenomicInteractions", 
-            function(GIObject){ 
-                return( GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "terminator") 
+setMethod("is.tt", "GenomicInteractions",
+            function(GIObject){
+                return( GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "terminator")
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("isInteractionType", "GenomicInteractions", 
-            function(GIObject, x, y){ 
-                return( (GIObject@anchor_one$node.class %in% x & GIObject@anchor_two$node.class  %in% y) | 
-                        (GIObject@anchor_one$node.class %in% y & GIObject@anchor_two$node.class %in% x ))  
+setMethod("isInteractionType", "GenomicInteractions",
+            function(GIObject, x, y){
+                return( (GIObject@anchor_one$node.class %in% x & GIObject@anchor_two$node.class  %in% y) |
+                        (GIObject@anchor_one$node.class %in% y & GIObject@anchor_two$node.class %in% x ))
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.trans", "GenomicInteractions", 
-            function(GIObject){ 
-                return( as.character(seqnames(GIObject@anchor_one)) != as.character(seqnames(GIObject@anchor_two)) ) 
+setMethod("is.trans", "GenomicInteractions",
+            function(GIObject){
+                return( as.character(seqnames(GIObject@anchor_one)) != as.character(seqnames(GIObject@anchor_two)) )
             })
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.cis", "GenomicInteractions", 
-            function(GIObject){ 
+setMethod("is.cis", "GenomicInteractions",
+            function(GIObject){
                 return( as.character(seqnames(GIObject@anchor_one)) == as.character(seqnames(GIObject@anchor_two)) )
             })
 
-#' Find overlaps between a GRanges and a GenomicInteractions object
+#' Find overlaps between GRanges and GenomicInteractions objects
 #'
-#' This function calls findOverlaps separately on each anchor and
-#' returns a list. See 'findOverlaps' in the GenomicRanges package for detailed
+#' When called with a GRanges and a GenomicInteractions object, this function
+#' calls findOverlaps separately on each anchor and returns a list.
+#'
+#' When
+#'
+#' See
+#' 'findOverlaps' in the GenomicRanges package for detailed
 #' documentation for this function.
 #'
 #' @param query GenomicInteractions or GRanges
 #' @param subject GRanges or GenomicInteractions
 #' @param maxgap,minoverlap,type,select See 'findOverlaps' in the IRanges package.
-#' 
-#' @return A list containing Hits objects for anchors one and two.
-#' 
+#'
+#' @return A Hits object or a list containing Hits objects for both anchors.
+#'
 #' @rdname GenomicInteractions-overlaps-methods
 #' @docType methods
 #' @name findOverlaps
-#' @import GenomicRanges 
+#' @import GenomicRanges
 #' @export
 NULL
 
@@ -137,8 +150,8 @@ NULL
 setMethod("findOverlaps", c("GenomicInteractions", "GRanges"), function(query, subject,  maxgap = 0L, minoverlap = 1L,
                                                                         type = c("any", "start", "end", "within", "equal"),
                                                                         select = c("all", "first", "last", "arbitrary")){
-    return(list(one=findOverlaps(anchorOne(query), subject, maxgap=maxgap, minoverlap=minoverlap, type=type, select=select), 
-                two=findOverlaps(anchorTwo(query), subject, maxgap=maxgap, minoverlap=minoverlap, type=type, select=select)))  
+    return(list(one=findOverlaps(anchorOne(query), subject, maxgap=maxgap, minoverlap=minoverlap, type=type, select=select),
+                two=findOverlaps(anchorTwo(query), subject, maxgap=maxgap, minoverlap=minoverlap, type=type, select=select)))
 })
 
 #' @rdname GenomicInteractions-overlaps-methods
@@ -146,9 +159,131 @@ setMethod("findOverlaps", c("GenomicInteractions", "GRanges"), function(query, s
 setMethod("findOverlaps", c("GRanges", "GenomicInteractions"), function(query, subject, maxgap = 0L, minoverlap = 1L,
                                                                         type = c("any", "start", "end", "within", "equal"),
                                                                         select = c("all", "first", "last", "arbitrary")){
-  return(list(one=findOverlaps(query, anchorOne(subject), maxgap=maxgap, minoverlap=minoverlap, type=type, select=select), 
+  return(list(one=findOverlaps(query, anchorOne(subject), maxgap=maxgap, minoverlap=minoverlap, type=type, select=select),
               two=findOverlaps(query, anchorTwo(subject), maxgap=maxgap, minoverlap=minoverlap, type=type, select=select)
-              ))  
+              ))
+})
+
+#' @rdname GenomicInteractions-overlaps-methods
+#' @export
+setMethod("findOverlaps", c("GenomicInteractions", "GenomicInteractions"), function(query, subject) {
+    if (!all(.isSortedStart) & all(.isSortedChrom))
+        stop("GenomicInteractions object must be sorted")
+    overlaps.one = as.matrix(findOverlaps(anchorOne(query), anchorOne(subject)))
+    overlaps.two = as.matrix(findOverlaps(anchorTwo(query), anchorTwo(subject)))
+    # this is afaik the best way to find duplicates in R
+    overlaps.all = rbind(overlaps.one, overlaps.two)
+    overlaps.common = overlaps.all[duplicated(overlaps.all), ]
+    hits_object = new("Hits", queryHits = overlaps.common[,"queryHits"], subjectHits=overlaps.common[,"subjectHits"], queryLength=length(query), subjectLength=length(subject))
+    return(hits_object)
+})
+
+#' Acessing/modifying sequence information for a GenomicInteracions object
+#'
+#' Allows access/modification of seqinfo for GenomicInteractions objcets. When
+#' used with "force=True", interactions with either (or both) anchors on invalid
+#' chromosomes will be removed.
+#'
+#' For more information see ?seqinfo in the GenomeInfoDb
+#' package.
+#'
+#' @param x A GenomicInteractions object
+#' @return A seqinfo object,
+#' @docType methods
+#' @rdname seqinfo-GenomicInteractions-method
+#' @import GenomicRanges
+#' @export
+setMethod("seqinfo", "GenomicInteractions", function(x) {
+    if (!.isEqualSeqInfo(anchorOne(x), anchorTwo(x))) {
+        objName = deparse(substitute(x))
+        stop(paste("Seqinfo differs between anchors in", objName))
+    }
+    return(seqinfo(anchorOne(x)))
+})
+
+#' @param force A logical indicating whether or not to drop invalid levels.
+#' @param value A replacement seqinfo object
+#' @rdname seqinfo-GenomicInteractions-method
+#' @import GenomicRanges
+#' @import GenomeInfoDb
+#' @import BiocGenerics
+#' @export
+setReplaceMethod("seqinfo", "GenomicInteractions", function(x, new2old=NULL, force=FALSE, value) {
+    if (!is(value, "Seqinfo"))
+        stop("the supplied 'seqinfo' must be a Seqinfo object")
+    if (!.isEqualSeqInfo(anchorOne(x), anchorTwo(x))) {
+        objName = deparse(substitute(x))
+        stop(paste("Seqinfo differs between anchors in", objName))
+    }
+    dangling_seqlevels_one <- GenomeInfoDb:::getDanglingSeqlevels(anchorOne(x), new2old=new2old, force=force, seqlevels(value))
+    dangling_seqlevels_two <- GenomeInfoDb:::getDanglingSeqlevels(anchorTwo(x), new2old=new2old, force=force, seqlevels(value))
+    dangling_seqlevels = unique(c(dangling_seqlevels_one, dangling_seqlevels_two))
+    if (length(dangling_seqlevels) != 0L) {
+        x.one = !(seqnames(anchorOne(x)) %in% dangling_seqlevels)
+        x.two = !(seqnames(anchorTwo(x)) %in% dangling_seqlevels)
+        x = x[x.one & x.two]
+    }
+    old_seqinfo = seqinfo(x)
+    new_seqnames_one <- GenomeInfoDb:::makeNewSeqnames(anchorOne(x), new2old=new2old, seqlevels(value))
+    new_seqnames_two <- GenomeInfoDb:::makeNewSeqnames(anchorTwo(x), new2old=new2old, seqlevels(value))
+    x@anchor_one = BiocGenerics:::updateS4(anchorOne(x), seqnames=new_seqnames_one, seqinfo=value, check=FALSE)
+    x@anchor_two = BiocGenerics:::updateS4(anchorTwo(x), seqnames=new_seqnames_two, seqinfo=value, check=FALSE)
+    # check for object validity? need valid.GenomicInteractions.seqinfo method ?
+    return(x)
+})
+
+
+#' Sort GenomicInteractions Object
+#'
+#' This method will sort a GenomicInteractions object by first
+#' arranging all interactions start on the lower-ordered anchor;
+#' for trans-chromosomal interactions this is the anchor on the
+#' lower ordered chromomsome (defined by the seqlevels factor);
+#' and then by the position of the first anchor.
+#'
+#' @param x GenomicInteractions Object
+#' @param decreasing A logical indicating sort order
+#' @import GenomicRanges
+#' @return A sorted GenomicInteractions object
+#' @docType methods
+#' @export
+setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE) {
+          anchor.one = anchorOne(x)
+          anchor.two = anchorTwo(x)
+          # based on order of seqlevels(x)
+          chrom.rev = !.isSortedChrom(x)
+          start.rev = !.isSortedStart(x)
+          reversed = which(chrom.rev | start.rev)
+          if (decreasing==TRUE) {reversed = !reversed}
+          one.rev = anchor.one[reversed]
+          anchor.one[reversed] = anchor.two[reversed]
+          anchor.two[reversed] = one.rev
+          x@anchor_one = anchor.one
+          x@anchor_two = anchor.two
+          i = order(anchor.one, decreasing=decreasing)
+          x = x[i]
+          return(x)
+})
+
+#' Trim a GenomicInteractions object
+#'
+#' This will remove any interactions with an anchor falling outside
+#' of the seqlengths in a GenomicInteractions object, and trim ranges
+#' which cross the ends of chromosomes.
+#'
+#' @param x A GenomicInteractions object
+#' @param minAnchorSize The minimum size anchor to allow when trimming ranges.
+#' @param ... any additional arguments to trim
+#' @return A trimmed GenomicInteractions object
+#' @docType methods
+#' @export
+setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
+          one.valid = start(x@anchor_one) < seqlengths(x@anchor_one)[as.character(seqnames(x@anchor_one))] - minAnchorSize
+          two.valid = start(x@anchor_two) < seqlengths(x@anchor_two)[as.character(seqnames(x@anchor_two))] - minAnchorSize
+          suppressWarnings({ x = x[one.valid & two.valid] }) # otherwise warns if x needs trimming
+          x@anchor_one = trim(anchorOne(x), ...)
+          x@anchor_two = trim(anchorTwo(x), ...)
+          return(x)
 })
 
 #' Print function for GenomicInteractions
@@ -165,16 +300,16 @@ setMethod("print", "GenomicInteractions", function(x){
     cat("\tNumber of individual interactions: ",  length(x), "\n", sep="")
     cat("\tNumber of interactions: ",  sum(x), "\n", sep="")
     cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no"), "\n")
-        cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), 
+        cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)),
                                                 paste(unique(c(x@anchor_one$node.class, x@anchor_two$node.class)), collapse=", "),
-                                                "N/A"), 
+                                                "N/A"),
             "\n", sep="")
     cat("\tInteractions:\n")
-    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(x@anchor_one))[1:min(10, length(x))], 
-                                   start(x@anchor_one)[1:min(10, length(x))], 
+    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(x@anchor_one))[1:min(10, length(x))],
+                                   start(x@anchor_one)[1:min(10, length(x))],
                                    end(x@anchor_one)[1:min(10, length(x))]),
-                        .pasteAnchor(as.character(seqnames(x@anchor_two))[1:min(10, length(x))], 
-                                     start(x@anchor_two)[1:min(10, length(x))], 
+                        .pasteAnchor(as.character(seqnames(x@anchor_two))[1:min(10, length(x))],
+                                     start(x@anchor_two)[1:min(10, length(x))],
                                      end(x@anchor_two)[1:min(10, length(x))]),
                         sep="\t-----\t", collapse="\n\t\t"), sep="")
     cat(ifelse(length(x)>10, "\n\t\t....\n", ""))
@@ -188,7 +323,7 @@ setMethod("print", "GenomicInteractions", function(x){
 #' @return invisible(1)
 #' @docType methods
 #' @export
-setMethod("show", "GenomicInteractions", function(object){ 
+setMethod("show", "GenomicInteractions", function(object){
     cat("GenomicInteractions\n")
     cat("\tName: ", object@experiment_name, "\n", sep="")
     cat("\tDescription: ", object@description, "\n", sep="")
@@ -196,20 +331,20 @@ setMethod("show", "GenomicInteractions", function(object){
     cat("\tNumber of individual interactions: ",  length(object), "\n", sep="")
     cat("\tNumber of interactions: ",  sum(object), "\n", sep="")
     cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(object@anchor_one)), "yes", "no"), "\n", sep="")
-    cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(object@anchor_one)), 
+    cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(object@anchor_one)),
                                                 paste(unique(c(object@anchor_one$node.class, object@anchor_two$node.class)), collapse=", "),
-                                                "N/A"), 
+                                                "N/A"),
                "\n", sep="")
     cat("\tInteractions:\n")
-    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(object@anchor_one))[1:min(10, length(object))], 
-                                   start(object@anchor_one)[1:min(10, length(object))], 
+    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(object@anchor_one))[1:min(10, length(object))],
+                                   start(object@anchor_one)[1:min(10, length(object))],
                                    end(object@anchor_one)[1:min(10, length(object))]),
-                             .pasteAnchor(as.character(seqnames(object@anchor_two))[1:min(10, length(object))], 
-                                          start(object@anchor_two)[1:min(10, length(object))], 
+                             .pasteAnchor(as.character(seqnames(object@anchor_two))[1:min(10, length(object))],
+                                          start(object@anchor_two)[1:min(10, length(object))],
                                           end(object@anchor_two)[1:min(10, length(object))]),
                              sep="\t-----\t", collapse="\n\t\t"), sep="")
     cat(ifelse(length(object)>10, "\n\t\t....\n", ""))
     cat("\n")
     return(invisible(1))
 })
-       
+
