@@ -87,7 +87,7 @@ setClass("GenomicInteractions",
 #' filename. 
 #' 
 #' @param fn Filename or, if type="hiclib", folder
-#' @param type One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam". 
+#' @param type One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam", "two.bams". 
 #' @param experiment_name Experiment name.
 #' @param description Description of experiment.
 #' @param gname Genome name to use for constructing the GenomicInteractions object.
@@ -188,8 +188,15 @@ GenomicInteractions = function(fn, type, experiment_name, description, gname){
         counts = as.integer(rep(1, length(anchor1))) 
         p.value = numeric(0)
         fdr = numeric(0)
+	}else if(type == "two.bams"){
+	    dat = .readTwoBams(fn, genome)
+	    anchor1 = dat[[1]]
+	    anchor2 = dat[[2]]
+	    counts = as.integer(rep(1, length(anchor1))) 
+	    p.value = numeric(0)
+	    fdr = numeric(0)
 	}else{
-        stop("type is not one of \"chiapet.tool\", \"chiapet.encode\", \"bed12\", \"bedpe\", \"hiclib\", \"homer\", \"bam\"")
+        stop("type is not one of \"chiapet.tool\", \"chiapet.encode\", \"bed12\", \"bedpe\", \"hiclib\", \"homer\", \"bam\", \"two.bams\"")
 	}
     giobject = new("GenomicInteractions", 
                  experiment_name = experiment_name, 
