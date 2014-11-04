@@ -45,4 +45,39 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
     return(sort(final_counts))
 })
 
+#' Remove all but one occurences of a duplicated interaction
+#' 
+#' Removes all but the first occurence of a duplicated interaction (defined as 
+#' having identical coordinates for both anchors). N.B. this does not summarise 
+#' the total counts of all the duplicates. It is designed for removing potential 
+#' PCR duplicates after reading in .bam files.
+#' 
+#' @param GIObject A GenomicInteractions object.
+#' @return A GenomicInteractions object that is a subset of the input object.
+#' @import GenomicRanges
+
+.removeDups <- function(GIObject){
+    dat <- data.frame(Chr1 = seqnames(anchorOne(GIObject)),
+                      Start1 = start(anchorOne(GIObject)),
+                      Chr2 = seqnames(anchorTwo(GIObject)),
+                      Start2 = start(anchorTwo(GIObject))
+    )
+    idx <- which(!duplicated(dat))
+    reads_removed <- length(GIObject) - length(idx)
+    percent_removed <- signif(100*reads_removed / length(GIObject), 3)
+    message(paste0("Removing ", reads_removed, " duplicate PETs (", percent_removed, "%)"))
+    return(GIObject[idx])
+}
+
+#' Tests whether anchors have the same strand.
+#' 
+#' This is designed for processing .bam files. 
+#' 
+#' @param GIObject A GenomicInteractions object
+#' @return A logical vector denoting with TRUE if both anchors of an interaction
+#'  are on the same strand and FALSE otherwise. 
+
+sameStrand <- function(GIObject){
+    return(strand(anchorOne(GIObject))==strand(anchorTwo(GIObject)))
+}
 
