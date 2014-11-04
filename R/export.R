@@ -121,6 +121,46 @@ setMethod("export.bedpe", c("GenomicInteractions"), function(GIObject, fn=NULL, 
     return(invisible(1))
 })
 
+
+#' Export interactions in a BEDPE-like format for use with ChiaSig
+#'
+#' Exports a GenomicInteractions object to BEDPE like format, (anchor specifications and a column for reads connecting them)
+#' and writes to a specified file. If filename is not specified, 
+#' then a data.frame containing the information is returned. The value of the score parameter defines which field is used 
+#' to populate the score field. 
+#' 
+#' 
+#' @param GIObject A GenomicInteractions object.
+#' @param fn     A filename to write the interactions data to
+#' @param score    Which metadata column to use as the score: counts or normalised
+#' @return invisible(1) if outputting to file or a data.frame containing all of the corresponding information
+#' 
+#' @export
+#' @docType methods
+#' @rdname export.chiasig
+#' @export
+setGeneric("export.chiasig", function(GIObject, fn=NULL, score="counts"){ standardGeneric("export.chiasig")} )
+#' @rdname export.chiasig
+#' @export
+setMethod("export.chiasig", c("GenomicInteractions"), function(GIObject, fn=NULL, score="counts"){
+  output = cbind(as.character(seqnames(anchorOne(GIObject))), start(anchorOne(GIObject))-1, end(anchorOne(GIObject)),
+                 as.character(seqnames(anchorTwo(GIObject))), start(anchorTwo(GIObject))-1)
+  if(score == "counts"){
+    output = cbind(output, count(GIObject))
+  }else if(score=="normalised"){
+    output = cbind(output, normalisedCount(GIObject))
+  }else{
+    output = cbind(output, ".")
+  }
+  
+  if(!is.null(fn)){
+    write.table(output, fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
+  }else{
+    return(output)
+  }
+  return(invisible(1))
+})
+
 #' Export interactions to an igraph object.
 #'
 #' Exports a GenomicInteractions object to graph.data.frame for use by igraph package. This uses unique anchors

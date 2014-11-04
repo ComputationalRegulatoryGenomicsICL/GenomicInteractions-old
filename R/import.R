@@ -135,14 +135,14 @@
 
 #' Function to read in interaction-data stored in a pair of BAM files
 #'
-#' Reads in interactions stored in a a pair of BAM files, e.g. from independent 
-#' alignment of paired-end reads. Assumes that each interaction is represented 
-#' by pair of PETs with the same qname (this may not always be true. Depending 
-#' on data origin read qnames may end in '/1' or '/2' to denote first or second 
-#' read in the pair). The function reads in files, removes unpaired reads, and 
+#' Reads in interactions stored in a a pair of BAM files, e.g. from independent
+#' alignment of paired-end reads. Assumes that each interaction is represented
+#' by pair of PETs with the same qname (this may not always be true. Depending
+#' on data origin read qnames may end in '/1' or '/2' to denote first or second
+#' read in the pair). The function reads in files, removes unpaired reads, and
 #' pairs reads based on macthing qnames.
 #'
-#' @param fn Character vector of two BAM files with aligned reads. 
+#' @param fn Character vector of two BAM files with aligned reads.
 #' @param genome BSGenome to use for constructing the GenomicInteractions object.
 #' @return list of two GRanges, storing the anchor information for each interaction
 #'
@@ -150,85 +150,36 @@
 #' @import GenomicRanges
 #'
 .readTwoBams = function(fn, genome){
-    
+
     if (length(fn)!=2){
         stop("Must supply two bam files for this import method")
     }
-    
+
     bf = scanBamFlag(isUnmappedQuery=FALSE)
     param = ScanBamParam(flag=bf, what=c("rname", "qname", "strand", "pos", "seq"))
-    
+
     message("Reading first bam file...")
     b1 = scanBam(fn[1], param=param)
     g1 = GRanges(as.character(b1[[1]]$rname), IRanges(b1[[1]]$pos, width=width(b1[[1]]$seq)), strand = as.character(b1[[1]]$strand),
                  qname = b1[[1]]$qname)
     seqinfo(g1) <- seqinfo(genome)
     rm(b1)
-    
+
     message("Reading second bam file...")
     b2 = scanBam(fn[2], param=param)
     g2 = GRanges(as.character(b2[[1]]$rname), IRanges(b2[[1]]$pos, width=width(b2[[1]]$seq)), strand = as.character(b2[[1]]$strand),
                  qname = b2[[1]]$qname)
     seqinfo(g2) <- seqinfo(genome)
     rm(b2)
-    
+
     message("Removing unpaired reads...")
     g1 <- g1[g1$qname %in% g2$qname]
     g2 <- g2[g2$qname %in% g1$qname]
-    
+
     message("Pairing reads...")
     g1 <- g1[order(g1$qname)]
     g2 <- g2[order(g2$qname)]
-    
+
     return(list(g1, g2))
 }
-
-#' Summarise Interactions between defined anchors
-#'
-#' Calculate the number of of paired-end reads mapping between a defined set of anchors.
-#' This function will ignore counts present in the input data.
-#'
-#' @return A GenomicInteractions object with annotated counts between anchors
-#' @docType methods
-#' @rdname countsBetweenAnchors-methods
-#' @export
-setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBetweenAnchors")})
-
-#' @param x A GenomicInteractions object
-#' @param y A GenomicRanges object
-#' @param ignore_overlaps Allow overlapping anchors. Use this when you have overlapping anchors 
-#'                        but be careful with multi-mapping. The "within" option can help with this.
-#' @param ... Extra parameters to pass to findOverlaps
-#' @import GenomicRanges
-#' @rdname countsBetweenAnchors-methods
-#' @docType methods
-#' @export
-setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
-    #check anchors are unique
-    if (ignore_overlaps == FALSE && any(countOverlaps(y, y) > 1)) stop("anchors are not unique")
-    one = overlapsAny(anchorOne(x), y, ...)
-    two = overlapsAny(anchorTwo(x), y, ...)
-    x.valid = x[one & two]
-    overlaps = findOverlaps(sort(x.valid), y, select="first", ...) # select produces matrix not Hits
-    interactions = paste(overlaps[[1]], overlaps[[2]], sep=":")
-    tabulated = table(interactions)
-
-    pairs_list = strsplit(names(tabulated), ":")
-    pairs_one = as.integer(sapply(pairs_list, function(x) x[1]))
-    pairs_two = as.integer(sapply(pairs_list, function(x) x[2]))
-
-    anchor_one = y[pairs_one]
-    anchor_two = y[pairs_two]
-    counts = as.integer(tabulated)
-
-    final_counts = new("GenomicInteractions",
-                       experiment_name = name(x),
-                       description = description(x),
-                       genome_name = genomeName(x),
-                       anchor_one=anchor_one,
-                       anchor_two=anchor_two,
-                       counts=counts)
-
-    return(sort(final_counts))
-})
 

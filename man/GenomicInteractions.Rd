@@ -9,7 +9,7 @@ GenomicInteractions(fn, type, experiment_name, description, gname)
 \arguments{
 \item{fn}{Filename or, if type="hiclib", folder}
 
-\item{type}{One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam".}
+\item{type}{One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam", "two.bams".}
 
 \item{experiment_name}{Experiment name.}
 
