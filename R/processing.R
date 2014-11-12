@@ -102,7 +102,6 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
     #summarise by bin
     sum_byBin <- summarise(byBin, Total=n(), SameStrand=sum(SameStrand))
     sum_byBin <- mutate(sum_byBin, OppStrand=Total-SameStrand, 
-                        Ratio= SameStrand/Total,
                         log2Ratio=log2((OppStrand+1)/(SameStrand+1))) #pseudocount to avoid NaN errors
     sum_byBin <- mutate(sum_byBin, OppPercent=100*OppStrand/Total, SamePercent=100*SameStrand/Total)
     
@@ -127,28 +126,55 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
         print(ggplot(sum_byBin, aes(x=Bin, y=log2Ratio)) + geom_line() + geom_point() + 
                   geom_hline(aes_string(yintercept=lower)) + 
                   geom_hline(aes_string(yintercept=upper)) + 
-                  coord_cartesian(xlim=c(0, 100000)) + geom_vline(xintercept=bp_cutoff)
+                  coord_cartesian(xlim=c(0, 20000)) + geom_vline(xintercept=bp_cutoff, linetype="dashed") +
+                  xlab("Distance (bp)") + ylab("log2 ratio opposite strand pairs / same strand pairs")
         )
     }
     return(bp_cutoff)
 }
 
-get_binom_ligation_threshold = function(GIObject, max.distance=20000, bin.size=500, p.cutoff=0.05, adjust="fdr"){
+get_binom_ligation_threshold = function(GIObject, max.distance=20000, bin.size=500, p.cutoff=0.05, adjust="fdr", plot=TRUE){
     
+    #make data frame
     stranded_df <- data.frame(Distance=calculateDistances(GIObject), SameStrand=sameStrand(GIObject))
     stranded_cis_df <- stranded_df[complete.cases(stranded_df),]
     stranded_cis_df <- stranded_cis_df[order(stranded_cis_df$Distance),]
-    
     stranded_cis_df = stranded_cis_df[ stranded_cis_df$Distance < max.distance, ]
     
+    #bin data
     bins = cut(stranded_cis_df$Distance, breaks=seq(0, max.distance, by=bin.size), include.lowest=TRUE)
     stranded_cis_df$Bin = bins 
     byBin <- group_by(stranded_cis_df, Bin)
     sum_byBin <- summarise(byBin, Total=n(), SameStrand=sum(SameStrand))
     
+    #get and adjust p values
+    sum_byBin$p.value <- sapply(1:nrow(sum_byBin), function(x){binom.test(sum_byBin$SameStrand[x], sum_byBin$Total[x])$p.value})
+    
     if(!is.na(adjust)){
-        return(seq(0, max.distance, by=bin.size)[  min(which(sapply(1:nrow(sum_byBin), function(x){ p.adjust(binom.test(sum_byBin$SameStrand[x], sum_byBin$Total[x])$p.value, method=adjust)}) > p.cutoff))])
-    }else{
-        return(seq(0, max.distance, by=bin.size)[  min(which(sapply(1:nrow(sum_byBin), function(x){ binom.test(sum_byBin$SameStrand[x], sum_byBin$Total[x])$p.value}) > p.cutoff))])
+        sum_byBin$p.value <- p.adjust(sum_byBin$p.value, method=adjust)
     }
+    
+    #get cutoff
+    bp_cutoff <- seq(0, max.distance, by=bin.size)[min(which(sum_byBin$p.value > p.cutoff))]
+    
+    if (plot){
+        #data for plotting
+        sum_byBin <- mutate(sum_byBin, OppStrand=Total-SameStrand, 
+                            Bin=bin.size*as.numeric((Bin)),
+                            OppPercent=100*OppStrand/Total)
+        
+        #plot % opposite strand reads and cutoff
+        print(ggplot(sum_byBin, aes(x=Bin, y=OppPercent)) + geom_line() + geom_point() +  
+                  coord_cartesian(xlim=c(0, max.distance)) + geom_vline(xintercept=bp_cutoff, linetype="dashed") +
+                  ylab("Opposite Strand Percentage")
+        )
+        #plot p values, p value cutoff and distance cutoff
+        print(ggplot(sum_byBin, aes(x=Bin, y=p.value)) + geom_line() + geom_point() + 
+                  coord_cartesian(xlim=c(0, max.distance)) + geom_hline(xintercept=p.cutoff, linetype="dashed") +
+                  geom_vline(xintercept=bp_cutoff, linetype="dashed") +
+                  ylab("p value") + xlab("Distance (bp)")
+        )
+    }
+    #return distance cutoff
+    return(bp_cutoff)
 }
