@@ -58,7 +58,7 @@ plotCisTrans <- function(GIObject){
   dat = dat[order(dat$fraction), ]
   dat$ymax = cumsum(dat$fraction)
   dat$ymin = c(0, head(dat$ymax, n=-1))
-  dat$label <- paste(dat$category, "\n", signif(100*dat$fraction,3))
+  dat$label <- paste(dat$category, "\n", signif(100*dat$fraction,3), "%")
   
   p <- ggplot(dat, aes(fill=category, ymax=ymax, ymin=ymin, xmax=4, xmin=2.3, label=label)) +
     geom_rect() +
@@ -160,7 +160,7 @@ plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=N
 
   dat$ymax = cumsum(dat$fraction)
   dat$ymin = c(0, head(dat$ymax, n=-1))
-  dat$label <- paste(dat$category, "\n", signif(100*dat$fraction,3))
+  dat$label <- paste(dat$category, "\n", signif(100*dat$fraction,3), "%")
   dat[dat$fraction < 0.03, "label"] <- NA
   
   p <- ggplot(dat, aes(fill=category, ymax=ymax, ymin=ymin, xmax=4, xmin=2.3)) +
@@ -179,7 +179,7 @@ plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=N
   if (!legend){
     p <- p + geom_text(aes(x=(4+2.3)/2, y=((ymax+ymin)/2), label=label))+theme(legend.position="none")
   }else{
-    p <- p + geom_text(aes(x=(4+2.3)/2, y=((ymax+ymin)/2), label=(signif(100*fraction,3))))
+    p <- p + geom_text(aes(x=(4+2.3)/2, y=((ymax+ymin)/2), label=paste(signif(100*fraction,3), "%")))
   }
   
   return(p)
