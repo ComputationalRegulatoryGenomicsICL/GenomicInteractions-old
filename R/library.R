@@ -33,6 +33,10 @@ capitalize = function(x) {
     as.numeric(seqnames(anchorOne(x))) <= as.numeric(seqnames(anchorTwo(x)))
 }
 
+.isSorted = function(x) {
+    .isSortedStart(x) & .isSortedChrom(x)
+}
+
 .isEqualSeqInfo = function(one, two) {
     seqinfo.one = seqinfo(one)
     seqinfo.two = seqinfo(two)

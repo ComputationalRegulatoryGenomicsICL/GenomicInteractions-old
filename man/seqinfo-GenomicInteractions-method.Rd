@@ -7,11 +7,13 @@
 \usage{
 \S4method{seqinfo}{GenomicInteractions}(x)
 
-\S4method{seqinfo}{GenomicInteractions}(x, new2old = NULL, force = F) <-
+\S4method{seqinfo}{GenomicInteractions}(x, new2old = NULL, force = FALSE) <-
   value
 }
 \arguments{
 \item{x}{A GenomicInteractions object}
+
+\item{new2old}{Mapping between new and old seqnames. See ?seqinfo in GenomeInfoDb for details.}
 
 \item{force}{A logical indicating whether or not to drop invalid levels.}
 

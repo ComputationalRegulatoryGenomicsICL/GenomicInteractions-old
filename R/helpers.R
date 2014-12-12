@@ -167,7 +167,7 @@ setMethod("findOverlaps", c("GRanges", "GenomicInteractions"), function(query, s
 #' @rdname GenomicInteractions-overlaps-methods
 #' @export
 setMethod("findOverlaps", c("GenomicInteractions", "GenomicInteractions"), function(query, subject) {
-    if (!all(.isSortedStart) & all(.isSortedChrom))
+    if (!all(.isSorted(query)) & !all(.isSorted(subject)))
         stop("GenomicInteractions object must be sorted")
     overlaps.one = as.matrix(findOverlaps(anchorOne(query), anchorOne(subject)))
     overlaps.two = as.matrix(findOverlaps(anchorTwo(query), anchorTwo(subject)))
@@ -201,6 +201,7 @@ setMethod("seqinfo", "GenomicInteractions", function(x) {
     return(seqinfo(anchorOne(x)))
 })
 
+#' @param new2old Mapping between new and old seqnames. See ?seqinfo in GenomeInfoDb for details.
 #' @param force A logical indicating whether or not to drop invalid levels.
 #' @param value A replacement seqinfo object
 #' @rdname seqinfo-GenomicInteractions-method
@@ -248,12 +249,12 @@ setReplaceMethod("seqinfo", "GenomicInteractions", function(x, new2old=NULL, for
 #' @docType methods
 #' @export
 setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE) {
+          if (any(names(mcols(anchorOne(x))) != names(mcols(anchorTwo(x)))))
+              stop("Metadata differs between anchors and will be lost in sort.")
           anchor.one = anchorOne(x)
           anchor.two = anchorTwo(x)
           # based on order of seqlevels(x)
-          chrom.rev = !.isSortedChrom(x)
-          start.rev = !.isSortedStart(x)
-          reversed = which(chrom.rev | start.rev)
+          reversed = !.isSorted(x)
           if (decreasing==TRUE) {reversed = !reversed}
           one.rev = anchor.one[reversed]
           anchor.one[reversed] = anchor.two[reversed]
@@ -275,6 +276,7 @@ setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE) {
 #' @param minAnchorSize The minimum size anchor to allow when trimming ranges.
 #' @param ... any additional arguments to trim
 #' @return A trimmed GenomicInteractions object
+#' @importFrom IRanges trim
 #' @docType methods
 #' @export
 setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
