@@ -7,7 +7,7 @@
 \usage{
 \S4method{seqinfo}{GenomicInteractions}(x)
 
-\S4method{seqinfo}{GenomicInteractions}(x, new2old = NULL, force = F) <-
+\S4method{seqinfo}{GenomicInteractions}(x, new2old = NULL, force = FALSE) <-
   value
 }
 \arguments{

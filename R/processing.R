@@ -81,6 +81,9 @@ sameStrand <- function(GIObject){
     return(strand(anchorOne(GIObject))==strand(anchorTwo(GIObject)))
 }
 
+#' Get self ligation threshold with SD method from Heidari et al
+#' 
+#' @export
 
 get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, plot=TRUE){
     require(dplyr)
@@ -133,6 +136,9 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
     return(bp_cutoff)
 }
 
+#' get self ligation threshold with binomial test
+#' 
+#' @export
 get_binom_ligation_threshold = function(GIObject, max.distance=20000, bin.size=500, p.cutoff=0.05, adjust="fdr", plot=TRUE){
     
     #make data frame
