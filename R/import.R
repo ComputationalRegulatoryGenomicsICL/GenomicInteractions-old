@@ -142,21 +142,23 @@
 #' @docType methods
 #' @rdname countsBetweenAnchors-methods
 #' @export
-setGeneric("countsBetweenAnchors",function(x, y){standardGeneric ("countsBetweenAnchors")})
+setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBetweenAnchors")})
 
 #' @param x A GenomicInteractions object
 #' @param y A GenomicRanges object
+#' @param ignore_overlaps Allow overlapping anchors. Use this when you have overlapping anchors but be careful with multi-mapping.
+#' @param ... Extra parameters to pass to findOverlaps
 #' @import GenomicRanges
 #' @rdname countsBetweenAnchors-methods
 #' @docType methods
 #' @export
-setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y) {
+setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
     #check anchors are unique
-    if (any(countOverlaps(y, y) > 1)) stop("anchors are not unique")
-    one = overlapsAny(anchorOne(x), y)
-    two = overlapsAny(anchorTwo(x), y)
+    if (ignore_overlaps == FALSE && any(countOverlaps(y, y) > 1)) stop("anchors are not unique")
+    one = overlapsAny(anchorOne(x), y, ...)
+    two = overlapsAny(anchorTwo(x), y, ...)
     x.valid = x[one & two]
-    overlaps = findOverlaps(sort(x.valid), y, select="first") # select produces matrix not Hits
+    overlaps = findOverlaps(sort(x.valid), y, select="first", ...) # select produces matrix not Hits
     interactions = paste(overlaps[[1]], overlaps[[2]], sep=":")
     tabulated = table(interactions)
 
