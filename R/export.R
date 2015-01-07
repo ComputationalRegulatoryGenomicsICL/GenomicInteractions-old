@@ -153,7 +153,6 @@ setMethod("export.chiasig", c("GenomicInteractions"), function(GIObject, fn=NULL
     output = cbind(output, ".")
   }
   
-  output = cbind(output, as.character(strand(anchorOne(GIObject))), as.character(strand(anchorTwo(GIObject))))
   if(!is.null(fn)){
     write.table(output, fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
   }else{
