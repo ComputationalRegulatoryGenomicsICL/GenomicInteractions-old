@@ -146,7 +146,8 @@ setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBe
 
 #' @param x A GenomicInteractions object
 #' @param y A GenomicRanges object
-#' @param ignore_overlaps Allow overlapping anchors. Use this when you have overlapping anchors but be careful with multi-mapping.
+#' @param ignore_overlaps Allow overlapping anchors. Use this when you have overlapping anchors 
+#'                        but be careful with multi-mapping. The "within" option can help with this.
 #' @param ... Extra parameters to pass to findOverlaps
 #' @import GenomicRanges
 #' @rdname countsBetweenAnchors-methods

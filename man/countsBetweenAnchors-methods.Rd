@@ -18,7 +18,8 @@ countsBetweenAnchors(x, y, ...)
 
 \item{...}{Extra parameters to pass to findOverlaps}
 
-\item{ignore_overlaps}{Allow overlapping anchors. Use this when you have overlapping anchors but be careful with multi-mapping.}
+\item{ignore_overlaps}{Allow overlapping anchors. Use this when you have overlapping anchors
+but be careful with multi-mapping. The "within" option can help with this.}
 }
 \value{
 A GenomicInteractions object with annotated counts between anchors
