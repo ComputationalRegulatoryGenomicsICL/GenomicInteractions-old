@@ -147,4 +147,36 @@ setMethod(f="[", signature=c("GenomicInteractions", "rle", "missing"), definitio
               fdr=x@fdr[i]) )
 } )
 
+#' @name c
+#' @aliases c,GenomicInteractions
+#' @docType methods
+#' @rdname GenomicInteractions-combine-methods
+#' @export
+setMethod(f="c", signature="GenomicInteractions", definition=function(x, ..., recursive=FALSE) {
+          if (!identical(recursive, FALSE))
+              stop("'recursive' argument not supported")
+          if (missing(x))
+              args <- unname(list(...))
+          else
+              args <- unname(list(x, ...))
+          ans_experiment_name = args[[1]]@experiment_name 
+          ans_description = args[[1]]@description
+          ans_genome_name = args[[1]]@genome_name 
+          ans_anchor_one <- do.call(c, lapply(args, anchorOne))
+          ans_anchor_two <- do.call(c, lapply(args, anchorTwo))
+          ans_counts <- do.call(c, lapply(args, count))
+          ans_normalised_counts <- do.call(c, lapply(args, normalisedCount))
+          ans_fdr <- do.call(c, lapply(args, FDR))
+          ans_pvalue <- do.call(c, lapply(args, pValue))
+          return( new("GenomicInteractions", 
+                      experiment_name = ans_experiment_name, 
+                      description = ans_description, 
+                      genome_name = ans_genome_name, 
+                      anchor_one=ans_anchor_one, 
+                      anchor_two=ans_anchor_two, 
+                      counts=ans_counts, 
+                      normalised_counts=ans_normalised_counts, 
+                      pvalue=ans_pvalue, 
+                      fdr=ans_fdr) )
+} )
 
