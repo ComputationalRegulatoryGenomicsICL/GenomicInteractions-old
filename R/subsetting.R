@@ -159,24 +159,28 @@ setMethod(f="c", signature="GenomicInteractions", definition=function(x, ..., re
               args <- unname(list(...))
           else
               args <- unname(list(x, ...))
-          ans_experiment_name = args[[1]]@experiment_name 
-          ans_description = args[[1]]@description
-          ans_genome_name = args[[1]]@genome_name 
-          ans_anchor_one <- do.call(c, lapply(args, anchorOne))
-          ans_anchor_two <- do.call(c, lapply(args, anchorTwo))
-          ans_counts <- do.call(c, lapply(args, count))
-          ans_normalised_counts <- do.call(c, lapply(args, normalisedCount))
-          ans_fdr <- do.call(c, lapply(args, FDR))
-          ans_pvalue <- do.call(c, lapply(args, pValue))
+          total_length = sum(vapply(args, length, integer(1)))
+          c_experiment_name = args[[1]]@experiment_name 
+          c_description = args[[1]]@description
+          c_genome_name = args[[1]]@genome_name 
+          c_anchor_one <- do.call(c, lapply(args, anchorOne))
+          c_anchor_two <- do.call(c, lapply(args, anchorTwo))
+          c_counts <- do.call(c, lapply(args, count))
+          c_normalised_counts <- do.call(c, lapply(args, normalisedCount))
+          stopIfNot(length(c_normalised_counts) == total_length)
+          c_fdr <- do.call(c, lapply(args, FDR))
+          stopIfNot(length(c_fdr) == total_length)
+          c_pvalue <- do.call(c, lapply(args, pValue))
+          stopIfNot(length(c_pvalue) == total_length)
           return( new("GenomicInteractions", 
-                      experiment_name = ans_experiment_name, 
-                      description = ans_description, 
-                      genome_name = ans_genome_name, 
-                      anchor_one=ans_anchor_one, 
-                      anchor_two=ans_anchor_two, 
-                      counts=ans_counts, 
-                      normalised_counts=ans_normalised_counts, 
-                      pvalue=ans_pvalue, 
-                      fdr=ans_fdr) )
+                      experiment_name = c_experiment_name, 
+                      description = c_description, 
+                      genome_name = c_genome_name, 
+                      anchor_one = c_anchor_one, 
+                      anchor_two = c_anchor_two, 
+                      counts = c_counts, 
+                      normalised_counts = c_normalised_counts, 
+                      pvalue = c_pvalue, 
+                      fdr = c_fdr) )
 } )
 
