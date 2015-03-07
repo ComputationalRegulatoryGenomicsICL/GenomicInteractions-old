@@ -17,54 +17,27 @@ setGeneric("subsetByFeatures",function(GIObject, features, feature.class=NULL){s
 #' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "GRanges", "missing"), function(GIObject, features, feature.class=NULL){
-    indic = unique(c(subjectHits(findOverlaps(features, GIObject@anchor_one)), subjectHits(findOverlaps(features, GIObject@anchor_two))))
-    return( new("GenomicInteractions", 
-        experiment_name = GIObject@experiment_name, 
-        description = GIObject@description, 
-        genome_name = GIObject@genome_name, 
-        anchor_one=GIObject@anchor_one[indic], 
-        anchor_two=GIObject@anchor_two[indic], 
-        counts=GIObject@counts[indic], 
-        pvalue=GIObject@pvalue[indic], 
-        fdr=GIObject@fdr[indic]) )
+    i = unique(c(subjectHits(findOverlaps(features, GIObject@anchor_one)), subjectHits(findOverlaps(features, GIObject@anchor_two))))
+    GIObject[i]
 })
 
 #' @rdname GenomicInteractions-subsetByFeatures-methods
 #' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "GRangesList", "missing"), function(GIObject, features, feature.class=NULL){
-    indic = unique(c(subjectHits(findOverlaps(features, GIObject@anchor_one)), subjectHits(findOverlaps(features, GIObject@anchor_two))))
-    return( new("GenomicInteractions", 
-        experiment_name = GIObject@experiment_name, 
-        description = GIObject@description, 
-        genome_name = GIObject@genome_name, 
-        anchor_one=GIObject@anchor_one[indic], 
-        anchor_two=GIObject@anchor_two[indic], 
-        counts=GIObject@counts[indic], 
-        pvalue=GIObject@pvalue[indic], 
-        fdr=GIObject@fdr[indic]) )
+    i = unique(c(subjectHits(findOverlaps(features, GIObject@anchor_one)), subjectHits(findOverlaps(features, GIObject@anchor_two))))
+    GIObject[i]
 })
 
 #' @rdname GenomicInteractions-subsetByFeatures-methods
 #' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "character", "character"), function(GIObject, features, feature.class){
-    if("node.class" %in% names(elementMetadata(GIObject@anchor_one)) & feature.class %in% unique(c(GIObject@anchor_one$node.class, GIObject@anchor_two$node.class))){
-        indic = sapply(elementMetadata(GIObject@anchor_one)[[paste(feature.class, "id", sep=".")]], 
-                    function(x){ features %in% x }) | sapply(elementMetadata(GIObject@anchor_two)[[paste(feature.class, "id", sep=".")]], function(x){ features %in% x })
-        return( new("GenomicInteractions", 
-            experiment_name = GIObject@experiment_name, 
-            description = GIObject@description, 
-            genome_name = GIObject@genome_name, 
-            anchor_one=GIObject@anchor_one[indic], 
-            anchor_two=GIObject@anchor_two[indic], 
-            counts=GIObject@counts[indic], 
-            pvalue=GIObject@pvalue[indic], 
-            fdr=GIObject@fdr[indic]) )
-    }else{
+    if(!"node.class" %in% names(elementMetadata(GIObject@anchor_one)) & feature.class %in% unique(c(GIObject@anchor_one$node.class, GIObject@anchor_two$node.class)))
         stop(paste(feature.class," has not been annotated on this GenomicInteractions object"))
-    }                                                                         
-  
+    i = sapply(elementMetadata(GIObject@anchor_one)[[paste(feature.class, "id", sep=".")]],
+               function(x){ features %in% x }) | sapply(elementMetadata(GIObject@anchor_two)[[paste(feature.class, "id", sep=".")]], function(x){ features %in% x })
+    GIObject[i]
 })
 
 #' Standard subsetting methods for GenomicInteractions objects
@@ -72,79 +45,28 @@ setMethod("subsetByFeatures", c("GenomicInteractions", "character", "character")
 #' @name [
 #' @param x A genomicInteractions object
 #' @param i A numeric, logical or Rle vector
-#' 
+#'
 #' @return A GenomicInteractions object containing only the features specified by `i`.
 #' @rdname GenomicInteractions-subset-methods
 NULL
 
 #' @name [
-#' @aliases [,GenomicInteractions,logical,missing-method
+#' @aliases [,GenomicInteractions-method
 #' @docType methods
 #' @rdname GenomicInteractions-subset-methods
 #' @export
-setMethod(f="[", signature=c("GenomicInteractions", "logical", "missing"), definition=function(x,i){
-  return( new("GenomicInteractions", 
-              experiment_name = x@experiment_name, 
-              description = x@description, 
-              genome_name = x@genome_name, 
-              anchor_one=x@anchor_one[i], 
-              anchor_two=x@anchor_two[i], 
-              counts=x@counts[i], 
-              pvalue=x@pvalue[i], 
-              fdr=x@fdr[i]) )
-} )
-
-#' @name [
-#' @aliases [,GenomicInteractions,numeric,missing-method
-#' @docType methods
-#' @rdname GenomicInteractions-subset-methods
-#' @export
-setMethod(f="[", signature=c("GenomicInteractions", "numeric", "missing"), definition=function(x,i){
-  return( new("GenomicInteractions", 
-              experiment_name = x@experiment_name, 
-              description = x@description, 
-              genome_name = x@genome_name, 
-              anchor_one=x@anchor_one[i], 
-              anchor_two=x@anchor_two[i], 
-              counts=x@counts[i], 
-              pvalue=x@pvalue[i], 
-              fdr=x@fdr[i]) )
-} )
-
-#' @name [
-#' @aliases [,GenomicInteractions,Rle,missing-method
-#' @docType methods
-#' @rdname GenomicInteractions-subset-methods
-#' @export
-setMethod(f="[", signature=c("GenomicInteractions", "Rle", "missing"), definition=function(x,i){
-  i = as.vector(i) # bit of a hack but unsure how to access Rle directly
-  return( new("GenomicInteractions", 
-              experiment_name = x@experiment_name, 
-              description = x@description, 
-              genome_name = x@genome_name, 
-              anchor_one=x@anchor_one[i], 
-              anchor_two=x@anchor_two[i], 
-              counts=x@counts[i], 
-              pvalue=x@pvalue[i], 
-              fdr=x@fdr[i]) )
-} )
-
-#' @name [
-#' @aliases [,GenomicInteractions,rle,missing-method
-#' @docType methods
-#' @rdname GenomicInteractions-subset-methods
-#' @export
-setMethod(f="[", signature=c("GenomicInteractions", "rle", "missing"), definition=function(x,i){
-  i = as.vector(i) # bit of a hack but unsure how to access Rle directly
-  return( new("GenomicInteractions", 
-              experiment_name = x@experiment_name, 
-              description = x@description, 
-              genome_name = x@genome_name, 
-              anchor_one=x@anchor_one[i], 
-              anchor_two=x@anchor_two[i], 
-              counts=x@counts[i], 
-              pvalue=x@pvalue[i], 
-              fdr=x@fdr[i]) )
+setMethod(f="[", "GenomicInteractions", function(x, i, j, drop) {
+          if (!missing(i)) {
+            ans_anchor_one = x@anchor_one[i]
+            ans_anchor_two = x@anchor_two[i]
+            ans_mcols = mcols(x)[i, ,drop=FALSE]
+            x = BiocGenerics:::updateS4(x, anchor_one=ans_anchor_one,
+                                        anchor_two=ans_anchor_two,
+                                        elementMetadata=ans_mcols)
+        }
+        if (!missing(j))
+            mcols(x) = mcols(x)[ , j, drop=FALSE]
+        return(x)
 } )
 
 #' @name c
@@ -152,35 +74,23 @@ setMethod(f="[", signature=c("GenomicInteractions", "rle", "missing"), definitio
 #' @docType methods
 #' @rdname GenomicInteractions-combine-methods
 #' @export
-setMethod(f="c", signature="GenomicInteractions", definition=function(x, ..., recursive=FALSE) {
+setMethod(f="c", signature="GenomicInteractions", function(x, ..., ignore.mcols=FALSE, recursive=FALSE) {
           if (!identical(recursive, FALSE))
               stop("'recursive' argument not supported")
           if (missing(x))
-              args <- unname(list(...))
+              args = unname(list(...))
           else
-              args <- unname(list(x, ...))
-          total_length = sum(vapply(args, length, integer(1)))
-          c_experiment_name = args[[1]]@experiment_name 
-          c_description = args[[1]]@description
-          c_genome_name = args[[1]]@genome_name 
-          c_anchor_one <- do.call(c, lapply(args, anchorOne))
-          c_anchor_two <- do.call(c, lapply(args, anchorTwo))
-          c_counts <- do.call(c, lapply(args, count))
-          c_normalised_counts <- do.call(c, lapply(args, normalisedCount))
-          stopIfNot(length(c_normalised_counts) == total_length)
-          c_fdr <- do.call(c, lapply(args, FDR))
-          stopIfNot(length(c_fdr) == total_length)
-          c_pvalue <- do.call(c, lapply(args, pValue))
-          stopIfNot(length(c_pvalue) == total_length)
-          return( new("GenomicInteractions", 
-                      experiment_name = c_experiment_name, 
-                      description = c_description, 
-                      genome_name = c_genome_name, 
-                      anchor_one = c_anchor_one, 
-                      anchor_two = c_anchor_two, 
-                      counts = c_counts, 
-                      normalised_counts = c_normalised_counts, 
-                      pvalue = c_pvalue, 
-                      fdr = c_fdr) )
+              args = unname(list(x, ...))
+          ans_anchor_one=do.call(c, lapply(args, anchorOne)) # does this implicitly check for seqinfo?
+          ans_anchor_two=do.call(c, lapply(args, anchorTwo))
+          if (ignore.mcols)
+              ans_mcols = new("DataFrame", nrows=length(ans_anchor_one))
+          else
+              ans_mcols = DataFrame(do.call(rbind, lapply(args, mcols, FALSE)))
+          new("GenomicInteractions",
+              metadata = list(experiment_name="", description=""), # users can set this later
+              anchor_one=ans_anchor_one, # does this implicitly check for seqinfo?
+              anchor_two=ans_anchor_two,
+              elementMetadata=ans_mcols)
 } )
 

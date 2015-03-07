@@ -348,7 +348,7 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
     ans
 }
 
-showGenomicInteractions = function(x, print.seqinfo=FALSE) {
+showGenomicInteractions = function(x, margin="", print.seqinfo=FALSE) {
     lx <- length(x)
     nc <- ncol(mcols(x))
     cat(class(x), " object with ",
@@ -359,17 +359,22 @@ showGenomicInteractions = function(x, print.seqinfo=FALSE) {
     if (name(x) != "") cat("\tName: ", name(x), "\n", sep="")
     if (description(x) != "") cat("\tDescription: ", description(x), "\n", sep="")
     cat("\tSum of interactions: ",  sum(x), "\n", sep="")
-    cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no"), "\n")
-    annotations = paste(unique(c(x@anchor_one$node.class, x@anchor_two$node.class)), collapse=", ")
-    cat("\t\t", "Annotated with: ",  ifelse(!is.null(annotations), annotations, "N/A"))
+    is_atd = ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no")
+    cat("\tAnnotated: ", is_atd, "\n")
+    if (is_atd == "yes") {
+        annotations = paste(unique(c(x@anchor_one$node.class, x@anchor_two$node.class)), collapse=", ")
+        cat("\t\t", "Annotated with: ",  annotations, "\n")
+    }
     cat("\tInteractions:\n")
     out = S4Vectors:::makePrettyMatrixForCompactPrinting(x, .makeNakedMatFromGenomicInteractions)
+    if (nrow(out) != 0L)
+        rownames(out) = paste0(margin, rownames(out))
     print(out, quote=FALSE, right=TRUE, max=length(out))
     #cat(ifelse(lx>10, "\n\t\t....\n", ""))
     cat("\n")
     if (print.seqinfo) {
-        cat("-------\n")
-        cat("seqinfo: ", summary(seqinfo(x)), "\n", sep="")
+        cat(margin, "-------\n")
+        cat(margin, "seqinfo: ", summary(seqinfo(x)), "\n", sep="")
     }
 }
 
@@ -380,7 +385,7 @@ showGenomicInteractions = function(x, print.seqinfo=FALSE) {
 #' @docType methods
 #' @export
 setMethod("print", "GenomicInteractions", function(x){
-    return(showGenomicInteractions(x))
+    showGenomicInteractions(x, margin="  ", print.seqinfo=TRUE)
 })
 
 #' Representation function for GenomicInteractions
@@ -390,6 +395,6 @@ setMethod("print", "GenomicInteractions", function(x){
 #' @docType methods
 #' @export
 setMethod("show", "GenomicInteractions", function(object){
-    return(showGenomicInteractions(object))
+    showGenomicInteractions(object, margin="  ", print.seqinfo=TRUE)
 })
 

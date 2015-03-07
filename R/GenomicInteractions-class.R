@@ -67,8 +67,9 @@ GenomicInteractions = function(anchor_one, anchor_two, experiment_name="", descr
     mcols = DataFrame(...)
     if (ncol(mcols) == 0L)
         mcols <- new("DataFrame", nrows = length(seqnames))
-    if (mrow(mcols) == 1)
-        do.call(rbind, replicate(mcols, length(anchor_one)) # inefficient
+    if (nrow(mcols) == 1L)
+        #do.call(rbind, replicate(mcols, length(anchor_one))) # inefficient
+        mcols = mcols[rep(1, length(anchor_one)), ]
     new("GenomicInteractions",
         metadata=list(experiment_name=experiment_name, description=description),
         anchor_one=anchor_one,
