@@ -121,6 +121,14 @@ setMethod("is.cis", "GenomicInteractions",
                 return( as.character(seqnames(GIObject@anchor_one)) == as.character(seqnames(GIObject@anchor_two)) )
             })
 
+#' Return the total number of interactions in a GenomicInteractions GIObject
+#'
+#' @param x GenomicInteractions GIObject
+#' @return The sum of the counts in GIObject
+#' @docType methods
+#' @export
+setMethod("sum", "GenomicInteractions", function(x){ return( sum(interactionCounts(x))) })
+
 #' Find overlaps between GRanges and GenomicInteractions objects
 #'
 #' When called with a GRanges and a GenomicInteractions object, this function
@@ -327,6 +335,44 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
           return(x)
 })
 
+.makeNakedMatFromGenomicInteractions = function(x) {
+    lx <- length(x)
+    nc <- ncol(mcols(x))
+    ans <- cbind("Anchor One"=.pasteAnchor(x@anchor_one),
+                 "   "=rep.int("---", lx),
+                 "Anchor Two"=.pasteAnchor(x@anchor_two))
+    if (nc > 0L) {
+        tmp <- do.call(data.frame, c(lapply(mcols(x), showAsCell), list(check.names=FALSE)))
+        ans <- cbind(ans, `|`=rep.int("|", lx), as.matrix(tmp))
+    }
+    ans
+}
+
+showGenomicInteractions = function(x, print.seqinfo=FALSE) {
+    lx <- length(x)
+    nc <- ncol(mcols(x))
+    cat(class(x), " object with ",
+        lx, " ", ifelse(lx == 1L, "interaction", "interactions"),
+        " and ",
+        nc, " metadata ", ifelse(nc == 1L, "column", "columns"),
+        ":\n", sep="")
+    if (name(x) != "") cat("\tName: ", name(x), "\n", sep="")
+    if (description(x) != "") cat("\tDescription: ", description(x), "\n", sep="")
+    cat("\tSum of interactions: ",  sum(x), "\n", sep="")
+    cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no"), "\n")
+    annotations = paste(unique(c(x@anchor_one$node.class, x@anchor_two$node.class)), collapse=", ")
+    cat("\t\t", "Annotated with: ",  ifelse(!is.null(annotations), annotations, "N/A"))
+    cat("\tInteractions:\n")
+    out = S4Vectors:::makePrettyMatrixForCompactPrinting(x, .makeNakedMatFromGenomicInteractions)
+    print(out, quote=FALSE, right=TRUE, max=length(out))
+    #cat(ifelse(lx>10, "\n\t\t....\n", ""))
+    cat("\n")
+    if (print.seqinfo) {
+        cat("-------\n")
+        cat("seqinfo: ", summary(seqinfo(x)), "\n", sep="")
+    }
+}
+
 #' Print function for GenomicInteractions
 #'
 #' @param x GenomicInteractionsObject
@@ -334,28 +380,7 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
 #' @docType methods
 #' @export
 setMethod("print", "GenomicInteractions", function(x){
-    cat("GenomicInteractions\n")
-    cat("\tName: ", x@experiment_name, "\n", sep="")
-    cat("\tDescription: ", x@description, "\n", sep="")
-    cat("\tGenome: ", x@genome_name,"\n", sep="")
-    cat("\tNumber of individual interactions: ",  length(x), "\n", sep="")
-    cat("\tNumber of interactions: ",  sum(x), "\n", sep="")
-    cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no"), "\n")
-        cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)),
-                                                paste(unique(c(x@anchor_one$node.class, x@anchor_two$node.class)), collapse=", "),
-                                                "N/A"),
-            "\n", sep="")
-    cat("\tInteractions:\n")
-    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(x@anchor_one))[1:min(10, length(x))],
-                                   start(x@anchor_one)[1:min(10, length(x))],
-                                   end(x@anchor_one)[1:min(10, length(x))]),
-                        .pasteAnchor(as.character(seqnames(x@anchor_two))[1:min(10, length(x))],
-                                     start(x@anchor_two)[1:min(10, length(x))],
-                                     end(x@anchor_two)[1:min(10, length(x))]),
-                        sep="\t-----\t", collapse="\n\t\t"), sep="")
-    cat(ifelse(length(x)>10, "\n\t\t....\n", ""))
-    cat("\n")
-    return(invisible(1))
+    return(showGenomicInteractions(x))
 })
 
 #' Representation function for GenomicInteractions
@@ -365,27 +390,6 @@ setMethod("print", "GenomicInteractions", function(x){
 #' @docType methods
 #' @export
 setMethod("show", "GenomicInteractions", function(object){
-    cat("GenomicInteractions\n")
-    cat("\tName: ", object@experiment_name, "\n", sep="")
-    cat("\tDescription: ", object@description, "\n", sep="")
-    cat("\tGenome: ", object@genome_name,"\n", sep="")
-    cat("\tNumber of individual interactions: ",  length(object), "\n", sep="")
-    cat("\tNumber of interactions: ",  sum(object), "\n", sep="")
-    cat("\t", "Annotated: ", ifelse( "node.class" %in% names(elementMetadata(object@anchor_one)), "yes", "no"), "\n", sep="")
-    cat("\t\t", "Annotated with: ",  ifelse( "node.class" %in% names(elementMetadata(object@anchor_one)),
-                                                paste(unique(c(object@anchor_one$node.class, object@anchor_two$node.class)), collapse=", "),
-                                                "N/A"),
-               "\n", sep="")
-    cat("\tInteractions:\n")
-    cat("\t\t", paste(.pasteAnchor(as.character(seqnames(object@anchor_one))[1:min(10, length(object))],
-                                   start(object@anchor_one)[1:min(10, length(object))],
-                                   end(object@anchor_one)[1:min(10, length(object))]),
-                             .pasteAnchor(as.character(seqnames(object@anchor_two))[1:min(10, length(object))],
-                                          start(object@anchor_two)[1:min(10, length(object))],
-                                          end(object@anchor_two)[1:min(10, length(object))]),
-                             sep="\t-----\t", collapse="\n\t\t"), sep="")
-    cat(ifelse(length(object)>10, "\n\t\t....\n", ""))
-    cat("\n")
-    return(invisible(1))
+    return(showGenomicInteractions(object))
 })
 

@@ -17,8 +17,8 @@ capitalize = function(x) {
 }
 
 
-.pasteAnchor = function(seqname, start, end){
-    paste(paste(seqname, start, sep=":"), end, sep="..")
+.pasteAnchor = function(x) {
+    paste(paste(seqnames(x), start(x), sep=":"), end(x), sep="..")
 }
 
 .generateInteractionName = function(anchorString1, anchorString2, counts){
