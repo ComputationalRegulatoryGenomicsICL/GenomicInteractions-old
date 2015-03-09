@@ -93,7 +93,7 @@ setMethod(f="c", signature="GenomicInteractions", function(x, ..., ignore.mcols=
               args = unname(list(x, ...))
           ans_anchor_one=do.call(c, lapply(args, anchorOne)) # does this implicitly check for seqinfo?
           ans_anchor_two=do.call(c, lapply(args, anchorTwo))
-          ans_counts=do.call(c, lapply(args, counts))
+          ans_counts=do.call(c, lapply(args, interactionCounts))
           if (ignore.mcols)
               ans_mcols = new("DataFrame", nrows=length(ans_anchor_one))
           else

@@ -24,7 +24,7 @@ setMethod("export.bed12", c("GenomicInteractions"),
                 chr = as.character(seqnames(anchorOne(GIObject)))
             } else {
                 chr = ifelse(seqnames(anchorOne(GIObject)) == seqnames(anchorTwo(GIObject)),
-                             seqnames(anchorOne(GIObject)),
+                             as.character(seqnames(anchorOne(GIObject))),
                              paste(seqnames(anchorOne(GIObject)), seqnames(anchorTwo(GIObject)), sep=", "))
             }
 
