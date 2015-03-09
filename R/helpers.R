@@ -291,25 +291,27 @@ setReplaceMethod("seqinfo", "GenomicInteractions", function(x, new2old=NULL, for
 #'
 #' @param x GenomicInteractions Object
 #' @param decreasing A logical indicating sort order
+#' @param order.interactions A logical indicating if interactions should be reordered,
+#'                           or only rearranged so that start(anchorOne) < start(anchorTwo)
 #' @import GenomicRanges
 #' @return A sorted GenomicInteractions object
 #' @docType methods
 #' @export
-setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE) {
+setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE, order.interactions=TRUE) {
           if (any(names(mcols(anchorOne(x))) != names(mcols(anchorTwo(x)))))
               stop("Metadata differs between anchors and will be lost in sort.")
           anchor.one = anchorOne(x)
           anchor.two = anchorTwo(x)
-          # based on order of seqlevels(x)
           reversed = !.isSorted(x)
           if (decreasing==TRUE) {reversed = !reversed}
           one.rev = anchor.one[reversed]
           anchor.one[reversed] = anchor.two[reversed]
           anchor.two[reversed] = one.rev
-          x@anchor_one = anchor.one
-          x@anchor_two = anchor.two
-          i = order(anchor.one, decreasing=decreasing)
-          x = x[i]
+          BiocGenerics:::updateS4(x, anchor_one=anchor.one, anchor_two=anchor.two)
+          if (order.interactions==TRUE) {
+            i = order(anchor.one, decreasing=decreasing)
+            x = x[i]
+          }
           return(x)
 })
 
