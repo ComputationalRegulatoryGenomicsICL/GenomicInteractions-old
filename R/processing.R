@@ -37,12 +37,11 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
     anchor_two = y[pairs_two]
     counts = as.integer(tabulated)
 
-    final_counts = new("GenomicInteractions",
-                       experiment_name = name(x),
-                       description = description(x),
-                       genome_name = genomeName(x),
+    final_counts = GenomicInteractions(
                        anchor_one=anchor_one,
                        anchor_two=anchor_two,
+                       experiment_name = name(x),
+                       description = description(x),
                        counts=counts)
 
     return(sort(final_counts))
