@@ -342,7 +342,8 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
     nc <- ncol(mcols(x))
     ans <- cbind("Anchor One"=.pasteAnchor(x@anchor_one),
                  "   "=rep.int("---", lx),
-                 "Anchor Two"=.pasteAnchor(x@anchor_two))
+                 "Anchor Two"=.pasteAnchor(x@anchor_two),
+                 "Counts"=x@counts)
     if (nc > 0L) {
         tmp <- do.call(data.frame, c(lapply(mcols(x), showAsCell), list(check.names=FALSE)))
         ans <- cbind(ans, `|`=rep.int("|", lx), as.matrix(tmp))

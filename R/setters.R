@@ -58,7 +58,10 @@ setReplaceMethod("description", "GenomicInteractions", function(GIObject, value)
 #' @rdname setters
 #' @export
 setReplaceMethod("interactionCounts", "GenomicInteractions", function(GIObject, value){
-    GIObject$counts = value
-    validObject(GIObject)
-    GIObject
+    if (!all(value == floor(value)))
+        stop("value must contain integer values")
+    value = as.integer(value)
+    if (length(value) == 1)
+        value = rep(value, length(GIObject))
+    BiocGenerics:::updateS4(GIObject, counts=value)
 })

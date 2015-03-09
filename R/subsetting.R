@@ -59,9 +59,11 @@ setMethod(f="[", "GenomicInteractions", function(x, i, j, drop) {
           if (!missing(i)) {
             ans_anchor_one = x@anchor_one[i]
             ans_anchor_two = x@anchor_two[i]
+            ans_counts = x@counts[i]
             ans_mcols = mcols(x)[i, ,drop=FALSE]
             x = BiocGenerics:::updateS4(x, anchor_one=ans_anchor_one,
                                         anchor_two=ans_anchor_two,
+                                        counts=ans_counts,
                                         elementMetadata=ans_mcols)
         }
         if (!missing(j))
@@ -83,6 +85,7 @@ setMethod(f="c", signature="GenomicInteractions", function(x, ..., ignore.mcols=
               args = unname(list(x, ...))
           ans_anchor_one=do.call(c, lapply(args, anchorOne)) # does this implicitly check for seqinfo?
           ans_anchor_two=do.call(c, lapply(args, anchorTwo))
+          ans_counts=do.call(c, lapply(args, counts))
           if (ignore.mcols)
               ans_mcols = new("DataFrame", nrows=length(ans_anchor_one))
           else
@@ -91,6 +94,7 @@ setMethod(f="c", signature="GenomicInteractions", function(x, ..., ignore.mcols=
               metadata = list(experiment_name="", description=""), # users can set this later
               anchor_one=ans_anchor_one, # does this implicitly check for seqinfo?
               anchor_two=ans_anchor_two,
+              counts=ans_counts,
               elementMetadata=ans_mcols)
 } )
 

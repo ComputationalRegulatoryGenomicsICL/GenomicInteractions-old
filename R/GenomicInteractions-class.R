@@ -4,6 +4,7 @@
 #'
 #'  @slot metadata List, defaults to "experiment_name" and "description", inherited from S4Vectors::Vector
 #'  @slot anchor_one,anchor_two GRanges. Set of anchors of interactions.
+#'  @slot counts integer vector, contains raw counts
 #'  @slot elementMetadata DataFrame
 #'
 #' This class is used to store information on which genomic regions are
@@ -31,9 +32,11 @@
 setClass("GenomicInteractions",
     representation(anchor_one = "GRanges",
                    anchor_two = "GRanges",
+                   counts = "integer",
                    elementMetadata="DataFrame"),
     prototype(anchor_one = GRanges(),
               anchor_two = GRanges(),
+              counts = integer(0),
               elementMetadata = DataFrame() ),
     contains="Vector",
     validity = function(object){
@@ -43,6 +46,10 @@ setClass("GenomicInteractions",
             return("length of anchor one and anchor two do not match")
         } else if(!.isEqualSeqInfo(object@anchor_one, object@anchor_two)) {
             return("seqinfo must be indentical for both GRanges") # this is order-dependent which is not desireable
+        } else if(length(object@counts) != length(object@anchor_one)) {
+            return("length of counts must be the same as the anchors")
+        } else if(any(object@counts < 0)) {
+            return("Counts should contain only non-negative integers")
         } else{ return(TRUE)}}
 )
 
@@ -51,6 +58,7 @@ setClass("GenomicInteractions",
 #' Create GenomicInteraction objects from two GRanges ojects.
 #'
 #' @param anchor_one, anchor_two GRanges objects.
+#' @param counts An integer vector, defaults to 1.
 #' @param experiment_name Experiment name.
 #' @param description Description of experiment.
 #' @param ... Additional data to be added to mcols
@@ -63,17 +71,21 @@ setClass("GenomicInteractions",
 #' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", description="this is a test", counts=interaction_counts)
 #'
 #' @export
-GenomicInteractions = function(anchor_one, anchor_two, experiment_name="", description="", ...) {
+GenomicInteractions = function(anchor_one=GRanges(), anchor_two=GRanges(), counts=integer(), experiment_name="", description="", ...) {
+    if (!all(counts == floor(counts)))
+        stop("counts must contain integer values")
+    if (length(counts) == 1)
+        counts = rep(counts, length(anchor_one))
     mcols = DataFrame(...)
     if (ncol(mcols) == 0L)
-        mcols <- new("DataFrame", nrows = length(seqnames))
+        mcols = new("DataFrame", nrows = length(anchor_one))
     if (nrow(mcols) == 1L)
-        #do.call(rbind, replicate(mcols, length(anchor_one))) # inefficient
         mcols = mcols[rep(1, length(anchor_one)), ]
     new("GenomicInteractions",
         metadata=list(experiment_name=experiment_name, description=description),
         anchor_one=anchor_one,
         anchor_two=anchor_two,
+        counts=as.integer(counts),
         elementMetadata=mcols)
 }
 

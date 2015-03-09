@@ -198,8 +198,6 @@ setMethod("export.igraph", "GenomicInteractions", function(GIObject){
 .getNames = function(x) {
     if ("name" %in% colnames(mcols(x)))
         names = mcols(x)[["name"]]
-    else if (!is.null(names(x)))
-        names = names(x)
     else
         names = paste0("interaction_", 1:length(x))
     names

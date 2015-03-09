@@ -74,13 +74,7 @@ setMethod("anchorTwo", "GenomicInteractions", function(GIObject){ return(GIObjec
 
 #' @rdname getters
 #' @export
-setMethod("interactionCounts", "GenomicInteractions", function(GIObject){
-          if ("counts" %in% names(mcols(GIObject)))
-              counts = GIObject$counts
-          else
-              rep(1, length(GIObject))
-          return(counts)
-})
+setMethod("interactionCounts", "GenomicInteractions", function(GIObject){ return(GIObject@counts) })
 
 #' @rdname getters
 #' @export
