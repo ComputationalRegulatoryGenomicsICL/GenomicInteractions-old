@@ -359,8 +359,8 @@ showGenomicInteractions = function(x, margin="", print.seqinfo=FALSE) {
         " and ",
         nc, " metadata ", ifelse(nc == 1L, "column", "columns"),
         ":\n", sep="")
-    if (name(x) != "") cat("\tName: ", name(x), "\n", sep="")
-    if (description(x) != "") cat("\tDescription: ", description(x), "\n", sep="")
+    if (!is.null(name(x))) cat("\tName: ", name(x), "\n", sep="")
+    if (!is.null(description(x))) cat("\tDescription: ", description(x), "\n", sep="")
     cat("\tSum of interactions: ",  sum(x), "\n", sep="")
     is_atd = ifelse( "node.class" %in% names(elementMetadata(x@anchor_one)), "yes", "no")
     cat("\tAnnotated: ", is_atd, "\n")

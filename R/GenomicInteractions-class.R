@@ -75,7 +75,7 @@ setClass("GenomicInteractions",
 #'
 #' @import GenomeInfoDb
 #' @export
-GenomicInteractions = function(anchor_one=GRanges(), anchor_two=GRanges(), counts=integer(), experiment_name="", description="", ...) {
+GenomicInteractions = function(anchor_one=GRanges(), anchor_two=GRanges(), counts=integer(), experiment_name=NULL, description=NULL, ...) {
     if (!all(counts == floor(counts)))
         stop("counts must contain integer values")
     if (length(counts) == 1)
