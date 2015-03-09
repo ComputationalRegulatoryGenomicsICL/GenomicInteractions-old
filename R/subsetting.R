@@ -54,6 +54,7 @@ NULL
 #' @aliases [,GenomicInteractions-method
 #' @docType methods
 #' @rdname GenomicInteractions-subset-methods
+#' @import BiocGenerics
 #' @export
 setMethod(f="[", "GenomicInteractions", function(x, i, j, drop) {
           if (!missing(i)) {
@@ -71,7 +72,14 @@ setMethod(f="[", "GenomicInteractions", function(x, i, j, drop) {
         return(x)
 } )
 
+#' Combine GenomicInteractions Methods
+#'
+#' This method will fail if
 #' @name c
+#' @param x, ... GenomicInteractions objects to be concatenated
+#' @param ignore.mcols Logical, default FALSE, remove mcols in combined object.
+#' @param recursive Not supported
+#'
 #' @aliases c,GenomicInteractions
 #' @docType methods
 #' @rdname GenomicInteractions-combine-methods

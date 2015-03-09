@@ -28,6 +28,9 @@
 #'             pvalue=c(0.1, 0.3, 0.1, 0.08))
 #'
 #' @import GenomicRanges
+#' @importFrom S4Vectors DataFrame
+#' @importClassesFrom S4Vectors Vector DataFrame
+#'
 #' @export GenomicInteractions
 setClass("GenomicInteractions",
     representation(anchor_one = "GRanges",
