@@ -70,6 +70,7 @@ setClass("GenomicInteractions",
 #' interaction_counts = sample(1:10, 4)
 #' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", description="this is a test", counts=interaction_counts)
 #'
+#' @import GenomeInfoDb
 #' @export
 GenomicInteractions = function(anchor_one=GRanges(), anchor_two=GRanges(), counts=integer(), experiment_name="", description="", ...) {
     if (!all(counts == floor(counts)))
@@ -81,6 +82,13 @@ GenomicInteractions = function(anchor_one=GRanges(), anchor_two=GRanges(), count
         mcols = new("DataFrame", nrows = length(anchor_one))
     if (nrow(mcols) == 1L)
         mcols = mcols[rep(1, length(anchor_one)), ]
+	if (!.isEqualSeqInfo(anchor_one, anchor_two)) {
+        seqinfo_both = merge(seqinfo(anchor_one), seqinfo(anchor_two))
+        seqlevels(anchor_one) = seqlevels(seqinfo_both)
+        seqinfo(anchor_one) = seqinfo_both
+        seqlevels(anchor_two) = seqlevels(seqinfo_both)
+        seqinfo(anchor_two) = seqinfo_both
+    }
     new("GenomicInteractions",
         metadata=list(experiment_name=experiment_name, description=description),
         anchor_one=anchor_one,
