@@ -32,7 +32,6 @@ make_gr <- function() {
                                   strand = "-"))
 }
 
-
 test_that("No overlaps returns list of empty matches (gi, gr)", {
   gi <- make_gi()
   gr <- make_gr()
@@ -73,17 +72,45 @@ test_that("No overlaps returns list of empty matches (gr, gi)", {
     expect_equal(findOverlaps(gr$nomatch, gi, type = type, select = "first"), expect)  
   }
   
+  
 })
 
-test_that("No overlaps returns list of empty matches (gi, gi)", {
+test_that("No / one anchor overlaps returns list of empty matches (gi, gi)", {
   gi1 <- make_gi()
-  gi2 <- gi1
+  gi2 <- gi1  
   gi2@anchor_one <- shift(anchorOne(gi2), 1000L)
   gi2@anchor_two <- shift(anchorTwo(gi2), 1000L)
+  gi3 <- gi1
+  gi3@anchor_two <- shift(anchorTwo(gi3), 1000L)
+  
   expect <- new("Hits", queryHits = integer(0), subjectHits = integer(0),
                            queryLength = 10L, subjectLength = 10L)
   
-  expect_equal(findOverlaps(gi1, gi2), expect) 
+  expect_equal(findOverlaps(gi1, gi2), expect)
+  
+  #first anchor overlaps, second does not
+  expect_equal(findOverlaps(gi1, gi3), expect)
 
 })
 
+test_that("Empty GRanges as query/subject returns list of empty matches",{
+  gi <- make_gi()
+  ##empty gr
+  gr <- GRanges()
+  expect <- list(one = new("Hits", queryHits = integer(0), subjectHits = integer(0),
+                           queryLength = 0L, subjectLength = 10L),
+                 two = new("Hits", queryHits = integer(0), subjectHits = integer(0),
+                           queryLength = 0L, subjectLength = 10L))
+
+  for (type in c("any", "start", "end")){
+    expect_equal(findOverlaps(gr, gi, type = type, select = "all"), expect)
+  }
+  
+  expect <- list(one = new("Hits", queryHits = integer(0), subjectHits = integer(0),
+                           queryLength = 10L, subjectLength = 0L),
+                 two = new("Hits", queryHits = integer(0), subjectHits = integer(0),
+                           queryLength = 10L, subjectLength = 0L))
+  for (type in c("any", "start", "end")){
+    expect_equal(findOverlaps(gi, gr, type = type, select = "all"), expect)
+  }
+})
