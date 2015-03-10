@@ -326,7 +326,8 @@ setReplaceMethod("seqinfo", "GenomicInteractions", function(x, new2old=NULL, for
 #' arranging all interactions start on the lower-ordered anchor;
 #' for trans-chromosomal interactions this is the anchor on the
 #' lower ordered chromomsome (defined by the seqlevels factor);
-#' and then by the position of the first anchor.
+#' and then by the position of the first anchor. See 
+#' ?"GenomicRanges-comparison" for ordering rules.
 #'
 #' @param x GenomicInteractions Object
 #' @param decreasing A logical indicating sort order

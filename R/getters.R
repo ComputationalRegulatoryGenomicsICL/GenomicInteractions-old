@@ -81,6 +81,6 @@ setMethod("interactionCounts", "GenomicInteractions", function(GIObject){ return
 setMethod("annotationFeatures", "GenomicInteractions", function(GIObject){
   if( "node.class" %in% names(elementMetadata(GIObject@anchor_one))) {
     annotation = unique(c(GIObject@anchor_one$node.class, GIObject@anchor_two$node.class))
-  } else { annotation = "NA" }
+  } else { annotation = NA_character_ }
   return(annotation)
 } )
