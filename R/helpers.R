@@ -264,7 +264,7 @@ setMethod("findOverlaps", c("GenomicInteractions", "GenomicInteractions"), funct
     return(hits_object)
 })
 
-#' Acessing/modifying sequence information for a GenomicInteracions object
+#' Acessing/modifying sequence information for a GenomicInteractions object
 #'
 #' Allows access/modification of seqinfo for GenomicInteractions objcets. When
 #' used with "force=True", interactions with either (or both) anchors on invalid
@@ -346,7 +346,7 @@ setMethod("sort", "GenomicInteractions", function(x, decreasing=FALSE, order.int
           one.rev = anchor.one[reversed]
           anchor.one[reversed] = anchor.two[reversed]
           anchor.two[reversed] = one.rev
-          BiocGenerics:::updateS4(x, anchor_one=anchor.one, anchor_two=anchor.two)
+          x <- BiocGenerics:::updateS4(x, anchor_one=anchor.one, anchor_two=anchor.two)
           if (order.interactions==TRUE) {
             i = order(anchor.one, decreasing=decreasing)
             x = x[i]
