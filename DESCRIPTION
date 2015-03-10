@@ -20,7 +20,8 @@ Imports:
     gridExtra,
     methods,
     igraph,
-    plotrix
+    plotrix,
+    S4Vectors
 Suggests: 
     knitr,
     BiocStyle,

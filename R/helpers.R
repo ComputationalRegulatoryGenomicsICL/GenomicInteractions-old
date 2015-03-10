@@ -252,6 +252,7 @@ setMethod("overlapsAny", c("GRanges", "GenomicInteractions"),
 
 #' @rdname GenomicInteractions-overlaps-methods
 #' @export
+#' @importFrom S4Vectors as.matrix
 setMethod("findOverlaps", c("GenomicInteractions", "GenomicInteractions"), function(query, subject) {
     if (!all(.isSorted(query)) & !all(.isSorted(subject)))
         stop("GenomicInteractions object must be sorted")
@@ -377,6 +378,7 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
           return(x)
 })
 
+#' @importFrom S4Vectors showAsCell
 .makeNakedMatFromGenomicInteractions = function(x) {
     lx <- length(x)
     nc <- ncol(mcols(x))
@@ -390,6 +392,7 @@ setMethod("trim", "GenomicInteractions", function(x, minAnchorSize=1, ...) {
     }
     ans
 }
+
 
 showGenomicInteractions = function(x, margin="", print.seqinfo=FALSE) {
     lx <- length(x)
