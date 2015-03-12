@@ -65,3 +65,4 @@ test_that("resetting annotations removes mcols", {
 })
 
 ## Distance calculations?
+
