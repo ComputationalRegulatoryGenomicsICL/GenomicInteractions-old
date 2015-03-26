@@ -128,7 +128,8 @@ setMethod("calculateDistances", c("GenomicInteractions"),
 })
 
 
-setGeneric(".calculateDistances.df", function(object1, object2, method="midpoint", floor=TRUE){standardGeneric (".calculateDistances.df")}) # TODO FUCK ME I KEEP ON FINDING BUGS
+setGeneric(".calculateDistances.df", function(object1, object2, method="midpoint", floor=TRUE){standardGeneric (".calculateDistances.df")})
+
 setMethod(".calculateDistances.df", c("data.frame", "data.frame"), 
         function(object1, object2, method="midpoint", floor=TRUE){ 
             if(method=="midpoint"){
