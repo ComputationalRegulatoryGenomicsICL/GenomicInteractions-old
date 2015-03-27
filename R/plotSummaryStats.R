@@ -239,7 +239,7 @@ categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL)
 #' plotCounts(hic_example_data)
 #' plotCounts(hic_example_data, normalise=TRUE)
 plotCounts <- function(GIObject, normalise=FALSE, cut = 10){
-  dat <-as.data.frame(table(count(GIObject)), stringsAsFactors = FALSE)
+  dat <-as.data.frame(table(interactionCounts(GIObject)), stringsAsFactors = FALSE)
   ylabel <- "Count"
 
   if (normalise){
