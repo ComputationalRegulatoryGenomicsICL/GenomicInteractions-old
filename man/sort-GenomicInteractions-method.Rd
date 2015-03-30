@@ -23,6 +23,7 @@ This method will sort a GenomicInteractions object by first
 arranging all interactions start on the lower-ordered anchor;
 for trans-chromosomal interactions this is the anchor on the
 lower ordered chromomsome (defined by the seqlevels factor);
-and then by the position of the first anchor.
+and then by the position of the first anchor. See
+?"GenomicRanges-comparison" for ordering rules.
 }
 
