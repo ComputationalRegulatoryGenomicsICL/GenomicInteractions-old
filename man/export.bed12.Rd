@@ -8,7 +8,7 @@
 export.bed12(GIObject, fn = NULL, ...)
 
 \S4method{export.bed12}{GenomicInteractions}(GIObject, fn = NULL,
-  score = "counts", drop.trans = TRUE)
+  score = "counts", drop.trans = c(FALSE, TRUE))
 }
 \arguments{
 \item{GIObject}{A GenomicInteractions object.}

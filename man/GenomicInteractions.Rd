@@ -4,7 +4,7 @@
 \title{Function to create a GenomicInteraction object}
 \usage{
 GenomicInteractions(anchor_one = GRanges(), anchor_two = GRanges(),
-  counts = integer(), experiment_name = "", description = "", ...)
+  counts = integer(), experiment_name = NULL, description = NULL, ...)
 }
 \arguments{
 \item{anchor_one,}{anchor_two GRanges objects.}

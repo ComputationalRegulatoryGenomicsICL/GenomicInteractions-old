@@ -13,27 +13,33 @@
 \usage{
 \S4method{findOverlaps}{GenomicInteractions,GRanges}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), select = c("all", "first", "last", "arbitrary"))
+  "equal"), select = c("all", "first", "last", "arbitrary"),
+  ignore.strand = FALSE)
 
 \S4method{findOverlaps}{GRanges,GenomicInteractions}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), ignore.strand = FALSE)
+  "equal"), select = c("all", "first", "last", "arbitrary"),
+  ignore.strand = FALSE)
 
 \S4method{countOverlaps}{GenomicInteractions,GRanges}(query, subject,
-  maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), ignore.strand = FALSE)
+  maxgap = 0L, minoverlap = 1L, select = c("all", "first", "last",
+  "arbitrary"), type = c("any", "start", "end", "within", "equal"),
+  ignore.strand = FALSE)
 
 \S4method{countOverlaps}{GRanges,GenomicInteractions}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), select = c("all", "first", "last", "arbitrary"))
+  "equal"), select = c("all", "first", "last", "arbitrary"),
+  ignore.strand = FALSE)
 
 \S4method{overlapsAny}{GenomicInteractions,GRanges}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), ignore.strand = FALSE)
+  "equal"), select = c("all", "first", "last", "arbitrary"),
+  ignore.strand = FALSE)
 
 \S4method{overlapsAny}{GRanges,GenomicInteractions}(query, subject,
   maxgap = 0L, minoverlap = 1L, type = c("any", "start", "end", "within",
-  "equal"), ignore.strand = FALSE)
+  "equal"), select = c("all", "first", "last", "arbitrary"),
+  ignore.strand = FALSE)
 
 \S4method{findOverlaps}{GenomicInteractions,GenomicInteractions}(query, subject)
 }
@@ -50,7 +56,7 @@ A Hits object or a list containing Hits objects for both anchors.
 \description{
 When called with a GRanges and a GenomicInteractions object, this function
 calls findOverlaps separately on each anchor and returns a list. countOverlaps
-and overlapsAny return a list of interger vectors and logical vectors respectively.
+and overlapsAny return a list of integer vectors and logical vectors respectively.
 }
 \details{
 When

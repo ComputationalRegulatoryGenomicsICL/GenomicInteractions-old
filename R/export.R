@@ -15,31 +15,31 @@ setGeneric("export.bed12",function(GIObject, fn=NULL, ...){standardGeneric ("exp
 #' @rdname export.bed12
 #' @export
 setMethod("export.bed12", c("GenomicInteractions"),
-        function(GIObject, fn=NULL, score="counts", drop.trans=TRUE){
+        function(GIObject, fn=NULL, score="counts", drop.trans=c(FALSE, TRUE)){
 
-            # does anything use this functionality?
-            if (drop.trans==TRUE) {
-                if (any(is.trans(GIObject)))
+            is_trans = is.trans(GIObject)
+
+            if (any(is_trans)) {
+                if (drop.trans==TRUE)
                     warning("trans interactions present in object will be dropped during bed12 export")
-                chr = as.character(seqnames(anchorOne(GIObject)))
-            } else {
-                chr = ifelse(seqnames(anchorOne(GIObject)) == seqnames(anchorTwo(GIObject)),
-                             as.character(seqnames(anchorOne(GIObject))),
-                             paste(seqnames(anchorOne(GIObject)), seqnames(anchorTwo(GIObject)), sep=", "))
+                else
+                    stop("trans interactions present in object and drop.trans == FALSE")
             }
 
-            GIObject = sort(GIObject[!is.trans(GIObject)], order.interactions=F)
+            GIObject = sort(GIObject[!is_trans], order.interactions=F)
 
             lx = length(GIObject)
             names = .getNames(GIObject)
             score = .getScore(GIObject, score)
+            s1 = strand(anchorOne(GIObject))
+            s2 = strand(anchorTwo(GIObject))
 
             output = data.frame(chr=as.character(seqnames(anchorOne(GIObject))),
                                 start=start(anchorOne(GIObject))-1,
                                 end=end(anchorTwo(GIObject)),
                                 name=names,
                                 score=score,
-                                strand=ifelse(strand(anchorOne(GIObject)) == strand(anchorTwo(GIObject)), strand(anchorOne(GIObject)), "."),
+                                strand=ifelse(s1 == s2 & s1 %in% c("+", "-"), s1, "."), # avoid case where strand == "*"
                                 thickStart=start(anchorOne(GIObject))-1,
                                 thickEnd=end(anchorTwo(GIObject)),
                                 itemRgb=rep("255,0,0", lx),
@@ -53,6 +53,7 @@ setMethod("export.bed12", c("GenomicInteractions"),
 			}else{
 			    return(output)
 			}
+
 			return(invisible(1))
 })
 
@@ -88,11 +89,13 @@ setMethod("export.bedpe", c("GenomicInteractions"), function(GIObject, fn=NULL, 
                    score_vector,
                    as.character(strand(anchorOne(GIObject))),
                    as.character(strand(anchorTwo(GIObject))))
+
     if(!is.null(fn)){
         write.table(output, fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
     }else{
         return(output)
     }
+
     return(invisible(1))
 })
 

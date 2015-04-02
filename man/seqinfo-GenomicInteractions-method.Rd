@@ -3,7 +3,7 @@
 \name{seqinfo,GenomicInteractions-method}
 \alias{seqinfo,GenomicInteractions-method}
 \alias{seqinfo<-,GenomicInteractions-method}
-\title{Acessing/modifying sequence information for a GenomicInteracions object}
+\title{Acessing/modifying sequence information for a GenomicInteractions object}
 \usage{
 \S4method{seqinfo}{GenomicInteractions}(x)
 
