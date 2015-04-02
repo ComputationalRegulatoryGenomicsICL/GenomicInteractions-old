@@ -26,6 +26,10 @@ viewPoint <- function(pos, GIObject, leftflank, rightflank, plot=TRUE){
 	if (length(pos) > 1){
 		stop("pos should be a single position, you have given ", length(pos), " positions")
 	}
+  
+  if (any(is.na(seqlengths(GIObject)))){
+    stop("seqlengths must be defined to plot view points")
+  }
 
 	#get all interactions that overlap pos
 	fO <- findOverlaps(pos, GIObject)
