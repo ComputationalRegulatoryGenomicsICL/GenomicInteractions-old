@@ -28,7 +28,7 @@ viewPoint = function(x, bait, region=NULL, ...) {
                              counts=c(x@counts[queryHits(hits$one)], 
                                       x@counts[queryHits(hits$two)]))
     if (!is.null(region)) { vp = x[overlapsAny(x@anchor_two, region, ...)] }
-    ord = order(start(vp@anchor_one), start(vp@anchor_two))
+    ord = order(vp@anchor_one, vp@anchor_two)
     return(vp[ord])
 }
 
