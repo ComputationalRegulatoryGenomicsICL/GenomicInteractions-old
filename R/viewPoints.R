@@ -23,8 +23,8 @@ viewPoint = function(x, bait, region=NULL, ...) {
     hits = findOverlaps(x, bait, ...)
     vp = GenomicInteractions(anchor_one=bait[c(subjectHits(hits$one), 
                                           subjectHits(hits$two))],
-                             anchor_two=c(x@anchor_one[queryHits(hits$one)], 
-                                          x@anchor_two[queryHits(hits$two)]),
+                             anchor_two=c(x@anchor_two[queryHits(hits$one)], 
+                                          x@anchor_one[queryHits(hits$two)]),
                              counts=c(x@counts[queryHits(hits$one)], 
                                       x@counts[queryHits(hits$two)]))
     if (!is.null(region)) { vp = x[overlapsAny(x@anchor_two, region, ...)] }
