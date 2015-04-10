@@ -57,8 +57,9 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
 #' @param GIObject A GenomicInteractions object.
 #' @return A GenomicInteractions object that is a subset of the input object.
 #' @import GenomicRanges
+#' @export
 
-.removeDups <- function(GIObject){
+removeDups <- function(GIObject){
     dat <- data.frame(Chr1 = seqnames(anchorOne(GIObject)),
                       Start1 = start(anchorOne(GIObject)),
                       Chr2 = seqnames(anchorTwo(GIObject)),
@@ -84,8 +85,24 @@ sameStrand <- function(GIObject){
 }
 
 #' Get self ligation threshold with SD method from Heidari et al
+#' 
+#' This function calculates a self ligation threshold according to 
+#' the method published in Heidari et al., Genome Research, 2014. 
+#' Briefly, paired reads are divided into in evenly sized bins. For
+#' each bin, the log2 ratio of reads that are aligned to opposite strand
+#' vs to the same strand is calculated. Twice the standard deviation of 
+#' this ratio at high distances is used a cutoff to determine which bins 
+#' are likely to contain mostly self-liagted reads.
+#' 
+#' @param GIObject a GenomicInteractions object of paired end reads
+#' @param bins Number of evenly sized bins to use.
+#' @param distance_th The threshold, in base pairs, to use as a cutoff to 
+#' pick which bins to use to determine the standard deviation.
+#' @param plot TRUE by default. Whether to plot the log2ratio of opposite
+#' to same strand reads vs distance.
 #'
 #' @export
+#' @return The cutoff in base pairs below which an interaction is likely to be a self ligation.
 
 get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, plot=TRUE){
     require(dplyr)
@@ -139,8 +156,30 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
 }
 
 #' get self ligation threshold with binomial test
+#' 
+#' This function calculates a self ligation threshold according to 
+#' a method based on that of Heidari et al., Genome Research, 2014. 
+#' Briefly, paired reads are divided into in evenly spaced bins. For
+#' each bin, the number of reads that are aligned to opposite strand
+#' vs to the same strand is calculated. A binomial test is used to test
+#' if this is significantly different from the 50:50 ratio expected by 
+#' chance if all reads are real interactions. 
+#' 
+#' @param GIObject a GenomicInteractions object of paired end reads
+#' @param bin.size Bin size in base pairs.
+#' @param max.distance The maximum distance to consider between reads. 
+#' Reads further apart than this distance should be very unlikely to be
+#'  self ligations.
+#' @param p.cutoff P value cut off for a significant difference from 50:50. Default: 0.05
+#' @param adjust Method to use to adjust p values. Default: fdr. See `help(p.adjust)` for 
+#' accepted values. Can also be NA for no adjustment.
+#' @param plot TRUE by default. Whether to plot the percentage of reads 
+#' on opposite strands vs difference and the binomial test p value vs distance.
 #'
 #' @export
+#' @return The cutoff in base pairs below which an interaction is likely to be a self ligation.
+
+
 get_binom_ligation_threshold = function(GIObject, max.distance=20000, bin.size=500, p.cutoff=0.05, adjust="fdr", plot=TRUE){
 
     #make data frame

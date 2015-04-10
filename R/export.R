@@ -26,7 +26,7 @@ setMethod("export.bed12", c("GenomicInteractions"),
                     stop("trans interactions present in object and drop.trans == FALSE")
             }
 
-            GIObject = sort(GIObject[!is_trans], order.interactions=F)
+            GIObject = sort(GIObject[!is_trans], order.interactions=FALSE)
 
             lx = length(GIObject)
             names = .getNames(GIObject)

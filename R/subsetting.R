@@ -74,11 +74,15 @@ setMethod(f="[", "GenomicInteractions", function(x, i, j, drop) {
 
 #' Combine GenomicInteractions Methods
 #'
-#' This method will fail if
+#' This method will fail if the seqlengths of the objects to be combined do not match.
+#' If some chromosomes appear in one set of seqinfo but not the other, the seqinfo will
+#' be merged.
+#' 
 #' @name c
 #' @param x, ... GenomicInteractions objects to be concatenated
 #' @param ignore.mcols Logical, default FALSE, remove mcols in combined object.
 #' @param recursive Not supported
+#' @return A GenomicInteractions object.
 #'
 #' @aliases c,GenomicInteractions
 #' @docType methods
