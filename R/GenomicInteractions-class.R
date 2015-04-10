@@ -20,12 +20,11 @@
 #'
 #' showClass("GenomicInteractions")
 #'
-#' library(BSgenome.Mmusculus.UCSC.mm9)
 #' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5), seqlengths=seqlengths(Mmusculus))
 #' anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5), seqlengths=seqlengths(Mmusculus))
-#' test <- new("GenomicInteractions", experiment_name="test", description="this is a test",
-#'             anchor_one = anchor.one, anchor_two = anchor.two, counts=as.integer(c(2,1,2,3)),
-#'             pvalue=c(0.1, 0.3, 0.1, 0.08))
+#' interaction_counts = sample(1:10, 4)
+#' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", 
+#'                            description="this is a test", counts=interaction_counts)
 #'
 #' @import GenomicRanges
 #' @import S4Vectors
@@ -70,7 +69,8 @@ setClass("GenomicInteractions",
 #' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5), seqlengths=seqlengths(Mmusculus))
 #' anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5), seqlengths=seqlengths(Mmusculus))
 #' interaction_counts = sample(1:10, 4)
-#' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", description="this is a test", counts=interaction_counts)
+#' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", 
+#'                            description="this is a test", counts=interaction_counts)
 #'
 #' @import GenomeInfoDb
 #' @export
