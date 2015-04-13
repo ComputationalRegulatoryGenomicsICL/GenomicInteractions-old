@@ -41,9 +41,7 @@ setClass("GenomicInteractions",
               elementMetadata = DataFrame() ),
     contains="Vector",
     validity = function(object){
-        if (length(object@anchor_one) == 0 ) {
-            return("anchor one cannot be of length 0")
-        } else if(length(object@anchor_one) != length(object@anchor_two)) {
+        if(length(object@anchor_one) != length(object@anchor_two)) {
             return("length of anchor one and anchor two do not match")
         } else if(!.isEqualSeqInfo(object@anchor_one, object@anchor_two)) {
             return("seqinfo must be indentical for both GRanges") # this is order-dependent which is not desireable
