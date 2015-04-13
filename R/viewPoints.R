@@ -10,7 +10,7 @@
 #' 
 #' @return A GenomicInteractions object.
 #' 
-#' @import GRanges
+#' @import GenomicRanges
 #' @export
 #' @examples
 #' \dontrun{
@@ -46,7 +46,7 @@ viewPoint = function(x, bait, region=NULL, ...) {
 #' 
 #' @return output of plot()
 #'
-#' @import GRanges
+#' @import GenomicRanges
 #' @export
 plotViewpoint = function(x, region, ...) {
     if (length(region) > 1) stop("region must be a single range")

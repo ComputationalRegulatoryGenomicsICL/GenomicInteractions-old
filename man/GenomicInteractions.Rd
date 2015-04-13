@@ -28,6 +28,7 @@ Create GenomicInteraction objects from two GRanges ojects.
 anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5), seqlengths=seqlengths(Mmusculus))
 anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5), seqlengths=seqlengths(Mmusculus))
 interaction_counts = sample(1:10, 4)
-test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", description="this is a test", counts=interaction_counts)
+test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test",
+                           description="this is a test", counts=interaction_counts)
 }
 
