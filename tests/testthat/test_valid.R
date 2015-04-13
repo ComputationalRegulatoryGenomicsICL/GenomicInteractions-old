@@ -16,15 +16,15 @@ make_gi <- function() {
   )
 }
 
-make_no_anchors <- function() {
-  new("GenomicInteractions",
-      metadata = list(experiment_name="test", description = "this is a test"),
-      anchor_one = GRanges(seqinfo = Seqinfo(seqnames = paste("chr", 1:3, sep=""))),
-      anchor_two = GRanges(seqinfo = Seqinfo(seqnames = paste("chr", 1:3, sep=""))),
-      counts = as.integer(10:1),
-      elementMetadata = new("DataFrame")
-  )
-}
+#make_no_anchors <- function() {
+  #new("GenomicInteractions",
+      #metadata = list(experiment_name="test", description = "this is a test"),
+      #anchor_one = GRanges(seqinfo = Seqinfo(seqnames = paste("chr", 1:3, sep=""))),
+      #anchor_two = GRanges(seqinfo = Seqinfo(seqnames = paste("chr", 1:3, sep=""))),
+      #counts = as.integer(10:1),
+      #elementMetadata = new("DataFrame")
+  #)
+#}
 
 make_unequal_anchors <- function() {
     new("GenomicInteractions",
@@ -95,7 +95,7 @@ make_neg_counts <- function() {
 
 
 test_that("Invalid objects are invalid", {
-  expect_error(make_no_anchors(), "anchor one cannot be of length 0")
+  #expect_error(make_no_anchors(), "anchor one cannot be of length 0")
   expect_error(make_unequal_anchors(), "length of anchor one and anchor two do not match")
   expect_error(make_diff_seqinfo(), "seqinfo must be indentical for both GRanges")
   expect_error(make_bad_counts(), "length of counts must be the same as the anchors")

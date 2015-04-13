@@ -36,7 +36,6 @@ Use these functions to set data stored in each of the slots of a
 GenomicInteractions object.
 }
 \examples{
-library(BSgenome.Mmusculus.UCSC.mm9)
 anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5), seqlengths=seqlengths(Mmusculus))
 anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5), seqlengths=seqlengths(Mmusculus))
 interaction_counts = sample(1:10, 4)

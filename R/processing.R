@@ -101,12 +101,12 @@ sameStrand <- function(GIObject){
 #' @param plot TRUE by default. Whether to plot the log2ratio of opposite
 #' to same strand reads vs distance.
 #'
+#' @import dplyr
+#' @import ggplot2
 #' @export
 #' @return The cutoff in base pairs below which an interaction is likely to be a self ligation.
 
 get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, plot=TRUE){
-    require(dplyr)
-    require(ggplot2)
     #get df
     stranded_df <- data.frame(Distance=calculateDistances(GIObject), SameStrand=sameStrand(GIObject))
     stranded_cis_df <- stranded_df[complete.cases(stranded_df),]

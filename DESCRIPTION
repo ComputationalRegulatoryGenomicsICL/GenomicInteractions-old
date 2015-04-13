@@ -21,7 +21,8 @@ Imports:
     methods,
     igraph,
     plotrix,
-    S4Vectors
+    S4Vectors,
+    dplyr
 Suggests:
     knitr,
     BiocStyle,
