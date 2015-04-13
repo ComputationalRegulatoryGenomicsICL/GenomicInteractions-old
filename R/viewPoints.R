@@ -20,7 +20,13 @@
 #' viewPoint(hic_data, pos, region)
 #' }
 viewPoint = function(x, bait, region=NULL, ...) {
+    if (any(names(mcols(anchorOne(x))) != names(mcols(anchorTwo(x))))) {
+        warning("Metadata differs between anchors and will be lost.")
+        mcols(x@anchor_one) = NULL
+        mcols(x@anchor_two) = NULL
+    }
     hits = findOverlaps(x, bait, ...)
+    if (length(hits) == 0) return(GenomicInteractions())
     vp = GenomicInteractions(anchor_one=bait[c(subjectHits(hits$one), 
                                           subjectHits(hits$two))],
                              anchor_two=c(x@anchor_two[queryHits(hits$one)], 
