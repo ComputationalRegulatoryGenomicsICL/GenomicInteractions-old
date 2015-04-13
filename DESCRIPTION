@@ -25,8 +25,6 @@ Imports:
 Suggests:
     knitr,
     BiocStyle,
-    BSgenome.Hsapiens.UCSC.hg19,
-    BSgenome.Mmusculus.UCSC.mm9,
     testthat
 VignetteBuilder: knitr
 Description: R package for handling Genomic interaction data, such as
