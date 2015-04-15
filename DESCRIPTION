@@ -30,7 +30,7 @@ Suggests:
 VignetteBuilder: knitr
 Description: R package for handling Genomic interaction data, such as
     ChIA-PET/Hi-C, annotating genomic features with interaction
-    information and producing various plots / statistics
+    information and producing various plots/statistics.
 biocViews: Software,Infrastructure,DataImport,DataRepresentation
 License: GPL-3
 Depends:
