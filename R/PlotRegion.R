@@ -68,21 +68,6 @@
 #' @importFrom plotrix ablineclip
 #' @examples
 #' 
-#' \dontrun{
-#'
-#' library(GenomicRanges)
-#'
-#' k562.rep1 = GenomicInteractions(file.path(system.file(package="GenomicInteractions"), "extdata", "k562.rep1.cluster.pet3+.txt"), 
-#'                                      type="chiapet.tool", 
-#'                                      experiment_name="k562", 
-#'                                      description="k562 pol2 8wg16", 
-#'                                      gname="BSgenome.Hsapiens.UCSC.hg19")
-#' annotation.features = list(promoter=refseq.promoters, 
-#'                              terminator=refseq.terminators, 
-#'                              gene.body=refseq.transcripts)                                    
-#' plotRegion(k562.rep1, GRanges("chr18", IRanges(9000000, 10000000)), annotation.features)
-#' }
-#' 
 #' @docType methods
 #' @rdname .plotRegion
 setGeneric("plotRegion",function(GIObject, region, annotation.features, annotation.cols=NULL, reduce.anchors=TRUE,
