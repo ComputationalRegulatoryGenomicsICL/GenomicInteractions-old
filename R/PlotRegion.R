@@ -66,7 +66,6 @@
 #' @param anchor.col colour for anchor regions
 #' @return invisible(1)
 #' @importFrom plotrix ablineclip
-#' @examples
 #' 
 #' @docType methods
 #' @rdname .plotRegion
