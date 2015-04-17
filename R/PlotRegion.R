@@ -66,29 +66,13 @@
 #' @param anchor.col colour for anchor regions
 #' @return invisible(1)
 #' @importFrom plotrix ablineclip
-#' @export
-#' @examples
-#' 
-#' \dontrun{
-#' k562.rep1 = GenomicInteractions(file.path(system.file(package="GenomicInteractions"), "extdata", "k562.rep1.cluster.pet3+.txt"), 
-#'                                      type="chiapet.tool", 
-#'                                      experiment_name="k562", 
-#'                                      description="k562 pol2 8wg16", 
-#'                                      gname="BSgenome.Hsapiens.UCSC.hg19")
-#' annotation.features = list(promoter=refseq.promoters, 
-#'                              terminator=refseq.terminators, 
-#'                              gene.body=refseq.transcripts)                                    
-#' plotRegion(k562.rep1, GRanges("chr18", IRanges(9000000, 10000000)), annotation.features)
-#' }
 #' 
 #' @docType methods
-#' @rdname plotRegion
-#' @export
+#' @rdname .plotRegion
 setGeneric("plotRegion",function(GIObject, region, annotation.features, annotation.cols=NULL, reduce.anchors=TRUE,
                                  plot.trans=TRUE, plot.cis=TRUE, order.cis=TRUE, plot.cis.names=TRUE, plot.header=TRUE,
                                  plot.lines=TRUE, anchor.col="darkred", plot.ids=FALSE){standardGeneric ("plotRegion")})
-#' @rdname plotRegion
-#' @export
+#' @rdname .plotRegion
 setMethod("plotRegion", 
     signature=c("GenomicInteractions", "GRanges", "list"), function(GIObject, region, annotation.features, annotation.cols=NULL, 
                        reduce.anchors=TRUE, plot.trans=TRUE, plot.cis=TRUE, order.cis=TRUE, plot.cis.names=TRUE, plot.header=TRUE,
