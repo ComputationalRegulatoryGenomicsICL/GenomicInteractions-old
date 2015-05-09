@@ -485,6 +485,11 @@ setMethod("duplicated", "GenomicInteractions", .duplicated.GenomicInteractions)
 #' @return A GenomicInteractions object
 #' @docType methods
 #' @export
+#' @examples
+#' 
+#' library(GenomicInteractions)
+#' data(hic_example_data)
+#' unique(hic_example_data[c(1:4, 1:5)])
 
 setMethod("unique", "GenomicInteractions", .unique.GenomicInteractions)
 
