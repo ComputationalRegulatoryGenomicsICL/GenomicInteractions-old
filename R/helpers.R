@@ -442,3 +442,49 @@ setMethod("show", "GenomicInteractions", function(object){
     showGenomicInteractions(object, margin="  ", print.seqinfo=TRUE)
 })
 
+
+.duplicated.GenomicInteractions <- function(x, fromLast=FALSE)
+{
+  dat <- cbind(as.data.frame(unname(anchorOne(x))), #duplicated names ok for GRanges but not for df 
+               as.data.frame(unname(anchorTwo(x))), 
+               interactionCounts(x),
+               mcols(x))
+  return(duplicated(dat, incomparables = FALSE, 
+                    fromLast = fromLast))
+}
+
+#' duplicated, GenomicInteractions-method
+#' 
+#' Finds duplicated interactions in a GenomicInteractions object. 
+#' 
+#' Uniqueness is based on anchor positions and metadata, interaction counts, and
+#' interaction metadata.
+#'
+#' @param x A GenomicInteractions object
+#' @param fromLast Whether to identify duplicates starting from last item in the 
+#'        Genomicinteractions object or not. Default: FALSE.
+#' @return A GenomicInteractions object
+#' @docType methods
+#' @export
+setMethod("duplicated", "GenomicInteractions", .duplicated.GenomicInteractions)
+
+.unique.GenomicInteractions <- function(x)
+{
+  idx <- !duplicated(x)
+  return(x[idx])
+}
+
+#' unique, GenomicInteractions-method
+#' 
+#' Finds unique interactions in a GenomicInteractions object. 
+#' 
+#' Uniqueness is based on anchor positions and metadata, interaction counts, and
+#' interaction metadata.
+#'
+#' @param x GenomicInteractionsObject
+#' @return A GenomicInteractions object
+#' @docType methods
+#' @export
+
+setMethod("unique", "GenomicInteractions", .unique.GenomicInteractions)
+
