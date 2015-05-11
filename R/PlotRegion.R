@@ -29,7 +29,7 @@ setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chrom
 
 # pass it is GI object, interaction.strength whether to use the height of the arc or the width of the arc to show interaction strength or none or neither
 # colour.by either count, padj or p-value, others are self-explanatory
-InteractionTrack <- function(name="InteractionTrack", variables, ...
+InteractionTrack <- function(name="InteractionTrack", giobject=giobject, ...
                              #giobject,
                              #interaction.strength="width", 
                              #colour.by="count",
@@ -38,42 +38,63 @@ InteractionTrack <- function(name="InteractionTrack", variables, ...
                              #plot.anchors = FALSE,
                              #col = "black", prepare=FALSE
                              ){
-	return(new("InteractionTrack", name=name, plottingFunction=drawGD, variables=list()))	
+	return(new("InteractionTrack", name=name, plottingFunction=drawGD, variables=list(giobject=giobject)))	
 }
+
+
 
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...){ 
     print(GdObject)
     print(minBase)
     print(maxBase)
     
-
+    draw.anchors = TRUE
+    anchors.col = "lightblue"
     #interaction.counts = "height" or "width"
-
     # do I need an axis?
 
-    #rev <- .dpOrDefault(GdObject, "reverseStrand", FALSE)
-    xscale <- c(minBase, maxBase)
-
-    #pushViewport(viewport(xscale=xscale, clip=TRUE))
-    #pushViewport(viewport(xscale=c(0, dev.size(units="px")[1]), yscale=c(0, 1))	)
-    #pushViewport(viewport(xscale=c(0, 1), yscale=c(0, 1))  )
     pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1))  )
     
     print(dev.size(units="px"))
 
-    print(GdObject$variables)
+    print(GdObject@variables$giobject)
     
-    x = c(10, 10, 200, 200) 
-    y = c(0, 0.2509799, 0.2509799, 0) 
-
-    grid.bezier(x, y,  default.units="native", gp=gpar(col="red",lwd=10))
-
-    x = c(700, 700, 1500,1500) 
-    y = c(0, 0.2509799, 0.2509799, 0) 
+    anchor_one_chr = seqnames(anchorOne(GdObject@variables$giobject))
+    anchor_one_starts = start(anchorOne(GdObject@variables$giobject))
+    anchor_one_ends = end(anchorOne(GdObject@variables$giobject))
     
-    grid.bezier(x, y,  default.units="native", gp=gpar(col="red",lwd=10))
+    anchor_two_chr = seqnames(anchorTwo(GdObject@variables$giobject))
+    anchor_two_starts = start(anchorTwo(GdObject@variables$giobject))
+    anchor_two_ends = end(anchorTwo(GdObject@variables$giobject))
     
+    anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
+    anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
     
+    # how can I fix this to work properly
+    print(anchor_one_chr)
+    
+    # TODO - fix this!!!
+    lwds = 1+log(interactionCounts(x))
+    
+    for(i in 1:length(GdObject@variables$giobject)){
+      grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
+                  c(0.05,1, 1,0.05),  default.units="native", gp=gpar(col="red",lwd=lwds))
+    }
+    
+    # add anchors 
+    anchors = unique(c(anchorOne(GdObject@variables$giobject), anchorTwo(GdObject@variables$giobject)))
+    if(draw.anchors){
+      for(i in 1:length(anchors)){
+        grid.polygon(
+                    c(start(anchors[i]), end(anchors[i]), end(anchors[i]), start(anchors[i])), 
+                    c(0, 0, 0.1,0.1),
+                    default.units="native", gp=gpar(col=anchors.col, fill= anchors.col))
+      }
+    }
+    #y = c(0, 0.2509799, 0.2509799, 0) 
+    #x = c(700, 700, 1500,1500) 
+    
+    #grid.bezier(x, y,  default.units="native", gp=gpar(col="red",lwd=1))
     # transinteractions
     # anchor regions
     # anchor colour
