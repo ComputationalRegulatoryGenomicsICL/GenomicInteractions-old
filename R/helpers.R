@@ -73,8 +73,8 @@ setMethod("is.pd", "GenomicInteractions",
 #' @export
 setMethod("is.pt", "GenomicInteractions",
             function(GIObject){
-                return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) |
-                        (GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "distal" ))
+                return( (GIObject@anchor_one$node.class == "promoter" & GIObject@anchor_two$node.class == "terminator" ) |
+                        (GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "promoter" ))
             })
 
 #' @rdname InteractionHelpers
@@ -89,7 +89,7 @@ setMethod("is.dd", "GenomicInteractions",
 setMethod("is.dt", "GenomicInteractions",
             function(GIObject){
                 return( (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ) |
-                        (GIObject@anchor_one$node.class == "distal" & GIObject@anchor_two$node.class == "terminator" ))
+                        (GIObject@anchor_one$node.class == "terminator" & GIObject@anchor_two$node.class == "distal" ))
             })
 
 #' @rdname InteractionHelpers
