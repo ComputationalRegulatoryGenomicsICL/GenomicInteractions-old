@@ -1,5 +1,31 @@
+## Definition of GenomicInteractions
 
-# so this is a custom track maybe it needs to inherit from RangeTrack
+#' A class to hold chromatin interaction data for a specific genomic region.
+#'
+#'  @slot plottingFunction function
+#'  @slot variables list
+#'  @slot chromosome
+#'  @slot stacking character
+#'
+#' InteractionTrack is a specific Gviz-derived class for enabling the visualisation of chromatin interaction data. 
+#' The InteractionTrack class allows interactions on a specified chromosome to be visualised by examining interactions
+#' between anchors as bezier curves.
+#' 
+#' Several additional display parameters (i.e. \rcode{displayPars(foo)=list(...) }are defined for this class, including 
+#' \code{plot.anchors} which can be used to specify whether anchors are to be drawn. \code{col.anchors} which can be used 
+#' to alter the colour of these anchor elements. The value of \code{plot.outside} determines whether or not interactions
+#' which span outside of the window are to be plotted, and \code{col.outside} defines the colour of these interactions. 
+#' Similarly \code{plot.trans} determines whether trans-interactions are plotted and \code{col.trans} specifies the colour
+#' of trans-interactions. By default, the line width of an arc representing an interaction is proportional to the number 
+#' of reads/counts supporting that interaction. Instead of using the counts to define this, the line width can be set to
+#' be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter. 
+#' 
+#'
+#'
+#' @import Gviz
+#' @import grid
+#'
+#' @export InteractionTrack
 setClass("InteractionTrack",
          contains=c("GdObject"),
          representation=representation(plottingFunction="function",
@@ -18,8 +44,9 @@ setClass("InteractionTrack",
                                             col.interaction.types = c()
                                             )))
 
+
 setMethod("initialize", "InteractionTrack", function(.Object, plottingFunction, chromosome, variables, ...) {
-  #.Object <- .updatePars(.Object, "InteractionTrack") #### need to sort this out
+  #.Object <- .updatePars(.Object, "InteractionTrack") #
   .Object@plottingFunction <- plottingFunction
   .Object@chromosome <- chromosome
   .Object@variables <- variables
@@ -55,22 +82,35 @@ setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chrom
   return(x)                                          
 })
 
-#' Plot interactions within a specified region. 
+#' Constructor to create an InteractionTrack object
+#'
+#' Create InteractionTrack object from an GenomicInteractions object to visualise a specified chromosome.
+#'
+#' @param x A GenomicInteractions object
+#' @param chromosome
+#'
+#' @return an InteractionTrack object
+#'
+#' @examples
 #' 
-#' This is function allows the plotting of an interactions between annotated features in a specified area. 
-#' The resulting plot shows unique interactions as curves between interaction anchor points with the number 
-#' of counts supporting that interaction proportional to the thickness of that line. It is also possible to 
-#' add cis-interactions which are not within the window/region and to also plot regions that are involved
-#' in trans-interactions. Plotting the data this way makes it possible to examine a region and easily examine
-#' which regions are highly interacting with each other.
-# pass it is GI object, interaction.strength whether to use the height of the arc or the width of the arc to show interaction strength or none or neither
-# colour.by either count, padj or p-value, others are self-explanatory
+#' library(GenomicRanges)
+#'
+#' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))
+#' anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5))
+#' interaction_counts = sample(1:10, 4)
+#' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", 
+#'                            description="this is a test", counts=interaction_counts)
+#' interactions.track = InteractionTrack(name="Test", test, chromosome="chr1")                        
+#' plotTracks(list(interactions.track))
 #' 
-#' 
-InteractionTrack <- function(name="InteractionTrack", giobject, chromosome, start=NULL, end=NULL){
-	return(new("InteractionTrack", name=name, plottingFunction=drawGD, chromosome=chromosome, variables=list(giobject=giobject)))	
+#' @export
+InteractionTrack <- function(name="InteractionTrack", x, chromosome, start=NULL, end=NULL){ # TODO SORT OUT START AND STOP HERE
+	return(new("InteractionTrack", name=name, plottingFunction=drawGD, chromosome=chromosome, variables=list(giobject=x)))	
 }
 
+#' draws InteractionTrack
+#' 
+#' @export
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...){ 
     
   print(GdObject)
