@@ -5,10 +5,13 @@
 \alias{unique,GenomicInteractions-method}
 \title{unique, GenomicInteractions-method}
 \usage{
-\S4method{unique}{GenomicInteractions}(x)
+\S4method{unique}{GenomicInteractions}(x, dropMetadata = FALSE)
 }
 \arguments{
 \item{x}{GenomicInteractionsObject}
+
+\item{dropMetadata}{Logical, default FALSE. Whether to drop interaction mcols
+when considering unique interactions.}
 }
 \value{
 A GenomicInteractions object
@@ -18,10 +21,11 @@ Finds unique interactions in a GenomicInteractions object.
 }
 \details{
 Uniqueness is based on anchor positions and metadata, interaction counts, and
-interaction metadata.
+interaction metadata (unless dropMetadata is TRUE)
 }
 \examples{
 library(GenomicInteractions)
+
 data(hic_example_data)
 unique(hic_example_data[c(1:4, 1:5)])
 }

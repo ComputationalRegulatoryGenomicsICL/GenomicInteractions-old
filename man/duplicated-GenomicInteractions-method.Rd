@@ -5,16 +5,20 @@
 \alias{duplicated,GenomicInteractions-method}
 \title{duplicated, GenomicInteractions-method}
 \usage{
-\S4method{duplicated}{GenomicInteractions}(x, fromLast = FALSE)
+\S4method{duplicated}{GenomicInteractions}(x, fromLast = FALSE,
+  dropMetadata = FALSE)
 }
 \arguments{
 \item{x}{A GenomicInteractions object}
 
 \item{fromLast}{Whether to identify duplicates starting from last item in the
 Genomicinteractions object or not. Default: FALSE.}
+
+\item{dropMetadata}{Logical, default FALSE. Whether to drop interaction mcols
+when considering unique interactions.}
 }
 \value{
-A GenomicInteractions object
+A vector containing indices of duplicated interactions
 }
 \description{
 Finds duplicated interactions in a GenomicInteractions object.
