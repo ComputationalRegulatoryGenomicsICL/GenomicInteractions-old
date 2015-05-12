@@ -1,6 +1,21 @@
 #' Virtual 4C viewpoint
 #'
-#' Some explanation needed
+#' This function creates a GenomicInteractions object representing interactions 
+#' originating at a given viewpoint ("bait"), or set of viewpoints. This is 
+#' similar to the idea of a virtual 4C experiment where you are interested in 
+#' interactions with a specific region. 
+#' 
+#' The object returned has the "bait" as anchor one, and the interacting regions 
+#' as anchor two. By default this is genome wide. If you only want to consider 
+#' interactions within a certain distance around the bait, you can specify a 
+#' region to consider.
+#' 
+#' Multiple baits can be given, e.g. to find all interactions around promoters.
+#' 
+#' You may want to visualise the resulting interactions in a genome browser - 
+#' you can do this by creating coverage over anchor two of the object and exporting 
+#' as a wig or bedgraph file.
+#' 
 #' 
 #' @param x A GenomicInteractions object.
 #' @param bait A GRanges object describing bait regions.
@@ -40,6 +55,10 @@ viewPoint = function(x, bait, region=NULL, ...) {
 }
 
 #' Plot coverage around a virtual 4C viewpoint
+#' 
+#' Plots coverage of interactions around a given viewpoint. This function requires 
+#' the output of `viewPoint()` as input. You should additionally specify the total 
+#' region you wish to plot. 
 #'
 #' @param x a GenomicInteractions object which is output from viewPoint
 #' @param region The genomic region to plot
