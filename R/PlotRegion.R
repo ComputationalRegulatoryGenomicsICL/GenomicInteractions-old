@@ -11,8 +11,8 @@ setClass("InteractionTrack",
                                             interaction.strength="width", 
                                             lwd.interaction ="counts",
                                             col.interactions = "red",
-                                            plot.cis = TRUE,
-                                            col.cis = "red",
+                                            plot.outside = TRUE,
+                                            col.outside = "red",
                                             plot.trans = FALSE,
                                             col.trans = "lightgray"
                                             )))
@@ -34,7 +34,6 @@ setMethod("start", "InteractionTrack", function(x){
   }else{
     return(x@variables$start)
   }
-  print(tmp.start)
   return(tmp.start)
   } )
 
@@ -45,7 +44,6 @@ setMethod("end", "InteractionTrack", function(x){
   }else{
     return(x@variables$start)
   }
-  print(tmp.end)
   return(tmp.end)
 })
 
@@ -73,16 +71,16 @@ InteractionTrack <- function(name="InteractionTrack", giobject, chromosome, star
 }
 
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...){ 
-    #print(GdObject)
-    print(minBase)
-    print(maxBase)
-    print(GdObject@variables$giobject)
-    if(prepare){
+    
+  print(GdObject)
+  if(prepare){
       displayPars(GdObject) <- list(".__verticalSpace"=5)
+      pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1) )) # TESTING
+      popViewport(1)
       return(invisible(GdObject))
     }
 
-    pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1))  )
+    pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1)))
     
     anchor_one_chr = as.character(seqnames(anchorOne(GdObject@variables$giobject)))
     anchor_one_starts = start(anchorOne(GdObject@variables$giobject))
@@ -95,13 +93,8 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
     anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
     
-    # TODO - fix this!!!
     if(displayPars(GdObject, "lwd.interaction") == "counts"){
-      
-      max(interactionCounts(GdObject@variables$giobject))
-      
       lwds = 2*(interactionCounts(GdObject@variables$giobject)/max(interactionCounts(GdObject@variables$giobject)))
-      
     }else if(displayPars(GdObject, "lwd.interaction") == "fdr"){
       lwds = 2-(GdObject@variables$giobject$fdr*2)
     }else if(displayPars(GdObject, "lwd.interaction") == "p.value"){
@@ -111,30 +104,20 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     }
     
     col.interactions = displayPars(GdObject, "col.interactions")
-    plot.cis = displayPars(GdObject, "plot.cis")
-    col.cis =  displayPars(GdObject, "col.cis")
+    plot.outside = displayPars(GdObject, "plot.outside")
+    col.outside =  displayPars(GdObject, "col.outside")
     plot.trans = displayPars(GdObject, "plot.trans")
-    print(plot.trans)
     col.trans = displayPars(GdObject, "col.trans")
     
-    # TODO order this so you go from trans to outside region to inside region
-    for(i in 1:length(GdObject@variables$giobject)){
-      print(lwds[i])
-      print(interactionCounts(GdObject@variables$giobject)[i])
-      
-      if( anchor_one_chr[i] ==  anchor_two_chr[i] ){
-        print(plot.cis)
-        print(col.cis)
-        if(plot.cis & (anchor_one_midpoints[i] <minBase || anchor_one_midpoints[i] > maxBase || 
-                         anchor_two_midpoints[i] < minBase || anchor_two_midpoints[i] > maxBase)){
-          print("HERE")
-          grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
-                      c(0.05,1, 1,0.05),  default.units="native", gp=gpar(col=col.cis,lwd=lwds[i]))
-        }else{
-          grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
-                    c(0.05,1, 1,0.05),  default.units="native", gp=gpar(col=col.interactions,lwd=lwds[i]))
-        }
-      }else if(plot.trans){
+    # determine which interactions are trans, have one end outside of the region or are within the region
+    trans.indexes = which( anchor_one_chr != GdObject@chromosome | anchor_two_chr != GdObject@chromosome )
+    outside.indexes = which( (anchor_one_chr == GdObject@chromosome & anchor_two_chr == GdObject@chromosome) & (anchor_one_midpoints <minBase | anchor_one_midpoints > maxBase | 
+       anchor_two_midpoints < minBase | anchor_two_midpoints > maxBase) )
+    inside.indexes = 1:length(anchor_one_chr)
+    inside.indexes = which(!(inside.indexes %in% c(trans.indexes, outside.indexes)))
+    
+    if(plot.trans){
+      for(i in trans.indexes){
         if( anchor_one_chr[i] != GdObject@chromosome ){
           if(anchor_two_midpoints[i] > ((minBase + maxBase)/2)){
             grid.curve(x1=anchor_two_midpoints[i], y1=0.05, x2=maxBase, y2=0.95,  curvature = -1, default.units="native", gp=gpar(col=col.trans,lwd=lwds[i]))
@@ -148,8 +131,21 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
             grid.curve(x1=anchor_one_midpoints[i], y1=0.05, x2=minBase, y2=0.95, curvature = 1, default.units="native", gp=gpar(col=col.trans,lwd=lwds[i]))
           }
         }
-      }  
+      }
     }
+    
+    if(plot.outside){
+      for(i in outside.indexes){
+        grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
+                    c(0.05,1, 1,0.05),  default.units="native", gp=gpar(col=col.outside,lwd=lwds[i]))
+      }
+    }
+    
+    for(i in inside.indexes){
+      grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
+                  c(0.05,1, 1,0.05),  default.units="native", gp=gpar(col=col.interactions,lwd=lwds[i]))
+    }
+    
     
     plot.anchors = displayPars(GdObject, "plot.anchors")
     col.anchors = displayPars(GdObject, "col.anchors")
