@@ -228,7 +228,7 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
         grid.bezier(xs, ys, id.lengths=rep(4, length(outside.indexes)), default.units="native", gp=gpar(col=cols[outside.indexes],lwd=ls)) # TODO
       }
     
-      for(i in inside.indexes){
+      for(i in inside.indexes){ # TODO
         grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
                     c(0.05,curve.heights[i], curve.heights[i], 0.05),  default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
       }
