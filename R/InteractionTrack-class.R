@@ -31,7 +31,7 @@
 #' @export InteractionTrack
 setClass("InteractionTrack",
          contains=c("GdObject"),
-         representation=representation(plottingFunction="function",
+         representation=representation(giobject="GenomicInteractions",
                                        variables="list",
                                        chromosome="character",
                                        stacking="character"),
@@ -48,9 +48,9 @@ setClass("InteractionTrack",
                                             )))
 
 
-setMethod("initialize", "InteractionTrack", function(.Object, plottingFunction, chromosome, variables, ...) {
+setMethod("initialize", "InteractionTrack", function(.Object, giobject, chromosome, variables, ...) {
   #.Object <- .updatePars(.Object, "InteractionTrack") #
-  .Object@plottingFunction <- plottingFunction
+  .Object@giobject <- giobject
   .Object@chromosome <- chromosome
   .Object@variables <- variables
   .Object <- callNextMethod(.Object, ...)
@@ -60,8 +60,8 @@ setMethod("initialize", "InteractionTrack", function(.Object, plottingFunction, 
 setMethod("start", "InteractionTrack", function(x){
   
   if(!is.null(x@variables$start)){
-    tmp.start = min(c(start(anchorOne(x@variables$giobject))[ seqnames(anchorOne(x@variables$giobject)) ==  x@variables$chromosome ],
-        start(anchorTwo(x@variables$giobject))[ seqnames(anchorTwo(x@variables$giobject)) ==  x@variables$chromosome ]))
+    tmp.start = min(c(start(anchorOne(x@giobject))[ seqnames(anchorOne(x@giobject)) ==  x@chromosome ],
+        start(anchorTwo(x@giobject))[ seqnames(anchorTwo(x@giobject)) ==  x@chromosome ]))
   }else{
     return(x@variables$start)
   }
@@ -70,8 +70,8 @@ setMethod("start", "InteractionTrack", function(x){
 
 setMethod("end", "InteractionTrack", function(x){ 
   if(!is.null(x@variables$end)){
-    tmp.end = max(c(end(anchorOne(x@variables$giobject))[ seqnames(anchorOne(x@variables$giobject)) ==  x@variables$chromosome ],
-                    end(anchorTwo(x@variables$giobject))[ seqnames(anchorTwo(x@variables$giobject)) ==  x@variables$chromosome ]))
+    tmp.end = max(c(end(anchorOne(x@giobject))[ seqnames(anchorOne(x@giobject)) ==  x@chromosome ],
+                    end(anchorTwo(x@giobject))[ seqnames(anchorTwo(x@giobject)) ==  x@chromosome ]))
   }else{
     return(x@variables$start)
   }
@@ -82,7 +82,7 @@ setMethod("chromosome", "InteractionTrack", function(GdObject) GdObject@chromoso
 
 setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chromosome, ...){
   x@chromosome = chromosome
-  x@variables$giobject = subsetByFeatures(x@variables$giobject, GRanges(chromosome, IRanges(from, to)))
+  x@giobject = subsetByFeatures(x@giobject, GRanges(chromosome, IRanges(from, to)))
   return(x)                                          
 })
 
@@ -121,25 +121,18 @@ InteractionTrack <- function(x, chromosome="", name=NULL, start=NULL, end=NULL){
     if(xor(is.null(start), is.null(end))){
       stop(paste("both start and end need to be specified"))
     }else if(is.null(start) & is.null(end)){
-      print("HERE")
       x = x[as.vector(seqnames(anchorOne(k562.rep1)) == chromosome | seqnames(anchorTwo(k562.rep1)) == chromosome)]
     }else{
       x = subsetByFeatures(x, GRanges(chromosome, IRanges(start, end)))
     }
   }
-  # if start and end are there then do something
-  # if only chr is there do something
-	return(new("InteractionTrack", name=name, plottingFunction=drawGD, chromosome=chromosome, variables=list(giobject=x)))	
+	return(new("InteractionTrack", name=name, giobject=x, chromosome=chromosome, variables=list(chromosome=chromosome, start=start, end=end)))	
 }
 
 #' draws InteractionTrack
 #' 
 #' @export
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){ 
-  
-  #print(GdObject)
-  
-  print(names(list(...)))
   
   if(subset){
     GdObject <- subset(GdObject, chromosome=GdObject@chromosome, from=minBase, to=maxBase)
@@ -152,40 +145,28 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     }
 
     pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1)))
-    if(length(GdObject@variables$giobject)>0){
-      anchor_one_chr = as.character(seqnames(anchorOne(GdObject@variables$giobject)))
-      anchor_one_starts = start(anchorOne(GdObject@variables$giobject))
-      anchor_one_ends = end(anchorOne(GdObject@variables$giobject))
+    if(length(GdObject@giobject)>0){
+      anchor_one_chr = as.character(seqnames(anchorOne(GdObject@giobject)))
+      anchor_one_starts = start(anchorOne(GdObject@giobject))
+      anchor_one_ends = end(anchorOne(GdObject@giobject))
       
-      anchor_two_chr = as.character(seqnames(anchorTwo(GdObject@variables$giobject)))
-      anchor_two_starts = start(anchorTwo(GdObject@variables$giobject))
-      anchor_two_ends = end(anchorTwo(GdObject@variables$giobject))
+      anchor_two_chr = as.character(seqnames(anchorTwo(GdObject@giobject)))
+      anchor_two_starts = start(anchorTwo(GdObject@giobject))
+      anchor_two_ends = end(anchorTwo(GdObject@giobject))
       
       anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
       anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
       
       if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "counts"){
-        lwds = 2*(interactionCounts(GdObject@variables$giobject)/max(interactionCounts(GdObject@variables$giobject)))
+        lwds = 2*(interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
       }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "fdr"){
-        lwds = 2-(GdObject@variables$giobject$fdr*2)
+        lwds = 2-(GdObject@giobject$fdr*2)
       }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "p.value"){
-        lwds = 2-(GdObject@variables$giobject$p.value*2)
+        lwds = 2-(GdObject@giobject$p.value*2)
       }else{
         lwds = rep(1, length(anchor_one_chr))
       }
-    
-      if(length(displayPars(GdObject, "col.interaction.types"))>0){
-        col.interaction.types = displayPars(GdObject, "col.interaction.types")
-        print(col.interaction.types)
-        names(col.interaction.types)
-        colour.map = str_split(names(col.interaction.types), "-")
-        cols = rep("black", length(anchor_two_midpoints))
-        for(i in 1:length(colour.map)){
-          cols[ isInteractionType(GdObject@variables$giobject, colour.map[[1]][1], colour.map[[1]][2]) ] = col.interaction.types[i]
-        }
-        print(cols)
-      }
-      
+  
       col.interactions = displayPars(GdObject, "col.interactions")
       plot.outside = displayPars(GdObject, "plot.outside")
       col.outside =  displayPars(GdObject, "col.outside")
@@ -204,18 +185,11 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       
       if(length(displayPars(GdObject, "col.interaction.types"))>0){
         col.interaction.types = displayPars(GdObject, "col.interaction.types")
-        print(col.interaction.types)
-        names(col.interaction.types)
         colour.map = str_split(names(col.interaction.types), "-")
-        print(colour.map)
         for(i in 1:length(colour.map)){
-          print(sum(isInteractionType(GdObject@variables$giobject, colour.map[[i]][1], colour.map[[i]][2])))
-          print(which(isInteractionType(GdObject@variables$giobject, colour.map[[i]][1], colour.map[[i]][2])))
-          cols[ isInteractionType(GdObject@variables$giobject, colour.map[[i]][1], colour.map[[i]][2]) ] = col.interaction.types[i]
-          print(cols)
+          cols[ isInteractionType(GdObject@giobject, colour.map[[i]][1], colour.map[[i]][2]) ] = col.interaction.types[i]
         }
       }
-      print(cols)
       
       if(plot.trans){
         for(i in trans.indexes){
@@ -237,12 +211,12 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       
       if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "counts"){
         # or scale to the whole object?
-        curve.heights = interactionCounts(GdObject@variables$giobject)/max(interactionCounts(GdObject@variables$giobject))
+        curve.heights = interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject))
         curve.heights = rep(1, length(anchor_one_chr))
       }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "fdr"){
-        curve.heights = 1.0-(GdObject@variables$giobject$fdr)
+        curve.heights = 1.0-(GdObject@giobject$fdr)
       }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "p.value"){
-        curve.heights = 1.0-(GdObject@variables$giobject$p.value)
+        curve.heights = 1.0-(GdObject@giobject$p.value)
       }else{
         curve.heights = rep(1, length(anchor_one_chr))
       }
@@ -266,8 +240,8 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       
       plot.anchors = displayPars(GdObject, "plot.anchors")
       col.anchors = displayPars(GdObject, "col.anchors")
-      if(plot.anchors & length(GdObject@variables$giobject) > 0){
-        anchors = unique(c(anchorOne(GdObject@variables$giobject), anchorTwo(GdObject@variables$giobject)))
+      if(plot.anchors & length(GdObject@giobject) > 0){
+        anchors = unique(c(anchorOne(GdObject@giobject), anchorTwo(GdObject@giobject)))
         xs = c()
         ys = c()
         for(i in 1:length(anchors)){
