@@ -6,7 +6,7 @@
 \title{draws InteractionTrack}
 \usage{
 \S4method{drawGD}{InteractionTrack}(GdObject, minBase, maxBase,
-  prepare = FALSE, ...)
+  prepare = FALSE, subset = TRUE, ...)
 }
 \description{
 draws InteractionTrack

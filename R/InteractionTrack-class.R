@@ -93,6 +93,9 @@ setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chrom
 #'
 #' @param x A GenomicInteractions object
 #' @param chromosome
+#' @param name
+#' @param start
+#' @param end
 #'
 #' @return an InteractionTrack object
 #'
@@ -132,6 +135,15 @@ InteractionTrack <- function(x, chromosome="", name=NULL, start=NULL, end=NULL){
 
 #' draws InteractionTrack
 #' 
+#' @param GdObject 
+#' @param minBase
+#' @param maxBase
+#' @param prepare
+#' @param subset
+#'
+#' @return an InteractionTrack object
+#' 
+#' @importFrom stringr str_split
 #' @export
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){ 
   
@@ -168,7 +180,7 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
     
     if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "counts"){
-      lwds = 1+log(interactionCounts(GdObject@giobject))#/max(interactionCounts(GdObject@giobject)))
+      lwds = 1+log(interactionCounts(GdObject@giobject))
     }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "fdr"){
       lwds = 1-(GdObject@giobject$fdr)
     }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "p.value"){
@@ -220,7 +232,6 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     }
     
     if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "counts"){
-      # or scale to the whole object?
       curve.heights = anchor.height + (( 1 - anchor.height ) * interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
     }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "fdr"){
       curve.heights = anchor.height + ((1 - anchor.height ) * (1.0-GdObject@giobject$fdr))
@@ -243,7 +254,7 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     if(length(inside.indexes)>0){
       xs = c()
       ys = c()
-      for(i in inside.indexes){ # TODO
+      for(i in inside.indexes){
         mdpt = (anchor_one_midpoints[i] + anchor_two_midpoints[i]) / 2
         xs = c(xs, c(anchor_one_midpoints[i], mdpt, anchor_two_midpoints[i]))
         ys = c(ys,  c(y.start, curve.heights[i], y.start))
