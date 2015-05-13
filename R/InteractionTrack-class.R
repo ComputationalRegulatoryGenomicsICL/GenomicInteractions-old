@@ -44,7 +44,8 @@ setClass("InteractionTrack",
                                             col.outside = "red",
                                             plot.trans = FALSE,
                                             col.trans = "lightgray",
-                                            col.interaction.types = c()
+                                            col.interaction.types = c(),
+                                            anchor.height = 0.05
                                             )))
 
 
@@ -121,7 +122,7 @@ InteractionTrack <- function(x, chromosome="", name=NULL, start=NULL, end=NULL){
     if(xor(is.null(start), is.null(end))){
       stop(paste("both start and end need to be specified"))
     }else if(is.null(start) & is.null(end)){
-      x = x[as.vector(seqnames(anchorOne(k562.rep1)) == chromosome | seqnames(anchorTwo(k562.rep1)) == chromosome)]
+      x = x[as.vector(seqnames(anchorOne(x)) == chromosome | seqnames(anchorTwo(x)) == chromosome)]
     }else{
       x = subsetByFeatures(x, GRanges(chromosome, IRanges(start, end)))
     }
@@ -144,113 +145,122 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       return(invisible(GdObject))
     }
 
-    pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1)))
-    if(length(GdObject@giobject)>0){
-      anchor_one_chr = as.character(seqnames(anchorOne(GdObject@giobject)))
-      anchor_one_starts = start(anchorOne(GdObject@giobject))
-      anchor_one_ends = end(anchorOne(GdObject@giobject))
-      
-      anchor_two_chr = as.character(seqnames(anchorTwo(GdObject@giobject)))
-      anchor_two_starts = start(anchorTwo(GdObject@giobject))
-      anchor_two_ends = end(anchorTwo(GdObject@giobject))
-      
-      anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
-      anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
-      
-      if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "counts"){
-        lwds = 2*(interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
-      }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "fdr"){
-        lwds = 2-(GdObject@giobject$fdr*2)
-      }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "p.value"){
-        lwds = 2-(GdObject@giobject$p.value*2)
-      }else{
-        lwds = rep(1, length(anchor_one_chr))
+  pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1)))
+  if(length(GdObject@giobject)>0){
+    plot.anchors = displayPars(GdObject, "plot.anchors")
+    col.anchors = displayPars(GdObject, "col.anchors")
+    anchor.height = displayPars(GdObject, "anchor.height")
+    col.interactions = displayPars(GdObject, "col.interactions")
+    plot.outside = displayPars(GdObject, "plot.outside")
+    col.outside =  displayPars(GdObject, "col.outside")
+    plot.trans = displayPars(GdObject, "plot.trans")
+    col.trans = displayPars(GdObject, "col.trans")
+    
+    anchor_one_chr = as.character(seqnames(anchorOne(GdObject@giobject)))
+    anchor_one_starts = start(anchorOne(GdObject@giobject))
+    anchor_one_ends = end(anchorOne(GdObject@giobject))
+    
+    anchor_two_chr = as.character(seqnames(anchorTwo(GdObject@giobject)))
+    anchor_two_starts = start(anchorTwo(GdObject@giobject))
+    anchor_two_ends = end(anchorTwo(GdObject@giobject))
+    
+    anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
+    anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
+    
+    if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "counts"){
+      lwds = 1+log(interactionCounts(GdObject@giobject))#/max(interactionCounts(GdObject@giobject)))
+    }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "fdr"){
+      lwds = 1-(GdObject@giobject$fdr)
+    }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "p.value"){
+      lwds = 1-(GdObject@giobject$p.value)
+    }else{
+      lwds = rep(1, length(anchor_one_chr))
+    }
+    
+    trans.indexes = which( anchor_one_chr != GdObject@chromosome | anchor_two_chr != GdObject@chromosome )
+    outside.indexes = which( (anchor_one_chr == GdObject@chromosome & anchor_two_chr == GdObject@chromosome) & (anchor_one_midpoints <minBase | anchor_one_midpoints > maxBase | 
+       anchor_two_midpoints < minBase | anchor_two_midpoints > maxBase) )
+    inside.indexes = 1:length(anchor_one_chr)
+    inside.indexes = which(!(inside.indexes %in% c(trans.indexes, outside.indexes)))
+    
+    cols = rep(col.interactions, length(anchor_one_chr))
+    cols[trans.indexes] = col.trans
+    cols[outside.indexes] = col.outside
+    
+    if(length(displayPars(GdObject, "col.interaction.types"))>0){
+      col.interaction.types = displayPars(GdObject, "col.interaction.types")
+      colour.map = str_split(names(col.interaction.types), "-")
+      for(i in 1:length(colour.map)){
+        cols[ isInteractionType(GdObject@giobject, colour.map[[i]][1], colour.map[[i]][2]) ] = col.interaction.types[i]
       }
-  
-      col.interactions = displayPars(GdObject, "col.interactions")
-      plot.outside = displayPars(GdObject, "plot.outside")
-      col.outside =  displayPars(GdObject, "col.outside")
-      plot.trans = displayPars(GdObject, "plot.trans")
-      col.trans = displayPars(GdObject, "col.trans")
-      
-      trans.indexes = which( anchor_one_chr != GdObject@chromosome | anchor_two_chr != GdObject@chromosome )
-      outside.indexes = which( (anchor_one_chr == GdObject@chromosome & anchor_two_chr == GdObject@chromosome) & (anchor_one_midpoints <minBase | anchor_one_midpoints > maxBase | 
-         anchor_two_midpoints < minBase | anchor_two_midpoints > maxBase) )
-      inside.indexes = 1:length(anchor_one_chr)
-      inside.indexes = which(!(inside.indexes %in% c(trans.indexes, outside.indexes)))
-      
-      cols = rep(col.interactions, length(anchor_one_chr))
-      cols[trans.indexes] = col.trans
-      cols[outside.indexes] = col.outside
-      
-      if(length(displayPars(GdObject, "col.interaction.types"))>0){
-        col.interaction.types = displayPars(GdObject, "col.interaction.types")
-        colour.map = str_split(names(col.interaction.types), "-")
-        for(i in 1:length(colour.map)){
-          cols[ isInteractionType(GdObject@giobject, colour.map[[i]][1], colour.map[[i]][2]) ] = col.interaction.types[i]
-        }
-      }
-      
-      if(plot.trans){
-        for(i in trans.indexes){
-          if( anchor_one_chr[i] != GdObject@chromosome ){
-            if(anchor_two_midpoints[i] > ((minBase + maxBase)/2)){
-              grid.curve(x1=anchor_two_midpoints[i], y1=0.05, x2=maxBase, y2=0.95,  curvature = -1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
-            }else{
-              grid.curve(x1=anchor_two_midpoints[i], y1=0.05, x2=minBase, y2=0.95,  curvature = 1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
-            }      
-          }else if( anchor_two_chr[i] != GdObject@chromosome){
-            if(anchor_one_midpoints[i] > ((minBase + maxBase)/2)){
-              grid.curve(x1=anchor_one_midpoints[i], y1=0.05, x2=maxBase, y2=0.95, curvature = -1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
-            }else{
-              grid.curve(x1=anchor_one_midpoints[i], y1=0.05, x2=minBase, y2=0.95, curvature = 1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
-            }
+    }
+    
+    if(plot.anchors){
+      y.start = anchor.height
+    }else{
+      y.start = 0
+    }
+    
+    if(plot.trans & length(trans.indexes) >0){
+      for(i in trans.indexes){
+        if( anchor_one_chr[i] != GdObject@chromosome ){
+          if(anchor_two_midpoints[i] > ((minBase + maxBase)/2)){
+            grid.curve(x1=anchor_two_midpoints[i], y1=y.start, x2=maxBase, y2=0.95,  curvature = -1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
+          }else{
+            grid.curve(x1=anchor_two_midpoints[i], y1=y.start, x2=minBase, y2=0.95,  curvature = 1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
+          }      
+        }else if( anchor_two_chr[i] != GdObject@chromosome){
+          if(anchor_one_midpoints[i] > ((minBase + maxBase)/2)){
+            grid.curve(x1=anchor_one_midpoints[i], y1=y.start, x2=maxBase, y2=0.95, curvature = -1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
+          }else{
+            grid.curve(x1=anchor_one_midpoints[i], y1=y.start, x2=minBase, y2=0.95, curvature = 1, default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
           }
         }
       }
-      
-      if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "counts"){
-        # or scale to the whole object?
-        curve.heights = interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject))
-        curve.heights = rep(1, length(anchor_one_chr))
-      }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "fdr"){
-        curve.heights = 1.0-(GdObject@giobject$fdr)
-      }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "p.value"){
-        curve.heights = 1.0-(GdObject@giobject$p.value)
-      }else{
-        curve.heights = rep(1, length(anchor_one_chr))
-      }
-    
-      if(plot.outside & length(outside.indexes)>0){
-        xs = c()
-        ys = c()
-        ls = c()
-        for(i in outside.indexes){
-          xs = c(xs, c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)))
-          ys = c(ys, c(0.05,curve.heights[i], curve.heights[i],0.05))
-          ls = c(ls, lwds[i])
-        }  
-        grid.bezier(xs, ys, id.lengths=rep(4, length(outside.indexes)), default.units="native", gp=gpar(col=cols[outside.indexes],lwd=ls))
-      }
-    
-      for(i in inside.indexes){ # TODO
-        grid.bezier(c(rep(anchor_one_midpoints[i], 2), rep(anchor_two_midpoints[i], 2)), 
-                    c(0.05,curve.heights[i], curve.heights[i], 0.05),  default.units="native", gp=gpar(col=cols[i],lwd=lwds[i]))
-      }
-      
-      plot.anchors = displayPars(GdObject, "plot.anchors")
-      col.anchors = displayPars(GdObject, "col.anchors")
-      if(plot.anchors & length(GdObject@giobject) > 0){
-        anchors = unique(c(anchorOne(GdObject@giobject), anchorTwo(GdObject@giobject)))
-        xs = c()
-        ys = c()
-        for(i in 1:length(anchors)){
-          xs = c(xs, c(start(anchors[i]), end(anchors[i]), end(anchors[i]), start(anchors[i])))
-          ys = c(ys, c(0, 0, 0.1,0.1))
-        }
-        grid.polygon(xs, ys, id.lengths=rep(4, length(anchors)), default.units="native", gp=gpar(col= "black", fill= col.anchors))
-      }
     }
-    popViewport(1)
-    return(invisible(GdObject))
+    
+    if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "counts"){
+      # or scale to the whole object?
+      curve.heights = anchor.height + (( 1 - anchor.height ) * interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
+    }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "fdr"){
+      curve.heights = anchor.height + ((1 - anchor.height ) * (1.0-GdObject@giobject$fdr))
+    }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "p.value"){
+      curve.heights = anchor.height +  ((1 - anchor.height ) * (1.0-GdObject@giobject$p.value))
+    }else{
+      curve.heights = rep(1, length(anchor_one_chr))
+    }
+    
+    if(plot.outside & length(outside.indexes)>0){
+      xs = c()
+      ys = c()
+      for(i in outside.indexes){
+        mdpt = (anchor_one_midpoints[i] + anchor_two_midpoints[i]) / 2
+        xs = c(xs, c(anchor_one_midpoints[i], mdpt, anchor_two_midpoints[i]))
+        ys = c(ys, c(y.start, curve.heights[i], y.start))
+      } 
+      grid.xspline(xs, ys, id.lengths=rep(3, length(outside.indexes)), shape=-1, default.units="native", gp=gpar(col=cols[outside.indexes], lwd=lwds[outside.indexes]))
+    }
+    if(length(inside.indexes)>0){
+      xs = c()
+      ys = c()
+      for(i in inside.indexes){ # TODO
+        mdpt = (anchor_one_midpoints[i] + anchor_two_midpoints[i]) / 2
+        xs = c(xs, c(anchor_one_midpoints[i], mdpt, anchor_two_midpoints[i]))
+        ys = c(ys,  c(y.start, curve.heights[i], y.start))
+      }
+      grid.xspline(xs, ys, id.lengths=rep(3, length(inside.indexes)), shape=-1, default.units="native", gp=gpar(col=cols[inside.indexes], lwd=lwds[inside.indexes]))
+    }  
+    if(plot.anchors & length(GdObject@giobject) > 0){
+      anchors = unique(c(anchorOne(GdObject@giobject), anchorTwo(GdObject@giobject)))
+      xs = c()
+      ys = c()
+      for(i in 1:length(anchors)){
+        xs = c(xs, c(start(anchors[i]), end(anchors[i]), end(anchors[i]), start(anchors[i])))
+        ys = c(ys, c(0, 0, anchor.height, anchor.height))
+      }
+      grid.polygon(xs, ys, id.lengths=rep(4, length(anchors)), default.units="native", gp=gpar(col= "black", fill= col.anchors))
+    }
+  }
+  popViewport(1)
+  return(invisible(GdObject))
 })
