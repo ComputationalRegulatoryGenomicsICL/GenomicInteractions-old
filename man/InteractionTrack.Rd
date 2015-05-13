@@ -19,7 +19,8 @@ an InteractionTrack object
 Create InteractionTrack object from an GenomicInteractions object to visualise a specified chromosome.
 }
 \examples{
-library(GenomicRanges)
+library(GenomicInteractions)
+library(Gviz)
 
 anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))
 anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5))
@@ -27,6 +28,6 @@ interaction_counts = sample(1:10, 4)
 test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test",
                            description="this is a test", counts=interaction_counts)
 interactions.track = InteractionTrack(name="Test", test, chromosome="chr1")
-plotTracks(list(interactions.track))
+plotTracks(list(interactions.track), chromosome="chr1", from=0, to=500)
 }
 

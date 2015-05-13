@@ -9,17 +9,20 @@
 #'
 #' InteractionTrack is a specific Gviz-derived class for enabling the visualisation of chromatin interaction data. 
 #' The InteractionTrack class allows interactions on a specified chromosome to be visualised by examining interactions
-#' between anchors as bezier curves.
+#' between anchors as bezier curves. The object is instantiated and used in a similar fashion to standard Gviz tracks
+#' and plotted using the \code{plotTracks}.
 #' 
-#' Several additional display parameters (i.e. \rcode{displayPars(foo)=list(...) }are defined for this class, including 
+#' Several additional display parameters (i.e. \code{displayPars(foo)=list(...) }are defined for this class, including 
 #' \code{plot.anchors} which can be used to specify whether anchors are to be drawn. \code{col.anchors} which can be used 
 #' to alter the colour of these anchor elements. The value of \code{plot.outside} determines whether or not interactions
 #' which span outside of the window are to be plotted, and \code{col.outside} defines the colour of these interactions. 
 #' Similarly \code{plot.trans} determines whether trans-interactions are plotted and \code{col.trans} specifies the colour
 #' of trans-interactions. By default, the line width of an arc representing an interaction is proportional to the number 
 #' of reads/counts supporting that interaction. Instead of using the counts to define this, the line width can be set to
-#' be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter. 
-#' 
+#' be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter. \code{col.interactions}
+#' sets the colour of arcs representing interactions within the region of interest. It is possible to colour the arcs by the type 
+#' of interaction they are involved in (i.e. promoter-promoter interactions etc) by setting the \code{col.interactions.type}
+#' display parameter to be a named vector of colours, where the name corresponds to the type of interaction. 
 #'
 #'
 #' @import Gviz
@@ -78,6 +81,7 @@ setMethod("end", "InteractionTrack", function(x){
 setMethod("chromosome", "InteractionTrack", function(GdObject) GdObject@chromosome)
 
 setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chromosome, ...){
+  x@chromosome = chromosome
   x@variables$giobject = subsetByFeatures(x@variables$giobject, GRanges(chromosome, IRanges(from, to)))
   return(x)                                          
 })
@@ -93,27 +97,54 @@ setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chrom
 #'
 #' @examples
 #' 
-#' library(GenomicRanges)
-#'
+#' library(GenomicInteractions)
+#' library(Gviz)
+#' 
 #' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))
 #' anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5))
 #' interaction_counts = sample(1:10, 4)
 #' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", 
 #'                            description="this is a test", counts=interaction_counts)
 #' interactions.track = InteractionTrack(name="Test", test, chromosome="chr1")                        
-#' plotTracks(list(interactions.track))
+#' plotTracks(list(interactions.track), chromosome="chr1", from=0, to=500)
 #' 
 #' @export
-InteractionTrack <- function(name="InteractionTrack", x, chromosome, start=NULL, end=NULL){ # TODO SORT OUT START AND STOP HERE
+InteractionTrack <- function(x, chromosome="", name=NULL, start=NULL, end=NULL){ # TODO SORT OUT START AND STOP HERE
+  if(!(class(x)=="GenomicInteractions")){ stop("x must be a GenomicInteractions object")}
+  if(is.null(name)){
+    name = name(x)
+  }
+  if(chromosome !="" & !(chromosome %in% seqlevels(x))){
+    stop(paste("chromosome:", chromosome, "not found in seqlevels of the supplied GenomicInteractions object", sep=" "))
+  }
+  if(chromosome != ""){
+    if(xor(is.null(start), is.null(end))){
+      stop(paste("both start and end need to be specified"))
+    }else if(is.null(start) & is.null(end)){
+      print("HERE")
+      x = x[as.vector(seqnames(anchorOne(k562.rep1)) == chromosome | seqnames(anchorTwo(k562.rep1)) == chromosome)]
+    }else{
+      x = subsetByFeatures(x, GRanges(chromosome, IRanges(start, end)))
+    }
+  }
+  # if start and end are there then do something
+  # if only chr is there do something
 	return(new("InteractionTrack", name=name, plottingFunction=drawGD, chromosome=chromosome, variables=list(giobject=x)))	
 }
 
 #' draws InteractionTrack
 #' 
 #' @export
-setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, ...){ 
-    
-  print(GdObject)
+setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){ 
+  
+  #print(GdObject)
+  
+  print(names(list(...)))
+  
+  if(subset){
+    GdObject <- subset(GdObject, chromosome=GdObject@chromosome, from=minBase, to=maxBase)
+  }
+  
   if(prepare){
       pushViewport(viewport(xscale=c(minBase, maxBase), yscale=c(0, 1) )) # TESTING
       popViewport(1)
@@ -225,7 +256,7 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
           ys = c(ys, c(0.05,curve.heights[i], curve.heights[i],0.05))
           ls = c(ls, lwds[i])
         }  
-        grid.bezier(xs, ys, id.lengths=rep(4, length(outside.indexes)), default.units="native", gp=gpar(col=cols[outside.indexes],lwd=ls)) # TODO
+        grid.bezier(xs, ys, id.lengths=rep(4, length(outside.indexes)), default.units="native", gp=gpar(col=cols[outside.indexes],lwd=ls))
       }
     
       for(i in inside.indexes){ # TODO

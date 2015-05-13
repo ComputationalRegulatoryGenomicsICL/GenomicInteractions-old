@@ -21,6 +21,7 @@ Imports:
     gridExtra,
     methods,
     igraph,
+    plotrix,
     S4Vectors,
     dplyr,
     Gviz

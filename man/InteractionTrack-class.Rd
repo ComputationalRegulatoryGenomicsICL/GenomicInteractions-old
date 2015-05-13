@@ -20,15 +20,19 @@ A class to hold chromatin interaction data for a specific genomic region.
 
 InteractionTrack is a specific Gviz-derived class for enabling the visualisation of chromatin interaction data.
 The InteractionTrack class allows interactions on a specified chromosome to be visualised by examining interactions
-between anchors as bezier curves.
+between anchors as bezier curves. The object is instantiated and used in a similar fashion to standard Gviz tracks
+and plotted using the \code{plotTracks}.
 
-Several additional display parameters (i.e. \rcode{displayPars(foo)=list(...) }are defined for this class, including
+Several additional display parameters (i.e. \code{displayPars(foo)=list(...) }are defined for this class, including
 \code{plot.anchors} which can be used to specify whether anchors are to be drawn. \code{col.anchors} which can be used
 to alter the colour of these anchor elements. The value of \code{plot.outside} determines whether or not interactions
 which span outside of the window are to be plotted, and \code{col.outside} defines the colour of these interactions.
 Similarly \code{plot.trans} determines whether trans-interactions are plotted and \code{col.trans} specifies the colour
 of trans-interactions. By default, the line width of an arc representing an interaction is proportional to the number
 of reads/counts supporting that interaction. Instead of using the counts to define this, the line width can be set to
-be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter.}
+be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter. \code{col.interactions}
+sets the colour of arcs representing interactions within the region of interest. It is possible to colour the arcs by the type
+of interaction they are involved in (i.e. promoter-promoter interactions etc) by setting the \code{col.interactions.type}
+display parameter to be a named vector of colours, where the name corresponds to the type of interaction.}
 }}
 
