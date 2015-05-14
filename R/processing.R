@@ -101,7 +101,7 @@ sameStrand <- function(GIObject){
 #' @param plot TRUE by default. Whether to plot the log2ratio of opposite
 #' to same strand reads vs distance.
 #'
-#' @import dplyr
+#' @importFrom dplyr mutate group_by n summarise "%>%"
 #' @import ggplot2
 #' @export
 #' @return The cutoff in base pairs below which an interaction is likely to be a self ligation.
