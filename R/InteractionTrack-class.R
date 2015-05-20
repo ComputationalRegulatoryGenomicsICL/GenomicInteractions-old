@@ -19,7 +19,7 @@
 #' Similarly \code{plot.trans} determines whether trans-interactions are plotted and \code{col.trans} specifies the colour
 #' of trans-interactions. By default, the line width of an arc representing an interaction is proportional to the number 
 #' of reads/counts supporting that interaction. Instead of using the counts to define this, the line width can be set to
-#' be proportion to either \code{fdr} or \code{p.value} using the \code{lwd.interactions} display parameter. \code{col.interactions}
+#' be proportion to either \code{fdr} or \code{p.value} using the \code{interaction.measure} display parameter. \code{col.interactions}
 #' sets the colour of arcs representing interactions within the region of interest. It is possible to colour the arcs by the type 
 #' of interaction they are involved in (i.e. promoter-promoter interactions etc) by setting the \code{col.interactions.type}
 #' display parameter to be a named vector of colours, where the name corresponds to the type of interaction. 
@@ -40,8 +40,9 @@ setClass("InteractionTrack",
                                             col.anchors.fill = "lightblue",
                                             col.anchors.line.node.class = c(),
                                             col.anchors.fill.node.class = c(),
-                                            interaction.strength="width", # TODO
-                                            lwd.interaction ="counts", # TODO
+                                            interaction.dimension="height",
+                                            interaction.measure ="counts",
+                                            interaction.dimension.transform = "default",
                                             col.interactions = "red",
                                             plot.outside = TRUE,
                                             col.outside = "red",
@@ -166,7 +167,9 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     col.anchors.line = displayPars(GdObject, "col.anchors.line")
     col.anchors.fill = displayPars(GdObject, "col.anchors.fill")
     col.anchors.fill.node.class = displayPars(GdObject, "col.anchors.fill.node.class")
+    col.anchors.line.node.class = displayPars(GdObject, "col.anchors.line.node.class")
     anchor.height = displayPars(GdObject, "anchor.height")
+    interaction.dimension.transform = displayPars(GdObject, "interaction.dimension.transform")
   
     col.interactions = displayPars(GdObject, "col.interactions")
     plot.outside = displayPars(GdObject, "plot.outside")
@@ -185,11 +188,11 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
     anchor_one_midpoints = (anchor_one_starts + anchor_one_ends) / 2
     anchor_two_midpoints = (anchor_two_starts + anchor_two_ends) / 2
     
-    if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "counts"){
+    if(displayPars(GdObject, "interaction.dimension")=="width" && displayPars(GdObject, "interaction.measure") == "counts"){
       lwds = 1+log(interactionCounts(GdObject@giobject))
-    }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "fdr"){
+    }else if(displayPars(GdObject, "interaction.dimension")=="width" && displayPars(GdObject, "interaction.measure") == "fdr"){
       lwds = 1-(GdObject@giobject$fdr)
-    }else if(displayPars(GdObject, "interaction.strength")=="width" && displayPars(GdObject, "lwd.interaction") == "p.value"){
+    }else if(displayPars(GdObject, "interaction.dimension")=="width" && displayPars(GdObject, "interaction.measure") == "p.value"){
       lwds = 1-(GdObject@giobject$p.value)
     }else{
       lwds = rep(1, length(anchor_one_chr))
@@ -241,23 +244,31 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       }
     }
     
-    if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "counts"){
-      curve.heights = anchor.height + (( 1 - anchor.height ) * interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
-    }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "fdr"){
-      if(is.infinite(log10(GdObject@giobject$fdr))){
-        fdr = 2.2e-16 # really the smallest value that R can represent
+    if(displayPars(GdObject, "interaction.dimension")=="height" && displayPars(GdObject, "interaction.measure") == "counts"){
+      if(interaction.dimension.transform == "log"){
+        counts = 1 + log(interactionCounts(GdObject@giobject))
+        curve.heights = anchor.height + (( 1 - anchor.height ) * (counts / max(counts)))
+      }else{
+        curve.heights = anchor.height + (( 1 - anchor.height ) * interactionCounts(GdObject@giobject)/max(interactionCounts(GdObject@giobject)))
+      }
+    }else if(displayPars(GdObject, "interaction.dimension")=="height" && displayPars(GdObject, "interaction.measure") == "fdr"){
+      if(interaction.dimension.transform == "log"){
+        fdr = GdObject@giobject$fdr
+        fdr[is.infinite(log10(fdr))] = 2.2e-16
+        fdr = -log10(fdr)
       }else{
         fdr = 1 - GdObject@giobject$fdr
       }
-      curve.heights = anchor.height + (1-anchor_height -log10(fdr)) # TODO
-      #curve.heights = anchor.height + ((1 - anchor.height ) * (1.0-GdObject@giobject$fdr))
-    }else if(displayPars(GdObject, "interaction.strength")=="height" && displayPars(GdObject, "lwd.interaction") == "p.value"){
-      if(is.infinite(log10(GdObject@giobject$p.value))){
-        p.value = 2.2e-16 # really the smallest value that R can represent
+      curve.heights = anchor.height + (1-anchor.height) * (fdr / max(fdr))
+    }else if(displayPars(GdObject, "interaction.dimension")=="height" && displayPars(GdObject, "interaction.measure") == "p.value"){
+      if(interaction.dimension.transform == "log"){
+        p.value = GdObject@giobject$p.value
+        p.value[is.infinite(log10(p.value))] = 2.2e-16
+        p.value = -log10(p.value)
       }else{
         p.value = 1 - GdObject@giobject$p.value
       }
-      curve.heights = anchor.height + (1-anchor_height -log10(p.value)) # TODO
+      curve.heights = anchor.height + (1-anchor.height) * (p.value / max(p.value))
     }else{
       curve.heights = rep(1, length(anchor_one_chr))
     }
@@ -294,12 +305,14 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
       
       col.anchors.fill = rep(col.anchors.fill, length(anchors))
       if(length(col.anchors.fill.node.class) > 0 & "node.class" %in% names(elementMetadata(anchors))){
-        col.anchors.fill[ anchors$node.class %in% names(col.anchors.fill.node.class)] = col.anchors.fill.node.class[ anchors$node.class ]
+        indexes = which(anchors$node.class %in% names(col.anchors.fill.node.class))
+        col.anchors.fill[ indexes ] = col.anchors.fill.node.class[ anchors$node.class[indexes] ]
       } 
         
       col.anchors.line = rep(col.anchors.line, length(anchors))
       if(length(col.anchors.line.node.class) > 0 & "node.class" %in% names(elementMetadata(anchors))){
-        col.anchors.line[ anchors$node.class %in% names(col.anchors.line.node.class)] = col.anchors.line.node.class[ anchors$node.class ]
+        indexes = which(anchors$node.class %in% names(col.anchors.line.node.class))
+        col.anchors.line[ indexes ] = col.anchors.line.node.class[ anchors$node.class[indexes] ]
       } 
       
       xs = c()
