@@ -110,7 +110,7 @@ plotDists <- function(GIObject, breaks=c(0, 1000, 5000, 10000, 50000, 100000, 50
     geom_histogram() +
     theme_bw(base_size=16)+
     theme(axis.text.x = element_text(angle=90, vjust=0.5)) +
-    xlab("Interaction distance (bp)")
+    xlab("Interaction distance (bp)") + ylab("Count")
 
   return(p)
 }
