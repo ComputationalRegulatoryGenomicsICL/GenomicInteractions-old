@@ -457,8 +457,6 @@ setMethod("summariseByFeatures", "GenomicInteractions",
 })
 
 
-
-
 #' Summarise the number of interactions between two sets of features.
 #' 
 #' This function will calculate the number of observed interactions between
@@ -529,14 +527,14 @@ setMethod("summariseByFeaturePairs", "GenomicInteractions",
             
             one.one.ol = findOverlaps(features.one, x.gi@anchor_one)
             two.one.ol = findOverlaps(features.one, x.gi@anchor_two)
-                        
-            f1.one.f2.two = subjectHits(one.one.ol)[which(x.gi@anchor_one[ subjectHits(one.one.ol) ]$node.class == feature.name.one & 
-                    x.gi@anchor_two[ subjectHits(one.one.ol) ]$node.class == feature.name.two
-                  )]
             
-            f1.two.f2.one = subjectHits(two.one.ol)[which(x.gi@anchor_two[ subjectHits(two.one.ol) ]$node.class == feature.name.one & 
-                    x.gi@anchor_one[ subjectHits(two.one.ol) ]$node.class == feature.name.two
-            )]
+            f1.one.f2.two = subjectHits(one.one.ol)[
+              which(x.gi@anchor_one[ subjectHits(one.one.ol) ]$node.class == feature.name.one & 
+              x.gi@anchor_two[ subjectHits(one.one.ol) ]$node.class == feature.name.two)]
+            
+            f1.two.f2.one = subjectHits(two.one.ol)[
+              which(x.gi@anchor_two[ subjectHits(two.one.ol) ]$node.class == feature.name.one & 
+              x.gi@anchor_one[ subjectHits(two.one.ol) ]$node.class == feature.name.two)]
             
             results = NULL
             # this now results in a GI object only contain feature.name.one:feature.name.two interactions
@@ -570,17 +568,17 @@ setMethod("summariseByFeaturePairs", "GenomicInteractions",
                 iss.two = which(feature.two.names.full ==fn.two)
                 print(iss.two)
                 indexes = unique(intersect(interactions, unique(c(subjectHits(one.two.ol[ queryHits(one.two.ol) %in% iss.two]), 
-                                                       subjectHits(two.two.ol[ queryHits(two.two.ol) %in% iss.two])))))
+                                                                  subjectHits(two.two.ol[ queryHits(two.two.ol) %in% iss.two])))))
                 counts = sum(x.gi@counts[indexes])
                 print(counts)
                 results = rbind(results, c(fn, fn.two, counts))
               }
-          }
-          results = data.frame(results[,1], results[,2], as.numeric(results[,3]))
-          colnames(results) = c(paste(capitalize(feature.name.one), "id", sep="."), 
-                                 paste(capitalize(feature.name.two), "id", sep="."), 
-                                 "counts")
-          return(results)
-          }
+            }
+            results = data.frame(results[,1], results[,2], as.numeric(results[,3]))
+            colnames(results) = c(paste(capitalize(feature.name.one), "id", sep="."), 
+                                  paste(capitalize(feature.name.two), "id", sep="."), 
+                                  "counts")
+            return(results)
+})
 
 

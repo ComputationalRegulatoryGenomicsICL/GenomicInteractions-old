@@ -11,6 +11,12 @@ InteractionTrack(x, chromosome = "", name = NULL, start = NULL,
 \item{x}{A GenomicInteractions object}
 
 \item{chromosome}{}
+
+\item{name}{}
+
+\item{start}{}
+
+\item{end}{}
 }
 \value{
 an InteractionTrack object

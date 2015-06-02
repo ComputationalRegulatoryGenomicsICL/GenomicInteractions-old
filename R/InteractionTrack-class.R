@@ -13,16 +13,20 @@
 #' and plotted using the \code{plotTracks}.
 #' 
 #' Several additional display parameters (i.e. \code{displayPars(foo)=list(...) }are defined for this class, including 
-#' \code{plot.anchors} which can be used to specify whether anchors are to be drawn. \code{col.anchors} which can be used 
-#' to alter the colour of these anchor elements. The value of \code{plot.outside} determines whether or not interactions
+#' \code{plot.anchors} which can be used to specify whether anchors are to be drawn. \code{col.anchors.line} which can be used 
+#' to alter the colour of border of these anchor elements and \code{col.anchors.fill} can be used to alter the fill colour of these
+#' elements. The value of \code{plot.outside} determines whether or not interactions
 #' which span outside of the window are to be plotted, and \code{col.outside} defines the colour of these interactions. 
 #' Similarly \code{plot.trans} determines whether trans-interactions are plotted and \code{col.trans} specifies the colour
-#' of trans-interactions. By default, the line width of an arc representing an interaction is proportional to the number 
-#' of reads/counts supporting that interaction. Instead of using the counts to define this, the line width can be set to
-#' be proportion to either \code{fdr} or \code{p.value} using the \code{interaction.measure} display parameter. \code{col.interactions}
+#' of trans-interactions. By default, the height of an arc representing an interaction is proportional to the number 
+#' of reads/counts supporting that interaction. Instead of using the counts to define this, the height can be set to
+#' be proportional to either \code{fdr} or \code{p.value} using the \code{interaction.measure} display parameter. By changing the 
+#' \code{interaction.dimension} to width, the line widths of each arc now represent the statistic supporting them. The heights of the arcs
+#' can be made to be proportional to log10 of the supporting statistic by changing \code{interaction.dimension.transform} to log. \code{col.interactions}
 #' sets the colour of arcs representing interactions within the region of interest. It is possible to colour the arcs by the type 
-#' of interaction they are involved in (i.e. promoter-promoter interactions etc) by setting the \code{col.interactions.type}
-#' display parameter to be a named vector of colours, where the name corresponds to the type of interaction. 
+#' of interaction they are involved in (i.e. promoter-promoter interactions etc) by setting the \code{col.interactions.types}
+#' display parameter to be a named vector of colours, where the name corresponds to the type of interaction. This is applicable to
+#' anchors regions through the use of the \code{col.anchors.line.node.class} and \code{col.anchors.fill.node.class} parameters.
 #'
 #'
 #' @import Gviz
@@ -344,7 +348,7 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
 #' 
 #' @return returns a list of the default display parameters.
 #' 
-#' @importFrom Gviz availableDisplayPars InferredDisplayPars
+#' @importFrom Gviz availableDisplayPars
 #' @export
 availableDisplayPars = function(class){
   if(class=="InteractionTrack"){

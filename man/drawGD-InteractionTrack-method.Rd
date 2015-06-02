@@ -8,6 +8,20 @@
 \S4method{drawGD}{InteractionTrack}(GdObject, minBase, maxBase,
   prepare = FALSE, subset = TRUE, ...)
 }
+\arguments{
+\item{GdObject}{}
+
+\item{minBase}{}
+
+\item{maxBase}{}
+
+\item{prepare}{}
+
+\item{subset}{}
+}
+\value{
+an InteractionTrack object
+}
 \description{
 draws InteractionTrack
 }
