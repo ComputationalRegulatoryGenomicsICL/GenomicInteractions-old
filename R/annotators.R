@@ -553,7 +553,7 @@ setMethod("summariseByFeaturePairs", "GenomicInteractions",
             all.features.one.with.interactions = features.one[features.one.with.interactions.indexes]
             feature.ones.id = feature.one.names.full[features.one.with.interactions.indexes]
             for( fn in unique(feature.ones.id)){
-              print(fn)
+              #print(fn)
               iss = which(feature.one.names.full ==fn)
               
               interactions = unique(c(subjectHits(one.one.ol[ queryHits(one.one.ol) %in% iss]), subjectHits(two.one.ol[ queryHits(two.one.ol) %in% iss])))
@@ -562,15 +562,15 @@ setMethod("summariseByFeaturePairs", "GenomicInteractions",
               
               features.two.involved.one = unique(unlist(elementMetadata(anchorOne(x.gi))[[paste(feature.name.two, "id", sep=".")]][interactions.two]))
               features.two.involved.two = unique(unlist(elementMetadata(anchorTwo(x.gi))[[paste(feature.name.two, "id", sep=".")]][interactions.one]))
-              print(unique(c(features.two.involved.one, features.two.involved.two)))
+              #print(unique(c(features.two.involved.one, features.two.involved.two)))
               for( fn.two in unique(c(features.two.involved.one, features.two.involved.two))){
-                print(feature.two)
+                #print(feature.two)
                 iss.two = which(feature.two.names.full ==fn.two)
-                print(iss.two)
+                #print(iss.two)
                 indexes = unique(intersect(interactions, unique(c(subjectHits(one.two.ol[ queryHits(one.two.ol) %in% iss.two]), 
                                                                   subjectHits(two.two.ol[ queryHits(two.two.ol) %in% iss.two])))))
                 counts = sum(x.gi@counts[indexes])
-                print(counts)
+                #print(counts)
                 results = rbind(results, c(fn, fn.two, counts))
               }
             }
