@@ -45,7 +45,6 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                                      fdr = as.numeric( dat[, "FDR"]))
     
       }else if(type == "chiapet.encode"){
-        print("HERE")
         #dat = .processChiapetName(unique(import.bed(fn)$name))
         dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
         anchor_one = GRanges(dat[,"chrom.left."],

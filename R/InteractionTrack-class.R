@@ -140,18 +140,6 @@ InteractionTrack <- function(x, chromosome="", name=NULL, start=NULL, end=NULL){
 	return(new("InteractionTrack", name=name, giobject=x, chromosome=chromosome, variables=list(chromosome=chromosome, start=start, end=end)))	
 }
 
-#' draws InteractionTrack
-#' 
-#' @param GdObject 
-#' @param minBase
-#' @param maxBase
-#' @param prepare
-#' @param subset
-#'
-#' @return an InteractionTrack object
-#' 
-#' @importFrom stringr str_split
-#' @export
 setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, maxBase, prepare=FALSE, subset=TRUE, ...){ 
   
   if(subset){

@@ -465,9 +465,9 @@ setMethod("summariseByFeatures", "GenomicInteractions",
 #' and how many interactions exist between them. 
 #'
 #' @param GIObject An annotated GenomicInteractions object
-#' @param features.one A GRanges object containing the feature set of interest
-#' @param features.name.one The name of the first feature set of interest
-#' @param features A GRanges object containing the second feature set of interest
+#' @param feature.one A GRanges object containing the feature set of interest
+#' @param feature.name.one The name of the first feature set of interest
+#' @param feature A GRanges object containing the second feature set of interest
 #' @param feature.name.two The name of the second feature set of interest
 #'
 #' @return A data frame with one line for each range in `features'
