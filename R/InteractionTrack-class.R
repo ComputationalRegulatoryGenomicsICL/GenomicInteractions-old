@@ -1,4 +1,4 @@
-## Definition of GenomicInteractions
+## Definition of InteractionTrack
 
 #' A class to hold chromatin interaction data for a specific genomic region.
 #'
@@ -100,16 +100,15 @@ setMethod("subset", signature(x="InteractionTrack"), function(x, from, to, chrom
 #' Create InteractionTrack object from an GenomicInteractions object to visualise a specified chromosome.
 #'
 #' @param x A GenomicInteractions object
-#' @param chromosome
-#' @param name
-#' @param start
-#' @param end
+#' @param chromosome specify which chromosome to hold information on - can be null
+#' @param name specify the name of the track - if null takes it to be the name of the GenomicInteractions passed
+#' @param start specify which start location to hold information on - can be null
+#' @param end specify which end location to hold information on - can be null
 #'
 #' @return an InteractionTrack object
 #'
-#' @examples
-#' 
-#' library(GenomicInteractions)
+#' @examples 
+#'
 #' library(Gviz)
 #' 
 #' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))

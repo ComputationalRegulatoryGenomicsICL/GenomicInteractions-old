@@ -18,7 +18,6 @@ Imports:
     rtracklayer,
     GenomeInfoDb,
     ggplot2,
-    grid,
     gridExtra,
     methods,
     igraph,

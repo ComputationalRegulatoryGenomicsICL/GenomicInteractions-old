@@ -10,13 +10,13 @@ InteractionTrack(x, chromosome = "", name = NULL, start = NULL,
 \arguments{
 \item{x}{A GenomicInteractions object}
 
-\item{chromosome}{}
+\item{chromosome}{specify which chromosome to hold information on - can be null}
 
-\item{name}{}
+\item{name}{specify the name of the track - if null takes it to be the name of the GenomicInteractions passed}
 
-\item{start}{}
+\item{start}{specify which start location to hold information on - can be null}
 
-\item{end}{}
+\item{end}{specify which end location to hold information on - can be null}
 }
 \value{
 an InteractionTrack object
