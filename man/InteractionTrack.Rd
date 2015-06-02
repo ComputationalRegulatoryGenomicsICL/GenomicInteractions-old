@@ -25,7 +25,6 @@ an InteractionTrack object
 Create InteractionTrack object from an GenomicInteractions object to visualise a specified chromosome.
 }
 \examples{
-library(GenomicInteractions)
 library(Gviz)
 
 anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))

@@ -329,8 +329,8 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
 #' @param class A valid track object class name, or the object itself, in which case the class is derived directly 
 #' from it. 
 #'
-#' This function provides the same functionality as \code{Gviz::InteractionTrack} and allows the user to display 
-#' the default display parameters for the class. If the class of the track is not an \code{InteractionTrack} then 
+#' This function provides the same functionality as \code{Gviz::availableDisplayPars} and allows the user to display 
+#' the default display parameters for the \code{InteractionTrack} class. If the class of the track is not an \code{InteractionTrack} then 
 #' the function calls the availableDisplayPars method in Gviz.
 #' 
 #' @return returns a list of the default display parameters.

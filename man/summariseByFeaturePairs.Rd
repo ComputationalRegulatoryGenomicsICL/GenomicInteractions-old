@@ -17,11 +17,11 @@ summariseByFeaturePairs(GIObject, features.one, feature.name.one, features.two,
 
 \item{features.one}{A GRanges object containing the feature set of interest}
 
+\item{feature.name.one}{The name of the first feature set of interest}
+
+\item{features.two}{A GRanges object containing the second feature set of interest}
+
 \item{feature.name.two}{The name of the second feature set of interest}
-
-\item{features.name.one}{The name of the first feature set of interest}
-
-\item{features}{A GRanges object containing the second feature set of interest}
 }
 \value{
 A data frame with one line for each range in `features'
