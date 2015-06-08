@@ -225,9 +225,9 @@ setMethod("annotateInteractions", c("GenomicInteractions", "list"),
                                 lapply(unique(queryHits(two.ol)), function(x){ unique(names(annotations[[name]])[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))])})
                         }else if("id" %in% names(mcols(annotations[[name]]))){
                             elementMetadata( GIObject@anchor_one)[[ paste(name, "id", sep=".")]][ unique(queryHits(one.ol)) ] = 
-                                lapply(unique(queryHits(one.ol)), function(x){ unique(annotations[[name]]$id[unique(subjectHits(one.ol[ queryHits(one.ol) == x]))])})
+                                lapply(unique(queryHits(one.ol)), function(x){ as.character(unique(annotations[[name]]$id[unique(subjectHits(one.ol[ queryHits(one.ol) == x]))]))})
                             elementMetadata( GIObject@anchor_two)[[ paste(name, "id", sep=".")]][ unique(queryHits(two.ol)) ] = 
-                                lapply(unique(queryHits(two.ol)), function(x){ unique(annotations[[name]]$id[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))])})
+                                lapply(unique(queryHits(two.ol)), function(x){ as.character(unique(annotations[[name]]$id[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))]))})
                         }else{
                             stop("annotations requires an id column in elementMetadata or names to be non-null")
                         }
