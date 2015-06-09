@@ -193,7 +193,8 @@ setMethod(".calculateDistances.df", c("data.frame", "data.frame"),
 #' 
 #' data(hic_example_data)
 #' data(mm9_refseq_promoters)
-#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_promoters))
+#' mm9_refseq_grl = split(mm9_refseq_promoters, mm9_refseq_promoters$id)
+#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_grl))
 setGeneric("annotateInteractions",function(GIObject, annotations){standardGeneric ("annotateInteractions")})
 #' @rdname annotateInteractions
 #' @export
@@ -202,29 +203,34 @@ setMethod("annotateInteractions", c("GenomicInteractions", "list"),
                 objName = deparse(substitute(GIObject))
                 mcols.one = mcols(GIObject@anchor_one)
                 mcols.two = mcols(GIObject@anchor_two)
-                node.class.one = rep(NA, length(GIObject))
-                node.class.two = rep(NA, length(GIObject))
+                mcols.one$node.class = NA
+                mcols.two$node.class = NA
 
                 if (is.null(names(annotations))){
                   names(annotations) <- paste0("FEATURE", 1:length(annotations))
                 }
 
+                feature_names_list = lapply(annotations, .get_gr_names)
+                if (any(vapply(feature_names_list, function(x) any(duplicated(x)), logical(1)))) {
+                    warn("Some features contain duplicate IDs which will result duplicate annotations")
+                }
+
                 for(name in names(annotations)){
                     message(paste("Annotating with", name, "..."))
                     field_name = paste(name, "id", sep=".")
-                    feature_names = .get_gr_names(annotations[[name]])
+                    feature_name = feature_names_list[[name]]
                     mcols.one[[field_name]] = NA
                     mcols.two[[field_name]] = NA
                     one.ol = findOverlaps(GIObject@anchor_one, annotations[[name]])
                     two.ol = findOverlaps(GIObject@anchor_two, annotations[[name]])
-                    mcols.one[[field_name]][ unique(queryHits(one.ol)) ] = split(feature_names[ subjectHits(one.ol) ], unique(queryHits(one.ol)) )
-                    mcols.two[[field_name]][ unique(queryHits(two.ol)) ] = split(feature_names[ subjectHits(two.ol) ], unique(queryHits(two.ol)) )
-                    node.class.one = ifelse(is.na(node.class.one) & !is.na(mcols.one[[field_name]]), name, node.class.one)
-                    node.class.two = ifelse(is.na(node.class.two) & !is.na(mcols.two[[field_name]]), name, node.class.two)  
+                    mcols.one[[field_name]][ unique(queryHits(one.ol)) ] = split(feature_names[ subjectHits(one.ol) ], queryHits(one.ol) )
+                    mcols.two[[field_name]][ unique(queryHits(two.ol)) ] = split(feature_names[ subjectHits(two.ol) ], queryHits(two.ol) )
+                    mcols.one$node.class = ifelse(is.na(mcols.one$node.class) & !is.na(mcols.one[[field_name]]), name, mcols.one$node.class)
+                    mcols.two$node.class = ifelse(is.na(mcols.two$node.class) & !is.na(mcols.two[[field_name]]), name, mcols.two$node.class)
                 }
 
-                mcols.one$node.class = ifelse(is.na(node.class.one), "distal", node.class.one)
-                mcols.two$node.class = ifelse(is.na(node.class.two), "distal", node.class.two)
+                mcols.one$node.class = ifelse(is.na(mcols.one$node.class), "distal", mcols.one$node.class)
+                mcols.two$node.class = ifelse(is.na(mcols.two$node.class), "distal", mcols.two$node.class)
                 mcols(GIObject@anchor_one) = mcols.one
                 mcols(GIObject@anchor_two) = mcols.two
                 assign(objName, GIObject, envir = parent.frame())
