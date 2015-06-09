@@ -212,13 +212,13 @@ setMethod("annotateInteractions", c("GenomicInteractions", "list"),
 
                 feature_names_list = lapply(annotations, .get_gr_names)
                 if (any(vapply(feature_names_list, function(x) any(duplicated(x)), logical(1)))) {
-                    warn("Some features contain duplicate IDs which will result duplicate annotations")
+                    warning("Some features contain duplicate IDs which will result duplicate annotations")
                 }
 
                 for(name in names(annotations)){
                     message(paste("Annotating with", name, "..."))
                     field_name = paste(name, "id", sep=".")
-                    feature_name = feature_names_list[[name]]
+                    feature_names = feature_names_list[[name]]
                     mcols.one[[field_name]] = NA
                     mcols.two[[field_name]] = NA
                     one.ol = findOverlaps(GIObject@anchor_one, annotations[[name]])
