@@ -193,63 +193,66 @@ setMethod(".calculateDistances.df", c("data.frame", "data.frame"),
 #' 
 #' data(hic_example_data)
 #' data(mm9_refseq_promoters)
-#' \dontrun{
-#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_promoters))
-#' }
+#' mm9_refseq_grl = split(mm9_refseq_promoters, mm9_refseq_promoters$id)
+#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_grl))
 setGeneric("annotateInteractions",function(GIObject, annotations){standardGeneric ("annotateInteractions")})
 #' @rdname annotateInteractions
 #' @export
 setMethod("annotateInteractions", c("GenomicInteractions", "list"), 
             function(GIObject, annotations){
                 objName = deparse(substitute(GIObject))
-                GIObject@anchor_one$node.class = NA
-                GIObject@anchor_two$node.class = NA
-                
+                mcols.one = mcols(GIObject@anchor_one)
+                mcols.two = mcols(GIObject@anchor_two)
+                mcols.one$node.class = NA
+                mcols.two$node.class = NA
+
                 if (is.null(names(annotations))){
                   names(annotations) <- paste0("FEATURE", 1:length(annotations))
                 }
 
+                feature_names_list = lapply(annotations, .get_gr_names)
+                if (any(vapply(feature_names_list, function(x) any(duplicated(x)), logical(1)))) {
+                    warning("Some features contain duplicate IDs which will result duplicate annotations")
+                }
+
                 for(name in names(annotations)){
                     message(paste("Annotating with", name, "..."))
-                    elementMetadata(GIObject@anchor_one)[[paste(name, "id", sep=".")]] = NA
-                    elementMetadata(GIObject@anchor_two)[[paste(name, "id", sep=".")]] = NA
-                    one.ol = findOverlaps( GIObject@anchor_one, annotations[[name]])
-                    two.ol = findOverlaps( GIObject@anchor_two, annotations[[name]])
-                    
-                    if(class(annotations[[name]])=="GRanges"){ 
-                    # GRanges for annotation must have an id column or have names set
-                        if(!is.null(names(annotations[[name]]))){
-                            elementMetadata( GIObject@anchor_one)[[ paste(name, "id", sep=".")]][ unique(queryHits(one.ol)) ] = 
-                                lapply(unique(queryHits(one.ol)), function(x){ unique(names(annotations[[name]])[unique(subjectHits(one.ol[ queryHits(one.ol) == x]))])})
-                            elementMetadata( GIObject@anchor_two)[[ paste(name, "id", sep=".")]][ unique(queryHits(two.ol)) ] = 
-                                lapply(unique(queryHits(two.ol)), function(x){ unique(names(annotations[[name]])[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))])})
-                        }else if("id" %in% names(mcols(annotations[[name]]))){
-                            elementMetadata( GIObject@anchor_one)[[ paste(name, "id", sep=".")]][ unique(queryHits(one.ol)) ] = 
-                                lapply(unique(queryHits(one.ol)), function(x){ unique(annotations[[name]]$id[unique(subjectHits(one.ol[ queryHits(one.ol) == x]))])})
-                            elementMetadata( GIObject@anchor_two)[[ paste(name, "id", sep=".")]][ unique(queryHits(two.ol)) ] = 
-                                lapply(unique(queryHits(two.ol)), function(x){ unique(annotations[[name]]$id[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))])})
-                        }else{
-                            stop("annotations requires an id column in elementMetadata or names to be non-null")
-                        }
-                    }else if(class(annotations[[name]])=="GRangesList"){
-                      # GRangesList names must be ids for the regions
-                      elementMetadata( GIObject@anchor_one)[[ paste(name, "id", sep=".")]][ unique(queryHits(one.ol)) ] = 
-                          lapply(unique(queryHits(one.ol)), function(x){ names(annotations[[name]])[unique(subjectHits(one.ol[ queryHits(one.ol) == x]))]})
-                      elementMetadata( GIObject@anchor_two)[[ paste(name, "id", sep=".")]][ unique(queryHits(two.ol)) ] = 
-                          lapply(unique(queryHits(two.ol)), function(x){ names(annotations[[name]])[unique(subjectHits(two.ol[ queryHits(two.ol) == x]))]})
-                    }  
-                    GIObject@anchor_one$node.class = ifelse(is.na(GIObject@anchor_one$node.class) & !is.na(elementMetadata( GIObject@anchor_one)[[ paste(name, "id", sep=".")]]), 
-                                                            name, 
-                                                            GIObject@anchor_one$node.class)
-                    GIObject@anchor_two$node.class = ifelse(is.na(GIObject@anchor_two$node.class) & !is.na(elementMetadata( GIObject@anchor_two)[[ paste(name, "id", sep=".")]]), 
-                                                            name, 
-                                                            GIObject@anchor_two$node.class)  
+                    field_name = paste(name, "id", sep=".")
+                    feature_names = feature_names_list[[name]]
+                    mcols.one[[field_name]] = NA
+                    mcols.two[[field_name]] = NA
+                    one.ol = findOverlaps(GIObject@anchor_one, annotations[[name]])
+                    two.ol = findOverlaps(GIObject@anchor_two, annotations[[name]])
+                    mcols.one[[field_name]][ unique(queryHits(one.ol)) ] = split(feature_names[ subjectHits(one.ol) ], queryHits(one.ol) )
+                    mcols.two[[field_name]][ unique(queryHits(two.ol)) ] = split(feature_names[ subjectHits(two.ol) ], queryHits(two.ol) )
+                    mcols.one$node.class = ifelse(is.na(mcols.one$node.class) & !is.na(mcols.one[[field_name]]), name, mcols.one$node.class)
+                    mcols.two$node.class = ifelse(is.na(mcols.two$node.class) & !is.na(mcols.two[[field_name]]), name, mcols.two$node.class)
                 }
-                GIObject@anchor_one$node.class = ifelse(is.na(GIObject@anchor_one$node.class), "distal", GIObject@anchor_one$node.class)
-                GIObject@anchor_two$node.class = ifelse(is.na(GIObject@anchor_two$node.class), "distal", GIObject@anchor_two$node.class)
+
+                mcols.one$node.class = ifelse(is.na(mcols.one$node.class), "distal", mcols.one$node.class)
+                mcols.two$node.class = ifelse(is.na(mcols.two$node.class), "distal", mcols.two$node.class)
+                mcols(GIObject@anchor_one) = mcols.one
+                mcols(GIObject@anchor_two) = mcols.two
                 assign(objName, GIObject, envir = parent.frame())
                 return(invisible(1))
 })
+
+.get_gr_names = function(x) {
+    if (class(x)=="GRanges") { 
+        if (!is.null(names(x))) {
+            value = names(x)
+        } else if("id" %in% names(mcols(x))) {
+            value = x$id
+        } else {
+            stop("annotations requires an id column in elementMetadata or names to be non-null")
+        }
+    } else if(class(x)=="GRangesList") {
+        value = names(x)
+    } else {
+        stop("annotations must be GRanges or GRangesList objects")
+    }
+    as.character(value)
+}
 
 #' Summary statistics of interactions for a given feature set
 #'
