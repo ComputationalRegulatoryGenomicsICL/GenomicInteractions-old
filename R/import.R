@@ -36,6 +36,8 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 	em <- NULL
   if(type == "chiapet.tool"){
 	    dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
+        .validateInput(dat, c("chrom_left", "chrom_right", "start_left", "end_left", "start_right", "end_right",
+                              "pet.counts.between.left.and.right.anchors", "p.value", "FDR"))
         anchor_one = GRanges(dat[,"chrom_left"],
                             IRanges(as.integer(dat[,"start_left"])+1, as.integer(dat[,"end_left"])))
         anchor_two = GRanges(dat[,"chrom_right"],
@@ -47,6 +49,8 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
       }else if(type == "chiapet.encode"){
         #dat = .processChiapetName(unique(import.bed(fn)$name))
         dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
+        .validateInput(dat, c("chrom.left.", "chrom.right.", "start.left.", "end.left.", "start.right.", "end.right.", 
+                              "pet.counts.between.left.and.right.anchors", "p.value", "q.value"))
         anchor_one = GRanges(dat[,"chrom.left."],
                           IRanges(as.integer(dat[,"start.left."]), as.integer(dat[,"end.left."])))
         anchor_two = GRanges(dat[,"chrom.right."],
@@ -73,6 +77,8 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     
     }else if(type == "hiclib"){
 	    dat = .importHicLib(fn, chr_names)
+	    .validateInput(dat, c("chrm1", "fraglength1", "mid1", "fragid1", "chrm2", "fraglength2", 
+	                          "mid2", "fragid2", "N"))
         anchor_one = GRanges(dat$chrm1,
                           IRanges(dat$mid1-round(dat$fraglength1/2), dat$mid1 + round(dat$fraglength1/2)),
                           fragid=dat$fragid1)
@@ -83,6 +89,8 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     
     }else if(type == "homer"){
         dat = .importHomer(fn)
+        .validateInput(dat, c("chr.1.", "start.1.", "end.1.", "chr.2.", "start.2.", "end.2.", 
+                              "LogP", "Interaction.Reads", "FDR.Benjamini."))
         anchor_one = GRanges(dat$chr.1.,
                           IRanges(dat$start.1., dat$end.1.))
         anchor_two = GRanges(dat$chr.2.,
@@ -309,5 +317,22 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     g2 <- g2[order(g2$qname)]
 
     return(list(g1, g2))
+}
+
+#' Function to validate tabular input
+#'
+#' Check for columns in a data.frame.
+#'
+#' @param x A data frame.
+#' @param h A character vector containing expected headings
+#' @return list of two GRanges, storing the anchor information for each interaction
+#'
+.validateInput = function(x, h) {
+    h_in_x = h %in% colnames(x)
+    if (!all(h_in_x)) {
+        missing = paste(h[!h_in_x], collapse=", ")
+        stop(paste("Input file does not contain columns", missing))
+    }
+    invisible(0)
 }
 
