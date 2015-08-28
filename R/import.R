@@ -8,7 +8,8 @@
 #' from standard processing pipelines, such as HOMER and ChIA-PET tool. GenomicInteractions objects can also be created
 #' using calls of the form \code{new("GenomicInteractions", ...)}. For hiclib, it expects the directory in which the files
 #' extracted using h5dictToTxt.py from the hdf5 file are located, where as for all of the other file types it expects the full
-#' filename.
+#' filename. Note that recent versions of HiC (2015-) cannot export the required data and so this function will only work with
+#' older files.
 #'
 #' @param fn Filename or, if type="hiclib", folder
 #' @param type One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam", "two.bams".
@@ -21,7 +22,6 @@
 #' @importFrom IRanges IRanges
 #' @import data.table
 #' @importFrom stringr str_split
-#' @importFrom rtracklayer import.bed
 #'
 #' @examples
 #'
@@ -35,7 +35,7 @@
 makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", description="", chr_names = NULL){
 	em <- NULL
   if(type == "chiapet.tool"){
-	    dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
+        dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
         .validateInput(dat, c("chrom_left", "chrom_right", "start_left", "end_left", "start_right", "end_right",
                               "pet.counts.between.left.and.right.anchors", "p.value", "FDR"))
         anchor_one = GRanges(dat[,"chrom_left"],
@@ -43,13 +43,12 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
         anchor_two = GRanges(dat[,"chrom_right"],
                             IRanges(as.integer(dat[,"start_right"])+1, as.integer(dat[,"end_right"])))
         counts = as.integer(dat[,"pet.counts.between.left.and.right.anchors"])
-        em <- DataFrame(p.value = as.numeric( dat[, "p.value"]), 
+        em <- DataFrame(p.value = as.numeric( dat[, "p.value"]),
                                      fdr = as.numeric( dat[, "FDR"]))
-    
+
       }else if(type == "chiapet.encode"){
-        #dat = .processChiapetName(unique(import.bed(fn)$name))
         dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
-        .validateInput(dat, c("chrom.left.", "chrom.right.", "start.left.", "end.left.", "start.right.", "end.right.", 
+        .validateInput(dat, c("chrom.left.", "chrom.right.", "start.left.", "end.left.", "start.right.", "end.right.",
                               "pet.counts.between.left.and.right.anchors", "p.value", "q.value"))
         anchor_one = GRanges(dat[,"chrom.left."],
                           IRanges(as.integer(dat[,"start.left."]), as.integer(dat[,"end.left."])))
@@ -57,59 +56,74 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                           IRanges(as.integer(dat[,"start.right."]), as.integer(dat[,"end.right."])))
         counts = as.integer(dat[,"pet.cound.between.left.and.right.anchors"])
         em <- DataFrame(p.value = as.numeric( dat[,"p.value"]), fdr=as.numeric( dat[, "q.value"]))
-        
+
       }else if(type == "bed12"){
-        bedfile = import.bed(fn)
-        dat = .processChiapetName(unique(bedfile$name))
+        bedfile = read.table(fn)
+        dat = .processChiapetName(unique(bedfile[,4]))
         anchor_one = GRanges(dat[,"chrom.left."],
                           IRanges(as.integer(dat[,"start.left."]), as.integer(dat[,"end.left."])))
         anchor_two = GRanges(dat[,"chrom.right."],
                           IRanges(as.integer(dat[,"start.right."]), as.integer(dat[,"end.right."])))
         counts = as.integer(dat[,"counts"])
-    
+
       }else if(type == "bedpe"){
         dat = read.table(fn, stringsAsFactors=FALSE, sep="\t")
-        anchor_one = GRanges(dat[,1],
-                          IRanges(dat[,2]+1, dat[,3]), strand=ifelse(ncol(dat) >= 10, dat[,9], "*"))
-        anchor_two = GRanges(dat[,4],
-                          IRanges(dat[,5]+1, dat[,6]), strand=ifelse(ncol(dat) >= 10, dat[,10], "*"))
-        counts = as.integer(rep(1, length(anchor_one)))
-    
+        if (!all(vapply(dat[,c(2,3,5,6,8)], is.numeric, logical(1))) ||
+            !all(vapply(dat[,c(1,4)], is.character, logical(1)))) {
+            stop(paste("bedpe file does not appear to be in the correct format. See",
+                       "http://bedtools.readthedocs.org/en/latest/content/general-usage.html",
+                       "for details"))
+        }
+
+        if (ncol(dat) >= 10) {
+            if (!all(vapply(dat[,c(9,10)], is.character, logical(1)))) {
+                stop(paste("bedpe file does not appear to be in the correct format. See",
+                           "http://bedtools.readthedocs.org/en/latest/content/general-usage.html",
+                           "for details"))
+            }
+            stranded = TRUE
+        }
+
+        anchor_one = GRanges(dat[,1], IRanges(dat[,2]+1, dat[,3]), strand=ifelse(stranded, dat[,9], "*"))
+        anchor_two = GRanges(dat[,4], IRanges(dat[,5]+1, dat[,6]), strand=ifelse(stranded, dat[,10], "*"))
+        counts = as.integer(dat[,8])
+        if (any(counts == 0)) warning("Some counts are set to zero, bedpe score field may represent other data")
+
     }else if(type == "hiclib"){
 	    dat = .importHicLib(fn, chr_names)
-	    .validateInput(dat, c("chrm1", "fraglength1", "mid1", "fragid1", "chrm2", "fraglength2", 
+	    .validateInput(dat, c("chrm1", "fraglength1", "mid1", "fragid1", "chrm2", "fraglength2",
 	                          "mid2", "fragid2", "N"))
         anchor_one = GRanges(dat$chrm1,
                           IRanges(dat$mid1-round(dat$fraglength1/2), dat$mid1 + round(dat$fraglength1/2)),
                           fragid=dat$fragid1)
-		    anchor_two = GRanges(dat$chrm2,
+        anchor_two = GRanges(dat$chrm2,
                           IRanges(dat$mid2-round(dat$fraglength2/2), dat$mid2 + round(dat$fraglength2/2)),
                           fragid=dat$fragid2)
         counts = dat$N
-    
+
     }else if(type == "homer"){
         dat = .importHomer(fn)
-        .validateInput(dat, c("chr.1.", "start.1.", "end.1.", "chr.2.", "start.2.", "end.2.", 
+        .validateInput(dat, c("chr.1.", "start.1.", "end.1.", "chr.2.", "start.2.", "end.2.",
                               "LogP", "Interaction.Reads", "FDR.Benjamini."))
         anchor_one = GRanges(dat$chr.1.,
                           IRanges(dat$start.1., dat$end.1.))
         anchor_two = GRanges(dat$chr.2.,
                           IRanges(dat$start.2., dat$end.2.))
         counts = as.integer(dat$Interaction.Reads)
-        em <- DataFrame(p.value = exp(as.numeric(dat$LogP)), 
+        em <- DataFrame(p.value = exp(as.numeric(dat$LogP)),
                             fdr = as.numeric(dat$FDR.Benjamini.))
   	}else if(type == "bam"){
           dat = .readBam(fn)
           anchor_one = dat[[1]]
           anchor_two = dat[[2]]
           counts = as.integer(rep(1, length(anchor_one)))
-  	
+
     }else if(type == "two.bams"){
   	    dat = .readTwoBams(fn)
   	    anchor_one = dat[[1]]
   	    anchor_two = dat[[2]]
   	    counts = as.integer(rep(1, length(anchor_one)))
-  	
+
     }else{
           stop("type is not one of \"chiapet.tool\", \"chiapet.encode\", \"bed12\", \"bedpe\", \"hiclib\", \"homer\", \"bam\", \"two.bams\"")
   	}
@@ -120,7 +134,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
         seqlevels(anchor_two) = seqlevels(seqinfo_both)
         seqinfo(anchor_two) = seqinfo_both
     }
-  
+
     if (is.null(em)){
       em <- new("DataFrame", nrows = length(anchor_one))
     }
@@ -148,34 +162,25 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 #'
 #' @return a data.frame containing all of the processed information
 #'
-#' @importFrom stringr str_split
-.processChiapetName = function(x){
-  tmp.str = str_split(x, ",")
-  counts = as.integer(unlist(lapply(tmp.str, function(y){ return(y[2] ) } )))
-  tmp.str.2 = sapply(tmp.str, function(y){
-    str_split(y[1], "-")
-  })
-  paired.end.1 = t(sapply(tmp.str.2, function(y){
-    tmp = str_split(y[[1]], ":")
-    chr = tmp[[1]][1]
-    tmp = str_split(tmp[[1]][2], "\\.\\.")
-    start = as.integer(tmp[[1]][1]) + 1
-    end = as.integer(tmp[[1]][2])
-    return(c(chr, start, end))
-  }))
-  paired.end.2 = t(sapply(tmp.str.2, function(y){
-    tmp = str_split(y[[2]], ":")
-    chr = tmp[[1]][1]
-    tmp = str_split(tmp[[1]][2], "\\.\\.")
-    start = as.integer(tmp[[1]][1]) + 1
-    end = as.integer(tmp[[1]][2])
-    return(c(chr, start, end))
-  }))
-  dat = cbind(paired.end.1, paired.end.2, counts)
-  colnames(dat) = c("chrom.left.", "start.left.", "end.left.", "chrom.right.", "start.right.", "end.right.", "counts")
-  return(dat)
+#' @importFrom stringr str_match
+.processChiapetName = function(x) {
+    dat = str_match(x, "(\\w+):(-?\\d+)\\.\\.(\\d+)-(\\w+):(-?\\d+)\\.\\.(\\d+),(\\d+)")[,2:8]
+    na_by_line = apply(dat, 1, function(x) any(is.na(x)))
+    if (any(na_by_line)) {
+        stop(sprintf(paste("Not all names in bed12 file cannot be read in. Interactions should be stored in",
+                           "the \"names\" field in bed12 as \"chr:start..end-chr2:start2..end2\".",
+                           "First Error: Line %i"),
+                     which(na_by_line)[1]))
+    }
+    dat = as.data.frame(dat)
+    colnames(dat) = c("chrom.left.", "start.left.", "end.left.", "chrom.right.", "start.right.", "end.right.", "counts")
+    dat$start.right. = as.integer(as.character(dat$start.right.)) + 1L
+    dat$start.left. = as.integer(as.character(dat$start.left.)) + 1L
+    dat$end.right. = as.integer(as.character(dat$end.right.))
+    dat$end.left. = as.integer(as.character(dat$end.left.))
+    dat$counts = as.integer(as.character(dat$counts))
+    return(dat)
 }
-
 
 #' Function to read in processed Hi-C interaction data generated by HOMER
 #'
@@ -208,30 +213,29 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 #' @import data.table
 #'
 .importHicLib = function(dir, chr_names){
+    frags=data.table(fragid1=fread(paste0(dir, "fragids1"))$V1, chrm1=.process.chr(fread(paste0(dir, "chrms1"))$V1, chr_names),
+                    mid1=fread(paste0(dir, "mids1"))$V1, fraglength1 = fread(paste0(dir, "fraglens1"))$V1,
+                    fragid2=fread(paste0(dir, "fragids2"))$V1, chrm2=.process.chr(fread(paste0(dir, "chrms2"))$V1, chr_names),
+                    mid2=fread(paste0(dir, "mids2"))$V1, fraglength2 = fread(paste0(dir, "fraglens2"))$V1,
+                    distances=fread(paste0(dir, "distances"))$V1, stringsAsFactors=FALSE)
 
-  .process.chr = function(chrs, chr_names){
-    if (is.null(chr_names)){
-      warning("No chromosome names supplied for hiclib import: non-numeric chromosomes will not be renamed")
-      chrs = as.numeric(chrs)+1
-      return( paste0("chr", chrs ))
-    } else {
-      chrs = as.numeric(chrs)+1
-      chrs = ifelse( chr_names[chrs] %in% c("chrY"), "Y", chrs)
-      chrs = ifelse( chr_names[chrs] %in% c("chrX"), "X", chrs)
-      return( paste0("chr", chrs ))
-    }
-  }
+    frags_agg <- frags[, .N, by=names(frags)]
 
-  frags=data.table(fragid1=fread(paste0(dir, "fragids1"))$V1, chrm1=.process.chr(fread(paste0(dir, "chrms1"))$V1, chr_names),
-                   mid1=fread(paste0(dir, "mids1"))$V1, fraglength1 = fread(paste0(dir, "fraglens1"))$V1,
-                   fragid2=fread(paste0(dir, "fragids2"))$V1, chrm2=.process.chr(fread(paste0(dir, "chrms2"))$V1, chr_names),
-                   mid2=fread(paste0(dir, "mids2"))$V1, fraglength2 = fread(paste0(dir, "fraglens2"))$V1,
-                   distances=fread(paste0(dir, "distances"))$V1, stringsAsFactors=FALSE)
-  frags_agg <- frags[, .N, by=names(frags)]
-
-  return(frags_agg)
+    return(frags_agg)
 }
 
+.process.chr = function(chrs, chr_names){
+    if (is.null(chr_names)){
+        warning("No chromosome names supplied for hiclib import: non-numeric chromosomes will not be renamed")
+        chrs = as.numeric(chrs)+1
+        return( paste0("chr", chrs ))
+    } else {
+        chrs = as.numeric(chrs)+1
+        chrs = ifelse( chr_names[chrs] %in% c("chrY"), "Y", chrs)
+        chrs = ifelse( chr_names[chrs] %in% c("chrX"), "X", chrs)
+        return( paste0("chr", chrs ))
+    }
+}
 
 #' Function to read in interaction-data stored in a BAM file
 #'
@@ -250,7 +254,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
   param = ScanBamParam(flag=bf, what=c("rname", "qname", "strand", "pos", "seq", "cigar", "flag") )
   b = scanBam(fn, param=param)
 
-  y = GRanges(b[[1]]$rname, IRanges(b[[1]]$pos, width=width(b[[1]]$seq)), 
+  y = GRanges(b[[1]]$rname, IRanges(b[[1]]$pos, width=width(b[[1]]$seq)),
               strand = b[[1]]$strand,
               qname = b[[1]]$qname,
               bamFlagAsBitMatrix(b[[1]][["flag"]], bitnames="isFirstMateRead"),

@@ -30,7 +30,8 @@ to read interactions from a variety of files including BAM files, bed files (BED
 from standard processing pipelines, such as HOMER and ChIA-PET tool. GenomicInteractions objects can also be created
 using calls of the form \code{new("GenomicInteractions", ...)}. For hiclib, it expects the directory in which the files
 extracted using h5dictToTxt.py from the hdf5 file are located, where as for all of the other file types it expects the full
-filename.
+filename. Note that recent versions of HiC (2015-) cannot export the required data and so this function will only work with
+older files.
 }
 \examples{
 k562.rep1 = makeGenomicInteractionsFromFile(file.path(system.file(package="GenomicInteractions"), "extdata", "k562.rep1.cluster.pet3+.txt"),
