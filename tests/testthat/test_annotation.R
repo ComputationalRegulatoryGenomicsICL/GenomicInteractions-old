@@ -48,6 +48,9 @@ test_that("Annotate anchors returns expected results", {
   expect_true("signal" %in% names(mcols(anchorTwo(gi))))
   expect_equal(anchorOne(gi)$signal, expect_ann_one)
   expect_equal(anchorTwo(gi)$signal, expect_ann_two)
+  
+  expect_error(annotateAnchors(gi, 3, "signal", c(100, 102, 2, 320, 40)),
+               "anchor is neither 1 or 2")
 
 })
 ## Resetting annotation
@@ -64,5 +67,32 @@ test_that("resetting annotations removes mcols", {
   expect_true(length(mcols(anchorTwo(gi)))==0)
 })
 
-## Distance calculations?
+## Distance calculations
 
+test_that("distance calculations work as expected", {
+  expect_equal(calculateDistances(gi),
+               c(5, NA, 1, NA, 1))
+  expect_equal(calculateDistances(gi, method = "midpoint"),
+               c(5, NA, 1, NA, 1))
+  expect_equal(calculateDistances(gi, method = "inner"),
+               c(0, NA, 0, NA, 0))
+  expect_warning(calculateDistances(gi, method = "inner"),
+                 "setting negative distances to 0, this is due to the presence of overlapping anchors in your dataset")
+  expect_equal(calculateDistances(gi, method = "outer"),
+               c(14, NA, 8, NA, 6))
+  expect_error(calculateDistances(gi, method = "my_method"))
+})
+
+one.df <- as.data.frame(anchorOne(gi))
+two.df <- as.data.frame(anchorTwo(gi))
+
+test_that("distance calculations on dataframes work as expected", {
+  expect_equal(GenomicInteractions:::.calculateDistances.df(one.df, two.df),
+               calculateDistances(gi))
+  expect_equal(GenomicInteractions:::.calculateDistances.df(one.df, two.df, method = "midpoint"),
+               calculateDistances(gi, method = "midpoint"))
+  expect_equal(GenomicInteractions:::.calculateDistances.df(one.df, two.df, method = "inner"),
+               calculateDistances(gi, method = "inner"))
+  expect_equal(GenomicInteractions:::.calculateDistances.df(one.df, two.df, method = "outer"),
+               calculateDistances(gi, method = "outer"))
+  })
