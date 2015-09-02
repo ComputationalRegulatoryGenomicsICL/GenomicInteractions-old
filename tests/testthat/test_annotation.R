@@ -53,6 +53,21 @@ test_that("Annotate anchors returns expected results", {
                "anchor is neither 1 or 2")
 
 })
+
+## test summarisation
+
+test_that("summariseByFeatures results are the same as before", {
+  expect_equal_to_reference(summariseByFeatures(gi, promoters, feature.name = "promoter"),
+                            file = "summariseByFeatures.rds")
+})
+
+test_that("summariseByFeaturePairs results are the same as before", {
+  expect_equal_to_reference( summariseByFeaturePairs(gi, features.one = promoters, features.two = promoters, 
+                                                     feature.name.one = "promoter", feature.name.two = "promoter"),
+                            file = "summariseByFeaturePairs.rds")
+})
+
+
 ## Resetting annotation
 resetAnnotations(gi)
 
@@ -96,3 +111,4 @@ test_that("distance calculations on dataframes work as expected", {
   expect_equal(GenomicInteractions:::.calculateDistances.df(one.df, two.df, method = "outer"),
                calculateDistances(gi, method = "outer"))
   })
+
