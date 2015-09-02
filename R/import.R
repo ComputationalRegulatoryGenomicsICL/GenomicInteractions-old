@@ -103,15 +103,18 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 
     }else if(type == "homer"){
         dat = .importHomer(fn)
-        .validateInput(dat, c("chr.1.", "start.1.", "end.1.", "chr.2.", "start.2.", "end.2.",
-                              "LogP", "Interaction.Reads", "FDR.Benjamini."))
+        required_cols <- c("chr.1.", "start.1.", "end.1.", 
+                           "chr.2.", "start.2.", "end.2.", "Interaction.Reads")
+        .validateInput(dat, required_cols)
         anchor_one = GRanges(dat$chr.1.,
                           IRanges(dat$start.1., dat$end.1.))
         anchor_two = GRanges(dat$chr.2.,
                           IRanges(dat$start.2., dat$end.2.))
         counts = as.integer(dat$Interaction.Reads)
-        em <- DataFrame(p.value = exp(as.numeric(dat$LogP)),
-                            fdr = as.numeric(dat$FDR.Benjamini.))
+        
+        extra_cols <- names(dat)[!names(dat) %in% required_cols]
+        
+        em <- DataFrame(dat[, extra_cols])
   	}else if(type == "bam"){
           dat = .readBam(fn)
           anchor_one = dat[[1]]
