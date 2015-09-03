@@ -80,10 +80,10 @@ setMethod("export.bed12", c("GenomicInteractions"),
 .exportName = function(gi) {
     paste0(
         seqnames(anchorOne(gi)), ":",
-        start(anchorOne(gi)), "..",
+        start(anchorOne(gi)) - 1 , "..",
         end(anchorOne(gi)), "-",
         seqnames(anchorTwo(gi)), ":",
-        start(anchorTwo(gi)), "..",
+        start(anchorTwo(gi)) - 1, "..",
         end(anchorTwo(gi)), ",",
         interactionCounts(gi))
 }

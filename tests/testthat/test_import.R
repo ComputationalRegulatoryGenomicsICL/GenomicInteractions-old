@@ -25,18 +25,26 @@ gi <- new("GenomicInteractions",
           elementMetadata = new("DataFrame", nrows = as.integer(5))
 )
 
-test_that("bed12 export/import is consistent", {
-  tmp <- tempfile()
-  export.bed12(gi, fn = tmp)
-  expect_equal(gi, makeGenomicInteractionsFromFile(tmp, type = "bed12"))
-  unlink(tmp)
-  #fails, problem seems to be with import step
-})
+drop_strand <- function(gi){
+  strand(gi@anchor_one) <- "*"
+  strand(gi@anchor_two) <- "*"
+  return(gi)
+  }
 
 test_that("bed12 export/import is consistent", {
   tmp <- tempfile()
+  export.bed12(gi, fn = tmp)
+  #attributes dropped on export
+  expect_equivalent(sort(drop_strand(gi)), #bed12 cannot store strand so is dropped
+               sort(makeGenomicInteractionsFromFile(tmp, type = "bed12")))
+  unlink(tmp)
+})
+
+test_that("bedpe export/import is consistent", {
+  tmp <- tempfile()
   export.bedpe(gi, fn = tmp)
-  expect_equal(gi, makeGenomicInteractionsFromFile(tmp, type = "bedpe"))
+  #attributes dropped on export
+  expect_equivalent(sort(gi), sort(makeGenomicInteractionsFromFile(tmp, type = "bedpe")))
   unlink(tmp)
   #fails, anchor strands don't match after import!
 })
