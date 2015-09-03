@@ -81,11 +81,15 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                            "http://bedtools.readthedocs.org/en/latest/content/general-usage.html",
                            "for details"))
             }
-            stranded = TRUE
+            strand1 = dat[,9]
+            strand2 = dat[,10]
+        } else {
+            strand1 = "*"
+            strand2 = "*"
         }
 
-        anchor_one = GRanges(dat[,1], IRanges(dat[,2]+1, dat[,3]), strand=ifelse(stranded, dat[,9], "*"))
-        anchor_two = GRanges(dat[,4], IRanges(dat[,5]+1, dat[,6]), strand=ifelse(stranded, dat[,10], "*"))
+        anchor_one = GRanges(dat[,1], IRanges(dat[,2]+1, dat[,3]), strand=strand1)
+        anchor_two = GRanges(dat[,4], IRanges(dat[,5]+1, dat[,6]), strand=strand2)
         counts = as.integer(dat[,8])
         if (any(counts == 0)) warning("Some counts are set to zero, bedpe score field may represent other data")
 
