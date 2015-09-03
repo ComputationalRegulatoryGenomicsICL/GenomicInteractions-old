@@ -10,3 +10,50 @@ test_that("Constructor function throws errors with invalid inputs", {
   expect_error(GenomicInteractions(anchor_one, anchor_two, counts = 1.5), 
                "counts must contain integer values")
 })
+
+gi <- new("GenomicInteractions",
+          metadata = list(experiment_name="test", description = "this is a test"),
+          anchor_one = GRanges(seqnames = S4Vectors::Rle(factor(c("chr1", "chr2", "chr1")), c(1, 2, 2)),
+                               ranges = IRanges(1:5, width = 10:6),
+                               strand = S4Vectors::Rle(strand(c("+", "+", "-", "-", "-"))),
+                               seqinfo = Seqinfo(seqnames = paste("chr", 1:2, sep=""))),
+          anchor_two = GRanges(seqnames = S4Vectors::Rle(factor(c("chr1", "chr2", "chr1")), c(2, 2, 1)),
+                               ranges = IRanges(7:3, width = 10:6),
+                               strand = S4Vectors::Rle(strand(c("-", "+", "-", "-", "-"))),
+                               seqinfo = Seqinfo(seqnames = paste("chr", 1:2, sep=""))),
+          counts = as.integer(1:5),
+          elementMetadata = new("DataFrame", nrows = as.integer(5))
+)
+
+test_that("bed12 export/import is consistent", {
+  tmp <- tempfile()
+  export.bed12(gi, fn = tmp)
+  expect_equal(gi, makeGenomicInteractionsFromFile(tmp, type = "bed12"))
+  unlink(tmp)
+  #fails, problem seems to be with import step
+})
+
+test_that("bed12 export/import is consistent", {
+  tmp <- tempfile()
+  export.bedpe(gi, fn = tmp)
+  expect_equal(gi, makeGenomicInteractionsFromFile(tmp, type = "bedpe"))
+  unlink(tmp)
+  #fails, anchor strands don't match after import!
+})
+
+
+test_that("homer import is consistent with previous behaviour", {
+  fn <- system.file("extdata", "Seitan2013_WT_100kb_interactions.txt", 
+                    package="GenomicInteractions")
+  
+  expect_equal_to_reference(makeGenomicInteractionsFromFile(fn, type = "homer"), 
+                            file = "importhomer.rds")
+})
+
+test_that("chiapet tool import is consistent with previous behaviour", {
+  fn <- system.file("extdata/k562.rep1.cluster.pet3+.txt", 
+                    package="GenomicInteractions")
+  
+  expect_equal_to_reference(makeGenomicInteractionsFromFile(fn, type = "chiapet.tool"), 
+                            file = "importchiapettool.rds")
+})
