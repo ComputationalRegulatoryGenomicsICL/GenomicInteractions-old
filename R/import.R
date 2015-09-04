@@ -8,11 +8,11 @@
 #' from standard processing pipelines, such as HOMER and ChIA-PET tool. GenomicInteractions objects can also be created
 #' using calls of the form \code{new("GenomicInteractions", ...)}. For hiclib, it expects the directory in which the files
 #' extracted using h5dictToTxt.py from the hdf5 file are located, where as for all of the other file types it expects the full
-#' filename. Note that recent versions of HiC (2015-) cannot export the required data and so this function will only work with
+#' filename. Note that recent versions of hiclib (2015-) cannot export the required data and so this function will only work with
 #' older files.
 #'
 #' @param fn Filename or, if type="hiclib", folder
-#' @param type One of "chiapet.tool", "chiapet.encode", "bed12", "bedpe", "hiclib", "homer", "bam", "two.bams".
+#' @param type One of "chiapet.tool", "bed12", "bedpe", "hiclib", "homer", "bam", "two.bams".
 #' @param experiment_name Experiment name.
 #' @param description Description of experiment.
 #' @param chr_names a vector of chromosome names in order, required for re-naming chromosomes for hiclib import
@@ -33,31 +33,21 @@
 #' @export
 
 makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", description="", chr_names = NULL){
-	em <- NULL
-  if(type == "chiapet.tool"){
+	em = NULL
+    if (type == "chiapet.tool") {
         dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
-        .validateInput(dat, c("chrom_left", "chrom_right", "start_left", "end_left", "start_right", "end_right",
-                              "pet.counts.between.left.and.right.anchors", "p.value", "FDR"))
-        anchor_one = GRanges(dat[,"chrom_left"],
-                            IRanges(as.integer(dat[,"start_left"])+1, as.integer(dat[,"end_left"])))
-        anchor_two = GRanges(dat[,"chrom_right"],
-                            IRanges(as.integer(dat[,"start_right"])+1, as.integer(dat[,"end_right"])))
-        counts = as.integer(dat[,"pet.counts.between.left.and.right.anchors"])
-        em <- DataFrame(p.value = as.numeric( dat[, "p.value"]),
-                                     fdr = as.numeric( dat[, "FDR"]))
+        if (!all(vapply(dat[,c(2,3,5,6,7,8,9)], is.numeric, logical(1))) ||
+            !all(vapply(dat[,c(1,4)], is.character, logical(1)))) {
+            stop(paste("ChIA-PET file does not appear to be in the correct format. Columns should be",
+                       "chr1, start1, end1, chr2, start2, end2, pet_count, p-value, q-value"))
+        }
 
-      }else if(type == "chiapet.encode"){
-        dat = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
-        .validateInput(dat, c("chrom.left.", "chrom.right.", "start.left.", "end.left.", "start.right.", "end.right.",
-                              "pet.counts.between.left.and.right.anchors", "p.value", "q.value"))
-        anchor_one = GRanges(dat[,"chrom.left."],
-                          IRanges(as.integer(dat[,"start.left."]), as.integer(dat[,"end.left."])))
-        anchor_two = GRanges(dat[,"chrom.right."],
-                          IRanges(as.integer(dat[,"start.right."]), as.integer(dat[,"end.right."])))
-        counts = as.integer(dat[,"pet.cound.between.left.and.right.anchors"])
-        em <- DataFrame(p.value = as.numeric( dat[,"p.value"]), fdr=as.numeric( dat[, "q.value"]))
+        anchor_one = GRanges(dat[,1], IRanges(dat[,2], dat[,3]))
+        anchor_two = GRanges(dat[,4], IRanges(dat[,5], dat[,6]))
+        counts = as.integer(dat[,8])
+        em = DataFrame(p.value = dat[,8], fdr = dat[,9])
 
-      }else if(type == "bed12"){
+    } else if (type == "bed12") {
         bedfile = read.table(fn)
         dat = .processChiapetName(unique(bedfile[,4]))
         anchor_one = GRanges(dat[,"chrom.left."],
@@ -66,7 +56,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                           IRanges(as.integer(dat[,"start.right."]), as.integer(dat[,"end.right."])))
         counts = as.integer(dat[,"counts"])
 
-      }else if(type == "bedpe"){
+    } else if (type == "bedpe") {
         dat = read.table(fn, stringsAsFactors=FALSE, sep="\t")
         if (!all(vapply(dat[,c(2,3,5,6,8)], is.numeric, logical(1))) ||
             !all(vapply(dat[,c(1,4)], is.character, logical(1)))) {
@@ -93,7 +83,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
         counts = as.integer(dat[,8])
         if (any(counts == 0)) warning("Some counts are set to zero, bedpe score field may represent other data")
 
-    }else if(type == "hiclib"){
+    } else if (type == "hiclib") {
 	    dat = .importHicLib(fn, chr_names)
 	    .validateInput(dat, c("chrm1", "fraglength1", "mid1", "fragid1", "chrm2", "fraglength2",
 	                          "mid2", "fragid2", "N"))
@@ -105,9 +95,9 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                           fragid=dat$fragid2)
         counts = dat$N
 
-    }else if(type == "homer"){
+    } else if (type == "homer") {
         dat = .importHomer(fn)
-        required_cols <- c("chr.1.", "start.1.", "end.1.", 
+        required_cols = c("chr.1.", "start.1.", "end.1.",
                            "chr.2.", "start.2.", "end.2.", "Interaction.Reads")
         .validateInput(dat, required_cols)
         anchor_one = GRanges(dat$chr.1.,
@@ -115,25 +105,26 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
         anchor_two = GRanges(dat$chr.2.,
                           IRanges(dat$start.2., dat$end.2.))
         counts = as.integer(dat$Interaction.Reads)
-        
-        extra_cols <- names(dat)[!names(dat) %in% required_cols]
-        
-        em <- DataFrame(dat[, extra_cols])
-  	}else if(type == "bam"){
+
+        extra_cols = names(dat)[!names(dat) %in% required_cols]
+
+        em = DataFrame(dat[, extra_cols])
+  	} else if (type == "bam") {
           dat = .readBam(fn)
           anchor_one = dat[[1]]
           anchor_two = dat[[2]]
           counts = as.integer(rep(1, length(anchor_one)))
 
-    }else if(type == "two.bams"){
+    } else if (type == "two.bams") {
   	    dat = .readTwoBams(fn)
   	    anchor_one = dat[[1]]
   	    anchor_two = dat[[2]]
   	    counts = as.integer(rep(1, length(anchor_one)))
 
-    }else{
+    } else {
           stop("type is not one of \"chiapet.tool\", \"chiapet.encode\", \"bed12\", \"bedpe\", \"hiclib\", \"homer\", \"bam\", \"two.bams\"")
   	}
+
 	if (!.isEqualSeqInfo(anchor_one, anchor_two)) {
         seqinfo_both = merge(seqinfo(anchor_one), seqinfo(anchor_two))
         seqlevels(anchor_one) = seqlevels(seqinfo_both)
@@ -143,14 +134,16 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     }
 
     if (is.null(em)){
-      em <- new("DataFrame", nrows = length(anchor_one))
+      em = new("DataFrame", nrows = length(anchor_one))
     }
+
     giobject = new("GenomicInteractions",
                  metadata=list(experiment_name = experiment_name, description = description),
                  anchor_one=anchor_one,
                  anchor_two=anchor_two,
                  counts=counts,
                  elementMetadata=em)
+
     return(giobject)
 }
 
@@ -197,11 +190,10 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 #' @return a data frame containing the relevant information
 #'
 .importHomer = function(fn){
-  HOMER_int.df <- read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
-  #convert to closed format
-  #already 1-based
-  HOMER_int.df$end.1. <- HOMER_int.df$end.1. - 1
-  HOMER_int.df$end.2. <- HOMER_int.df$end.2. - 1
+  HOMER_int.df = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
+  #convert to closed format, already 1-based
+  HOMER_int.df$end.1. = HOMER_int.df$end.1. - 1
+  HOMER_int.df$end.2. = HOMER_int.df$end.2. - 1
   return(HOMER_int.df)
 }
 
@@ -226,7 +218,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                     mid2=fread(paste0(dir, "mids2"))$V1, fraglength2 = fread(paste0(dir, "fraglens2"))$V1,
                     distances=fread(paste0(dir, "distances"))$V1, stringsAsFactors=FALSE)
 
-    frags_agg <- frags[, .N, by=names(frags)]
+    frags_agg = frags[, .N, by=names(frags)]
 
     return(frags_agg)
 }
@@ -320,12 +312,12 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     rm(b2)
 
     message("Removing unpaired reads...")
-    g1 <- g1[g1$qname %in% g2$qname]
-    g2 <- g2[g2$qname %in% g1$qname]
+    g1 = g1[g1$qname %in% g2$qname]
+    g2 = g2[g2$qname %in% g1$qname]
 
     message("Pairing reads...")
-    g1 <- g1[order(g1$qname)]
-    g2 <- g2[order(g2$qname)]
+    g1 = g1[order(g1$qname)]
+    g2 = g2[order(g2$qname)]
 
     return(list(g1, g2))
 }
