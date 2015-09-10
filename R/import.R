@@ -44,7 +44,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 
         anchor_one = GRanges(dat[,1], IRanges(dat[,2], dat[,3]))
         anchor_two = GRanges(dat[,4], IRanges(dat[,5], dat[,6]))
-        counts = as.integer(dat[,8])
+        counts = as.integer(dat[,7])
         em = DataFrame(p.value = dat[,8], fdr = dat[,9])
 
     } else if (type == "bed12") {
