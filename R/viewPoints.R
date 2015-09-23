@@ -126,8 +126,8 @@ plotAvgViewpoint = function(x, left_dist = 100000, right_dist = 100000, ylab="Av
   #make ranges relative to bait
   bait <- resize(anchorOne(GIObject), width = 1, fix = fix)
   ints <- ranges(anchorTwo(GIObject))
-  ints <- shift(ints, shift = -(start(bait)))
-  ints <- shift(ints, shift = left_dist)
+  ints <- GenomicRanges::shift(ints, shift = -(start(bait)))
+  ints <- GenomicRanges::shift(ints, shift = left_dist)
   
   #make coverage and adjust to mean coverage per bait
   cov <- coverage(ints, weight = interactionCounts(GIObject), 
