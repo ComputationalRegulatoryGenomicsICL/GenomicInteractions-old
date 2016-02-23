@@ -66,5 +66,6 @@ setReplaceMethod("interactionCounts", "GenomicInteractions", function(GIObject, 
     value = as.integer(value)
     if (length(value) == 1)
         value = rep(value, length(GIObject))
-    BiocGenerics:::replaceSlots(GIObject, counts=value)
+    GIObject@elementMetadata$counts <- value
+    GIObject
 })
