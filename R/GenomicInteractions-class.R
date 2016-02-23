@@ -85,8 +85,8 @@ setValidity2("GenomicInteractions", function(object) {
 # Constructors
 setGeneric("GenomicInteractions", function(anchor1, anchor2, counts, ...){ standardGeneric("GenomicInteractions")})
 setMethod("GenomicInteractions", c("GRanges", "GRanges", "numeric"), 
-          function(anchor1, anchor2, counts){
-            out <- GInteractions(anchor1, anchor2, counts = counts)
+          function(anchor1, anchor2, counts, ...){
+            out <- GInteractions(anchor1, anchor2, counts = counts, ...)
             class(out) <- "GenomicInteractions"
             out
           })

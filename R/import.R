@@ -136,14 +136,11 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
     if (is.null(em)){
       em = new("DataFrame", nrows = length(anchor_one))
     }
-
-    giobject = new("GenomicInteractions",
-                 metadata=list(experiment_name = experiment_name, description = description),
-                 anchor_one=anchor_one,
-                 anchor_two=anchor_two,
-                 counts=counts,
-                 elementMetadata=em)
-
+	
+    giobject = GenomicInteractions(anchor_one, anchor_two,
+                 counts = counts,
+                 metadata = list(experiment_name = experiment_name, description = description),
+                 elementMetadata = em)
     return(giobject)
 }
 
