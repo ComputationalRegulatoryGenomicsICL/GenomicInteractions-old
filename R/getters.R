@@ -19,8 +19,7 @@
 #' anchor.one = GRanges(c("chr1", "chr1", "chr1", "chr1"), IRanges(c(10, 20, 30, 20), width=5))
 #' anchor.two = GRanges(c("chr1", "chr1", "chr1", "chr2"), IRanges(c(100, 200, 300, 50), width=5))
 #' interaction_counts = sample(1:10, 4)
-#' test <- GenomicInteractions(anchor.one, anchor.two, experiment_name="test", 
-#'                            description="this is a test", counts=interaction_counts)
+#' test <- GenomicInteractions(anchor.one, anchor.two, counts=interaction_counts)
 #'
 #' name(test)
 #' description(test)
@@ -59,29 +58,34 @@ setGeneric("annotationFeatures",function(GIObject){standardGeneric ("annotationF
 #' @rdname getters
 #' @export
 #' @aliases name
-setMethod("name", "GenomicInteractions", function(GIObject){ return(GIObject@metadata$experiment_name) } )
+setMethod("name", "GenomicInteractions", function(GIObject){ 
+  return(GIObject@metadata$experiment_name) } )
 
 #' @rdname getters
 #' @export
-setMethod("description", "GenomicInteractions", function(GIObject){ return(GIObject@metadata$description) } )
+setMethod("description", "GenomicInteractions", function(GIObject){ 
+  return(GIObject@metadata$description) } )
 
 #' @rdname getters
 #' @export
-setMethod("anchorOne", "GenomicInteractions", function(GIObject){ return(GIObject@anchor_one) } )
+setMethod("anchorOne", "GenomicInteractions", function(GIObject){ 
+  return(anchors(GIObject, type = "first")) } )
 
 #' @rdname getters
 #' @export
-setMethod("anchorTwo", "GenomicInteractions", function(GIObject){ return(GIObject@anchor_two) } )
+setMethod("anchorTwo", "GenomicInteractions", function(GIObject){ 
+  return(anchors(GIObject, type = "second")) } )
 
 #' @rdname getters
 #' @export
-setMethod("interactionCounts", "GenomicInteractions", function(GIObject){ return(GIObject@counts) })
+setMethod("interactionCounts", "GenomicInteractions", function(GIObject){ 
+  return(GIObject@elementMetadata$counts) })
 
 #' @rdname getters
 #' @export
 setMethod("annotationFeatures", "GenomicInteractions", function(GIObject){
-  if( "node.class" %in% names(elementMetadata(GIObject@anchor_one))) {
-    annotation = unique(c(GIObject@anchor_one$node.class, GIObject@anchor_two$node.class))
+  if( "node.class" %in% names(elementMetadata(GIObject@regions))) {
+    annotation = unique(GIObject@regions$node.class)
   } else { annotation = NA_character_ }
   return(annotation)
 } )
