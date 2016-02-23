@@ -36,22 +36,21 @@
 #' viewPoint(hic_data, pos, region)
 #' }
 viewPoint = function(x, bait, region=NULL, ...) {
-    if (any(names(mcols(anchorOne(x))) != names(mcols(anchorTwo(x))))) {
-        warning("Metadata differs between anchors and will be lost.")
-        mcols(x@anchor_one) = NULL
-        mcols(x@anchor_two) = NULL
-    }
-    hits = findOverlaps(x, bait, ...)
-    if (length(hits) == 0) return(GenomicInteractions())
-    vp = GenomicInteractions(anchor_one=bait[c(subjectHits(hits$one), 
+  hits <- list()  
+  hits$one <- findOverlaps(x, bait, use.region = "first")
+  hits$two <- findOverlaps(x, bait, use.region = "second")
+  if (length(hits) == 0) return(GenomicInteractions())
+  vp <- GenomicInteractions(anchor1 = bait[c(subjectHits(hits$one), 
                                           subjectHits(hits$two))],
-                             anchor_two=c(x@anchor_two[queryHits(hits$one)], 
-                                          x@anchor_one[queryHits(hits$two)]),
-                             counts=c(x@counts[queryHits(hits$one)], 
-                                      x@counts[queryHits(hits$two)]))
-    if (!is.null(region)) { vp = x[overlapsAny(x@anchor_two, region, ...)] }
-    ord = order(vp@anchor_one, vp@anchor_two)
-    return(vp[ord])
+                             anchor2 = c(anchorTwo(x)[queryHits(hits$one)], 
+                                          anchorOne(x)[queryHits(hits$two)]),
+                             counts = c(interactionCounts(x)[queryHits(hits$one)], 
+                                      interactionCounts(x)[queryHits(hits$two)]))
+  if (!is.null(region)) { 
+    vp <- x[overlapsAny(anchorTwo(x), region, ...)] 
+    }
+  ord = order(vp)
+  return(vp[ord])
 }
 
 #' Plot coverage around a virtual 4C viewpoint
@@ -73,8 +72,8 @@ viewPoint = function(x, bait, region=NULL, ...) {
 #' @export
 plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
     if (length(region) > 1) stop("region must be a single range")
-    x = x[overlapsAny(x@anchor_two, region, type="within")]
-    cov = as(coverage(x@anchor_two, weight = interactionCounts(x))[region], "GRanges")
+    x = x[overlapsAny(anchorTwo(x), region, type="within")]
+    cov = as(coverage(anchorTwo(x), weight = interactionCounts(x))[region], "GRanges")
     points_x = c(start(cov), end(cov)) + start(region)
     points_y = rep.int(cov$score, 2)
     ord = order(points_x)
