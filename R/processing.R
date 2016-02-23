@@ -21,11 +21,15 @@ setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBe
 setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
     #check anchors are unique
     if (ignore_overlaps == FALSE && any(countOverlaps(y, y) > 1)) stop("anchors are not unique")
+    
+    # this can probably be more efficient! to do: rewrite
     one = overlapsAny(anchorOne(x), y, ...)
     two = overlapsAny(anchorTwo(x), y, ...)
     x.valid = x[one & two]
-    overlaps = findOverlaps(sort(x.valid), y, select="first", ...) # select produces matrix not Hits
-    interactions = paste(overlaps[[1]], overlaps[[2]], sep=":")
+    hits <- list()
+    hits$one <- findOverlaps(anchorOne(x.valid), y, select = "first")
+    hits$two <- findOverlaps(anchorTwo(x.valid), y, select = "first") #select produces matrix not Hits
+    interactions = paste(hits[[1]], hits[[2]], sep=":")
     tabulated = table(interactions)
 
     pairs_list = strsplit(names(tabulated), ":")
@@ -37,10 +41,8 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
     counts = as.integer(tabulated)
 
     final_counts = GenomicInteractions(
-                       anchor_one=anchor_one,
-                       anchor_two=anchor_two,
-                       experiment_name = name(x),
-                       description = description(x),
+                       anchor1=anchor_one,
+                       anchor2=anchor_two,
                        counts=counts)
 
     return(sort(final_counts))
@@ -59,12 +61,11 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
 #' @export
 
 removeDups <- function(GIObject){
-    dat <- data.frame(Chr1 = seqnames(anchorOne(GIObject)),
-                      Start1 = start(anchorOne(GIObject)),
-                      Chr2 = seqnames(anchorTwo(GIObject)),
-                      Start2 = start(anchorTwo(GIObject))
-    )
-    idx <- which(!duplicated(dat))
+    if(any(interactionCounts(GIObject) != 1)){
+      warning("Some interactions have counts > 1: has the data already been summarised?\n",
+              "Will return first occurence of any duplicates not considering interactionCounts().")
+    }  
+    idx <- which(!duplicated(GIObject))
     reads_removed <- length(GIObject) - length(idx)
     percent_removed <- signif(100*reads_removed / length(GIObject), 3)
     message(paste0("Removing ", reads_removed, " duplicate PETs (", percent_removed, "%)"))
@@ -80,7 +81,7 @@ removeDups <- function(GIObject){
 #'  are on the same strand and FALSE otherwise.
 
 sameStrand <- function(GIObject){
-    return(strand(anchorOne(GIObject))==strand(anchorTwo(GIObject)))
+    return(strand(regions(GIObject)[GIObject@anchor1])==strand(regions(GIObject)[GIObject@anchor2]))
 }
 
 #' Get self ligation threshold with SD method from Heidari et al
