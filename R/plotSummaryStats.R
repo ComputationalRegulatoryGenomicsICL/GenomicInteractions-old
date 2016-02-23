@@ -23,7 +23,7 @@ plotSummaryStats <- function(GIObject, other=5, cut=10){
   p2 <- plotDists(GIObject)
   p4 <- plotCounts(GIObject, cut=cut)
   
-  if ("node.class" %in% names(elementMetadata(GIObject@anchor_one))) {
+  if ("node.class" %in% names(elementMetadata(GIObject@regions))) {
     p3 <- plotInteractionAnnotations(GIObject, other=other)
     p <- marrangeGrob(list(p4,p2,p1,p3), ncol=2, nrow =2, top = name(GIObject))
   }else{
@@ -99,7 +99,7 @@ plotDists <- function(GIObject, breaks=c(0, 1000, 5000, 10000, 50000, 100000, 50
   dists <- calculateDistances(GIObject, method=method)
   dists <- dists[!is.na(dists)]
 
-  breaks <- c(breaks, max(dists))
+  breaks <- unique(sort(c(breaks, max(dists))))
 
   labs <- vector()
   for(i in 1:length(breaks)-2){
@@ -140,7 +140,7 @@ plotDists <- function(GIObject, breaks=c(0, 1000, 5000, 10000, 50000, 100000, 50
 #' data(hic_example_data)
 #' plotInteractionAnnotations(hic_example_data)
 plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=NULL, other=0, keep.order=FALSE, legend=FALSE){
-
+  #add check for node classes existing!!
   dat <- categoriseInteractions(GIObject, node.classes, viewpoints)
 
   dat$fraction = dat$count / sum(dat$count)
@@ -206,8 +206,12 @@ plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=N
 #' data(hic_example_data)
 #' categoriseInteractions(hic_example_data)
 categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL){
+  if(!("node.class" %in% names(GIObject@regions@elementMetadata))){
+    stop("object not annotated!")
+  }
+  
   if(is.null(node.classes)){
-    node.classes <- unique(c(anchorOne(GIObject)$node.class, anchorTwo(GIObject)$node.class))
+    node.classes <- GIObject@regions$node.class
   }
 
   if(is.null(viewpoints)) {
