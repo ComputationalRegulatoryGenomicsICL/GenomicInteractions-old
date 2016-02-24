@@ -27,6 +27,7 @@
 #' test <- GenomicInteractions(anchor.one, anchor.two, counts=interaction_counts)
 #'
 #' @import GenomicRanges
+#' @importFrom S4Vectors DataFrame setValidity2
 #' @import InteractionSet
 #'
 #' @export GenomicInteractions
@@ -132,4 +133,32 @@ setMethod("GenomicInteractions", c("missing", "missing", "GenomicRangesORmissing
 setMethod("GenomicInteractions", c("ANY", "ANY", "ANY"), 
           function(anchor1, anchor2, counts, ...){
             GenomicInteractions(GInteractions(anchor1, anchor2, counts, ...))
+          })
+
+###############################################################################
+#' updateObject method for GenomicInteractions 1.3.7 and earlier
+#' 
+#' @importFrom Biobase updateObject
+#' @exportMethod
+
+setMethod("updateObject", signature(object="GenomicInteractions"),
+          function(object, ..., verbose = FALSE){
+            if (verbose){message("updating GenomicInteractions object")}
+            
+            anchor1 <- object@anchor_one
+            anchor2 <- object@anchor_two
+            all_anchors <- c(object@anchor_one, object@anchor_two)
+            mcols(anchor1) <- NULL
+            mcols(anchor2) <- NULL
+            
+            em <- DataFrame(counts = object@counts, object@elementMetadata)
+            
+            newobj <- GInteractions(anchor1, anchor2, 
+                                    all_anchors,
+                                    metadata = object@metadata,
+                                    elementMetadata = em)
+            
+            class(newobj) <- "GenomicInteractions"
+            names(mcols(newobj)) <- gsub("elementMetadata.", "", names(mcols(newobj)))
+            newobj
           })
