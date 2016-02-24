@@ -9,6 +9,7 @@ Author: Harmston, N., Ing-Simmons, E., Perry, M., Baresic, A., Lenhard,
 Maintainer: Malcolm Perry <mgperry32@gmail.com>,
     Liz Ing-Simmons <liz.ing-simmons12@csc.mrc.ac.uk>
 Imports:
+    InteractionSet,
     Rsamtools,
     GenomicRanges,
     IRanges,
@@ -36,3 +37,4 @@ biocViews: Software,Infrastructure,DataImport,DataRepresentation,HiC
 License: GPL-3
 Depends:
     R (>= 2.10)
+RoxygenNote: 5.0.1
