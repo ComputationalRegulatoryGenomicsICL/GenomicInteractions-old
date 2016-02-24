@@ -15,7 +15,6 @@
 #'
 #' @return An vector containing the distances between anchors/GRanges,
 #'         NA if on different chromosomes, rounded down to the nearest bp.
-#' @import GenomicRanges 
 #' @examples
 #'
 #' library(GenomicRanges)

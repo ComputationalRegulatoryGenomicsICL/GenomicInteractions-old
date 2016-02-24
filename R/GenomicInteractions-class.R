@@ -139,7 +139,7 @@ setMethod("GenomicInteractions", c("ANY", "ANY", "ANY"),
 #' updateObject method for GenomicInteractions 1.3.7 and earlier
 #' 
 #' @importFrom Biobase updateObject
-#' @exportMethod
+#' @export
 
 setMethod("updateObject", signature(object="GenomicInteractions"),
           function(object, ..., verbose = FALSE){

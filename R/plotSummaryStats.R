@@ -12,6 +12,7 @@
 #' @param other Default 5. Passed to plotInteractionAnnotations. Interaction types making up fewer than "other" percent of the total interactions will be consolidated into a single "other" category.
 #' @param cut Default 10. Passed to plotCounts.All interactions with counts > cut are consolidated into a single category.
 #' @return invisible(1)
+#' @import ggplot2
 #' @importFrom gridExtra marrangeGrob
 #' @export
 #'
@@ -38,7 +39,6 @@ plotSummaryStats <- function(GIObject, other=5, cut=10){
 #'
 #' @param GIObject A GenomicInteractions object
 #' @return A ggplot2 plot
-#' @import ggplot2
 #' @export
 #'
 #' @examples
@@ -87,7 +87,6 @@ plotCisTrans <- function(GIObject){
 #' @param breaks A numeric vector of breaks for the histogram
 #' @param method Method used for distance between anchors. Passed to calculateDistances. One of "midpoint", "inner", or "outer".
 #' @return A ggplot2 plot
-#' @import ggplot2
 #' @export
 #'
 #' @examples
@@ -133,7 +132,6 @@ plotDists <- function(GIObject, breaks=c(0, 1000, 5000, 10000, 50000, 100000, 50
 #'
 #' @return A ggplot2 plot
 #'
-#' @import ggplot2
 #' @export
 #'
 #' @examples
@@ -241,7 +239,6 @@ categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL)
 #' @param normalise Logical. If TRUE, plots proportion of total reads instead of count.
 #' @param cut Numeric, can be NULL. Default: 10. All interactions with counts > cut are consolidated into a single category.
 #' @return A ggplot2 plot
-#' @import ggplot2
 #' @export
 #'
 #' @examples

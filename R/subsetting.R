@@ -14,7 +14,6 @@
 setGeneric("subsetByFeatures",function(GIObject, features, feature.class=NULL){standardGeneric ("subsetByFeatures")})
 
 #' @rdname GenomicInteractions-subsetByFeatures-methods
-#' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "GRanges", "missing"), function(GIObject, features, feature.class=NULL){
     i <- overlapsAny(GIObject, features)
@@ -22,7 +21,6 @@ setMethod("subsetByFeatures", c("GenomicInteractions", "GRanges", "missing"), fu
 })
 
 #' @rdname GenomicInteractions-subsetByFeatures-methods
-#' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "GRangesList", "missing"), function(GIObject, features, feature.class=NULL){
   i <- overlapsAny(GIObject, features)
@@ -30,7 +28,6 @@ setMethod("subsetByFeatures", c("GenomicInteractions", "GRangesList", "missing")
 })
 
 #' @rdname GenomicInteractions-subsetByFeatures-methods
-#' @import GenomicRanges
 #' @export
 setMethod("subsetByFeatures", c("GenomicInteractions", "character", "character"), 
           function(GIObject, features, feature.class){

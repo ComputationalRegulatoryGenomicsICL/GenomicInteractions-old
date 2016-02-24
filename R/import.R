@@ -21,7 +21,6 @@
 #' @importFrom Rsamtools scanBamFlag ScanBamParam scanBam bamFlagAsBitMatrix
 #' @importFrom IRanges IRanges
 #' @importFrom data.table data.table fread .N
-#' @importFrom stringr str_split
 #'
 #' @examples
 #'

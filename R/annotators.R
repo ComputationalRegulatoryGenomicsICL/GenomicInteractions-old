@@ -33,7 +33,6 @@ setMethod("resetAnnotations", c("GenomicInteractions"), function(GIObject){
 #' 
 #' @rdname annotateAnchors
 #' @docType methods
-#' @import GenomicRanges
 #' @export
 setGeneric("annotateAnchors",function(GIObject, oneOrTwo, name, dat){standardGeneric ("annotateAnchors")})
 #' @rdname annotateAnchors
@@ -90,7 +89,6 @@ setMethod("annotateRegions", c("GenomicInteractions", "character", "vector"),
 #' @return invisible(1)
 #' @rdname annotateInteractions
 #' @docType methods
-#' @import GenomicRanges
 #' @export
 #' 
 #' @examples

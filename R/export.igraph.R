@@ -9,7 +9,7 @@
 #' @param GIObject A GenomicInteractions object.
 #'
 #' @return a graph.data.frame representation of the GenomicInteractions object
-#' @importFrom igraph graph.data.frame
+#' @importFrom igraph graph_from_data_frame
 #'
 #' @export
 #' @docType methods

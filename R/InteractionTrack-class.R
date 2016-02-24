@@ -31,6 +31,7 @@
 #'
 #' @import Gviz
 #' @import grid
+#' @importFrom stringr str_split
 #'
 #' @export InteractionTrack
 setClass("InteractionTrack",
