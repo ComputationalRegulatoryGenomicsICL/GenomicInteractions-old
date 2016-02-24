@@ -244,7 +244,7 @@ categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL)
 #' @import ggplot2
 #' @export
 #'
-#'  @examples
+#' @examples
 #' data(hic_example_data)
 #' plotCounts(hic_example_data)
 #' plotCounts(hic_example_data, normalise=TRUE)
