@@ -26,4 +26,13 @@ Plots coverage of interactions around a given viewpoint. This function requires
 the output of `viewPoint()` as input. You should additionally specify the total 
 region you wish to plot.
 }
+\examples{
+data(hic_example_data)
+library(GenomicRanges)
+pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
+vp <- viewPoint(hic_example_data, pos, region)
+plotViewpoint(vp, region)
+
+}
 

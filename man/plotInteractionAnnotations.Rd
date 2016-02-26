@@ -32,7 +32,11 @@ A ggplot2 plot
 Plot a donut plot of interaction types for an annotated GenomicInteractions object
 }
 \examples{
+library("GenomicRanges")
 data(hic_example_data)
+data(mm9_refseq_promoters)
+mm9_refseq_grl = split(mm9_refseq_promoters, mm9_refseq_promoters$id)
+annotateInteractions(hic_example_data, list(promoter=mm9_refseq_grl))
 plotInteractionAnnotations(hic_example_data)
 }
 

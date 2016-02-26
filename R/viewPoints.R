@@ -30,8 +30,8 @@
 #' @examples
 #' data(hic_example_data)
 #' library(GenomicRanges)
-#' pos <- GRanges(seqnames="chr5", ranges=IRanges(start=115938063, end=115941352))
-#' region <- GRanges(seqnames="chr5", ranges=IRanges(start=115838063, end=116041352))
+#' pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+#' region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
 #' vp <- viewPoint(hic_example_data, pos, region)
 viewPoint = function(x, bait, region=NULL, ...) {
   hits <- list()  
@@ -66,9 +66,18 @@ viewPoint = function(x, bait, region=NULL, ...) {
 #' 
 #' @return Coverage that is plotted (invisibly)
 #'
+#' @examples
+#' data(hic_example_data)
+#' library(GenomicRanges)
+#' pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+#' region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
+#' vp <- viewPoint(hic_example_data, pos, region)
+#' plotViewpoint(vp, region)
+#'
 #' @import GenomicRanges
 #' @importFrom graphics plot
 #' @export
+#' 
 plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
     if (length(region) > 1) stop("region must be a single range")
     x = x[overlapsAny(anchorTwo(x), region, type="within")]
@@ -103,6 +112,13 @@ plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
 #' 
 #' @return  Coverage that is plotted (invisibly)
 #'
+#' @examples
+#' data(hic_example_data)
+#' library(GenomicRanges)
+#' pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+#' region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
+#' vp <- viewPoint(hic_example_data, pos, region)
+#' plotAvgViewpoint(vp, left_dist = 1000000, right_dist = 100000)
 #' @import GenomicRanges
 #' @importFrom S4Vectors runValue
 #' @export

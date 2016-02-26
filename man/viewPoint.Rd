@@ -38,11 +38,10 @@ you can do this by creating coverage over anchor two of the object and exporting
 as a wig or bedgraph file.
 }
 \examples{
-data(hic_data)
+data(hic_example_data)
 library(GenomicRanges)
-pos <- GRanges(seqnames="chr5", ranges=IRanges(start=115938063, end=115941352))
-region <- GRanges(seqnames="chr5", ranges=IRanges(start=115838063, end=116041352))
-viewPoint(hic_data, pos, region)
-
+pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
+vp <- viewPoint(hic_example_data, pos, region)
 }
 

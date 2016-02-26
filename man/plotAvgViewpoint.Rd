@@ -4,7 +4,7 @@
 \alias{plotAvgViewpoint}
 \title{Plot coverage around a set of virtual 4C viewpoints}
 \usage{
-plotAvgViewpoint(x, left_dist = 1e+05, right_dist = 1e+05,
+plotAvgViewpoint(x, left_dist = 100000, right_dist = 100000,
   ylab = "Average signal", xlab = "Relative position", fix = "center",
   ...)
 }
@@ -30,5 +30,13 @@ Coverage that is plotted (invisibly)
 \description{
 Plots summarised coverage of interactions around a set of viewpoints, 
 e.g. promoters. This function requires the output of `viewPoint()` as input.
+}
+\examples{
+data(hic_example_data)
+library(GenomicRanges)
+pos <- GRanges(seqnames="chr15", ranges=IRanges(start=59477709, end=59482708))
+region <- GRanges(seqnames="chr15", ranges=IRanges(start=58980209, end=59980208))
+vp <- viewPoint(hic_example_data, pos, region)
+plotAvgViewpoint(vp, left_dist = 1000000, right_dist = 100000)
 }
 

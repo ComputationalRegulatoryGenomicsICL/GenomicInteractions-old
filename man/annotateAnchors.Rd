@@ -4,7 +4,7 @@
 \name{annotateAnchors}
 \alias{annotateAnchors}
 \alias{annotateAnchors,GenomicInteractions,numeric,character,vector-method}
-\title{Annotate anchors}
+\title{Annotate anchors - DEPRECATED}
 \usage{
 annotateAnchors(GIObject, oneOrTwo, name, dat)
 
@@ -27,7 +27,7 @@ containing data with which to annotate the object.}
 invisible(1)
 }
 \description{
-This function directly annotates a single set of anchors using the GRanges
-elementMetadata.
+This function is deprecated and will be removed in the next release of Bioconductor.
+Use `annotateRegions` instead.
 }
 

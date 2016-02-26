@@ -21,10 +21,10 @@ setMethod("resetAnnotations", c("GenomicInteractions"), function(GIObject){
       return(invisible(1))
 })
 
-#' Annotate anchors
+#' Annotate anchors - DEPRECATED
 #'
-#' This function directly annotates a single set of anchors using the GRanges
-#' elementMetadata.
+#' This function is deprecated and will be removed in the next release of Bioconductor.
+#' Use `annotateRegions` instead.
 #'
 #' @param GIObject A GenomicInteractions object
 #' @param oneOrTwo An integer indicating which anchor to annotate

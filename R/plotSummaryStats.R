@@ -135,7 +135,11 @@ plotDists <- function(GIObject, breaks=c(0, 1000, 5000, 10000, 50000, 100000, 50
 #' @export
 #'
 #' @examples
+#' library("GenomicRanges")
 #' data(hic_example_data)
+#' data(mm9_refseq_promoters)
+#' mm9_refseq_grl = split(mm9_refseq_promoters, mm9_refseq_promoters$id)
+#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_grl))
 #' plotInteractionAnnotations(hic_example_data)
 plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=NULL, other=0, keep.order=FALSE, legend=FALSE){
   #add check for node classes existing!!
@@ -201,7 +205,11 @@ plotInteractionAnnotations <- function(GIObject, node.classes=NULL, viewpoints=N
 #' @export
 #'
 #' @examples
+#' library("GenomicRanges")
 #' data(hic_example_data)
+#' data(mm9_refseq_promoters)
+#' mm9_refseq_grl = split(mm9_refseq_promoters, mm9_refseq_promoters$id)
+#' annotateInteractions(hic_example_data, list(promoter=mm9_refseq_grl))
 #' categoriseInteractions(hic_example_data)
 categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL){
   if(!("node.class" %in% names(GIObject@regions@elementMetadata))){
