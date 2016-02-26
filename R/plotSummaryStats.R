@@ -209,7 +209,7 @@ categoriseInteractions <- function(GIObject, node.classes=NULL, viewpoints=NULL)
   }
   
   if(is.null(node.classes)){
-    node.classes <- GIObject@regions$node.class
+    node.classes <- unique(regions(GIObject)$node.class)
   }
 
   if(is.null(viewpoints)) {

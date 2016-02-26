@@ -35,10 +35,6 @@ setGeneric("name<-",function(GIObject, value){standardGeneric ("name<-")})
 
 #' @rdname setters
 #' @export
-setGeneric("description<-",function(GIObject, value){standardGeneric ("description<-")})
-
-#' @rdname setters
-#' @export
 setGeneric("interactionCounts<-",function(GIObject, value){standardGeneric ("interactionCounts<-")})
 
 ## METHODS
@@ -51,10 +47,11 @@ setReplaceMethod("name", "GenomicInteractions", function(GIObject, value){
     })
 
 #' @rdname setters
+#' @importMethodsFrom Biobase 'description<-'
 #' @export
-setReplaceMethod("description", "GenomicInteractions", function(GIObject, value){
-    GIObject@metadata$description = value
-    GIObject
+setReplaceMethod("description", "GenomicInteractions", function(object, value){
+    object@metadata$description = value
+    object
 })
 
 #' @rdname setters

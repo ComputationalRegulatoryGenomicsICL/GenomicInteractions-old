@@ -8,7 +8,6 @@
 \alias{anchorTwo,GenomicInteractions-method}
 \alias{annotationFeatures}
 \alias{annotationFeatures,GenomicInteractions-method}
-\alias{description}
 \alias{description,GenomicInteractions-method}
 \alias{getters}
 \alias{interactionCounts}
@@ -18,8 +17,6 @@
 \title{Functions to access data held in a GenomicInteractions object.}
 \usage{
 name(GIObject)
-
-description(GIObject)
 
 anchorOne(GIObject)
 
@@ -31,7 +28,7 @@ annotationFeatures(GIObject)
 
 \S4method{name}{GenomicInteractions}(GIObject)
 
-\S4method{description}{GenomicInteractions}(GIObject)
+\S4method{description}{GenomicInteractions}(object)
 
 \S4method{anchorOne}{GenomicInteractions}(GIObject)
 

@@ -140,7 +140,10 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
                  counts = counts,
                  metadata = list(experiment_name = experiment_name, description = description),
                  elementMetadata = em)
+    names(mcols(giobject)) <- gsub("elementMetadata.", "", names(mcols(giobject)))
+    
     return(giobject)
+    
 }
 
 

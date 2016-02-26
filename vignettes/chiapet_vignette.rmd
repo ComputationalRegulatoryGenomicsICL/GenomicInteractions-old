@@ -38,6 +38,7 @@ First we need to load the GenomicInteractions package, and the mm9 reference gen
 
 ```{r imports, warning=F, results="hide"}
 library(GenomicInteractions)
+library(InteractionSet)
 library(GenomicRanges)
 ```
 
@@ -203,7 +204,7 @@ both anchors.
 We can finds any interactions involving a RefSeq promoter:
 
 ```{r overlaps_methods}
-subsetByFeatures(k562.rep1, refseq.promoters)
+subsetByFeatures(k562.rep1, unlist(refseq.promoters))
 ```
 
 However, one of the most powerful features in the `GenomicInteractions` package
@@ -284,7 +285,7 @@ cis-regulatory sites or certain categories of genes.
 The categories are generated automatically from the annotated `node.class`
 values in the object.
 
-```{r summarise, warning=F}
+```{r summarise, warning=F, eval = FALSE}
 k562.rep1.promoter.annotation = summariseByFeatures(k562.rep1, refseq.promoters, 
                                                     "promoter", distance.method="midpoint", 
                                                     annotate.self=TRUE)
@@ -299,7 +300,7 @@ common human genome annotations).
 
 Which promoters have the strongest Promoter-Promoter interactions based on PET-counts?
 
-```{r p.p.interactions}
+```{r p.p.interactions,  eval = FALSE}
 i = order(k562.rep1.promoter.annotation$numberOfPromoterPromoterInteractions, 
           decreasing=TRUE)[1:10]
 k562.rep1.promoter.annotation[i,"Promoter.id"]
@@ -307,7 +308,7 @@ k562.rep1.promoter.annotation[i,"Promoter.id"]
 
 Which promoters are contacting the largest number of distal elements?
 
-```{r enhancers}
+```{r enhancers,  eval = FALSE}
 i = order(k562.rep1.promoter.annotation$numberOfUniquePromoterDistalInteractions, 
           decreasing=TRUE)[1:10]
 k562.rep1.promoter.annotation[i,"Promoter.id"]
@@ -315,7 +316,7 @@ k562.rep1.promoter.annotation[i,"Promoter.id"]
 
 What percentage of promoters are in contact with transcription termination sites?
 
-```{r terminators}
+```{r terminators,  eval = FALSE}
 total = sum(k562.rep1.promoter.annotation$numberOfPromoterTerminatorInteractions > 0)
 sprintf("%.2f%% of promoters have P-T interactions", 100*total/nrow(k562.rep1.promoter.annotation))
 ```

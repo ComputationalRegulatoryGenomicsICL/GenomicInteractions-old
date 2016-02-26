@@ -2,8 +2,7 @@
 % Please edit documentation in R/setters.R
 \docType{methods}
 \name{setters}
-\alias{description<-}
-\alias{description<-,GenomicInteractions-method}
+\alias{description<-,GenomicInteractions,ANY-method}
 \alias{interactionCounts<-}
 \alias{interactionCounts<-,GenomicInteractions-method}
 \alias{name<-}
@@ -13,13 +12,11 @@
 \usage{
 name(GIObject) <- value
 
-description(GIObject) <- value
-
 interactionCounts(GIObject) <- value
 
 \S4method{name}{GenomicInteractions}(GIObject) <- value
 
-\S4method{description}{GenomicInteractions}(GIObject) <- value
+\S4method{description}{GenomicInteractions,ANY}(object) <- value
 
 \S4method{interactionCounts}{GenomicInteractions}(GIObject) <- value
 }

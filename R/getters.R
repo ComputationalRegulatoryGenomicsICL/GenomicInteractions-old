@@ -35,10 +35,6 @@ setGeneric("name",function(GIObject){standardGeneric ("name")})
 
 #' @rdname getters
 #' @export
-setGeneric("description",function(GIObject){standardGeneric ("description")})
-
-#' @rdname getters
-#' @export
 setGeneric("anchorOne",function(GIObject){standardGeneric ("anchorOne")})
 
 #' @rdname getters
@@ -62,9 +58,10 @@ setMethod("name", "GenomicInteractions", function(GIObject){
   return(GIObject@metadata$experiment_name) } )
 
 #' @rdname getters
+#' @importMethodsFrom Biobase description
 #' @export
-setMethod("description", "GenomicInteractions", function(GIObject){ 
-  return(GIObject@metadata$description) } )
+setMethod("description", c("GenomicInteractions"), function(object){ 
+  return(object@metadata$description) } )
 
 #' @rdname getters
 #' @export
