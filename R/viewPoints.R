@@ -28,13 +28,11 @@
 #' @import GenomicRanges
 #' @export
 #' @examples
-#' \dontrun{
-#' data(hic_data)
+#' data(hic_example_data)
 #' library(GenomicRanges)
 #' pos <- GRanges(seqnames="chr5", ranges=IRanges(start=115938063, end=115941352))
 #' region <- GRanges(seqnames="chr5", ranges=IRanges(start=115838063, end=116041352))
-#' viewPoint(hic_data, pos, region)
-#' }
+#' vp <- viewPoint(hic_example_data, pos, region)
 viewPoint = function(x, bait, region=NULL, ...) {
   hits <- list()  
   hits$one <- findOverlaps(x, bait, use.region = "first")
@@ -69,6 +67,7 @@ viewPoint = function(x, bait, region=NULL, ...) {
 #' @return Coverage that is plotted (invisibly)
 #'
 #' @import GenomicRanges
+#' @importFrom graphics plot
 #' @export
 plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
     if (length(region) > 1) stop("region must be a single range")
@@ -105,6 +104,7 @@ plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
 #' @return  Coverage that is plotted (invisibly)
 #'
 #' @import GenomicRanges
+#' @importFrom S4Vectors runValue
 #' @export
 plotAvgViewpoint = function(x, left_dist = 100000, right_dist = 100000, ylab="Average signal", 
                             xlab="Relative position", fix = "center",...) {

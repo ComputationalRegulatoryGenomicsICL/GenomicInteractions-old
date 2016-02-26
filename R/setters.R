@@ -7,8 +7,8 @@
 #' @param GIObject A GenomicInteractions object
 #' @param value A vector to replace a slot in the object
 #' @return GenomicInteractions object
-#'
-#'  @examples
+#' @rdname setters
+#' @examples
 #'
 #' library(GenomicRanges)
 #'
@@ -47,6 +47,7 @@ setReplaceMethod("name", "GenomicInteractions", function(GIObject, value){
     })
 
 #' @rdname setters
+#' @inheritParams Biobase::'description<-'
 #' @importMethodsFrom Biobase 'description<-'
 #' @export
 setReplaceMethod("description", "GenomicInteractions", function(object, value){

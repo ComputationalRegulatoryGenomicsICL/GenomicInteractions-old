@@ -26,4 +26,8 @@ invisible(1) if outputting to file or a data.frame containing all of the corresp
 then a data.frame containing the information is returned. The value of the score parameter defines which field is used
 to populate the score field.
 }
+\examples{
+data(hic_example_data)
+export.bedpe(hic_example_data, fn = tempfile(), score = "counts")
+}
 

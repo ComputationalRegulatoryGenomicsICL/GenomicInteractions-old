@@ -23,4 +23,9 @@ should be non-overlapping. This should already be the case for HiC data (either 
 fragments), however ChIA-PET data can contain overlapping anchors, which may need to be reduced to
 non-overlapping regions before graph export.
 }
+\examples{
+data(hic_example_data)
+ig <- export.igraph(hic_example_data)
+
+}
 

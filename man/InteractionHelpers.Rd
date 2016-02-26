@@ -79,4 +79,10 @@ Functions to classify interactions within GenomicInteractions objects.
     \item "is.trans" & "is.cis" select trans-chromosomal and
           intra-chromosomal interactions, respectively }
 }
+\examples{
+data(hic_example_data)
+table(is.cis(hic_example_data))
+sum(interactionCounts(hic_example_data))
+
+}
 

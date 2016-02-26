@@ -27,4 +27,8 @@ and writes to a specified file. If filename is not specified,
 then a data.frame containing the information is returned. The value of the score parameter defines which field is used
 to populate the score field.
 }
+\examples{
+data(hic_example_data)
+export.chiasig(hic_example_data, fn = tempfile(), score = "counts")
+}
 

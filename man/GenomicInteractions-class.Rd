@@ -9,8 +9,7 @@
  @slot anchor_one,anchor_two GRanges. Set of anchors of interactions.
  @slot counts integer vector, contains raw counts
  @slot elementMetadata DataFrame
-}
-\details{
+ 
 This class is used to store information on which genomic regions are
 interacting with each other. Objects of this class contain information of
 the genomic coordinates of the interacting regions and the strength of these

@@ -336,6 +336,9 @@ setMethod("drawGD", signature("InteractionTrack"), function(GdObject, minBase, m
 #' 
 #' @return returns a list of the default display parameters.
 #' 
+#' @examples
+#' availableDisplayPars("InteractionTrack")
+#' 
 #' @importFrom Gviz availableDisplayPars
 #' @export
 availableDisplayPars = function(class){

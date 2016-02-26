@@ -3,3 +3,4 @@
 #'  @name GenomicInteractions-package
 #'  @docType package
 #'  @import methods
+"_PACKAGE"

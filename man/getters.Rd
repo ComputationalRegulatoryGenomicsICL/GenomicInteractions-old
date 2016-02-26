@@ -40,6 +40,8 @@ annotationFeatures(GIObject)
 }
 \arguments{
 \item{GIObject}{A GenomicInteractions object}
+
+\item{object}{Object, possibly derived from class \code{\link{eSet-class}}.}
 }
 \value{
 For 'anchorOne' and 'anchorTwo', a GRanges. For 'interactionCounts', 
@@ -47,8 +49,12 @@ a numeric vector with counts for each interaction in the object. For
   'description' and 'name',  a character vector with
   length 1. For 'annotationFeatures', a character vector of features with
   which the object was previously annotated, or 'NA' if the object is unannotated.
-
- @examples
+}
+\description{
+Use these functions to access data stored in each of the slots of a
+GenomicInteractions object.
+}
+\examples{
 
 library(GenomicRanges)
 
@@ -62,9 +68,6 @@ description(test)
 anchorOne(test)
 anchorTwo(test)
 interactionCounts(test)
-}
-\description{
-Use these functions to access data stored in each of the slots of a
-GenomicInteractions object.
+
 }
 

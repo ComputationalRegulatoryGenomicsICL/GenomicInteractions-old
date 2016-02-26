@@ -24,11 +24,17 @@ interactionCounts(GIObject) <- value
 \item{GIObject}{A GenomicInteractions object}
 
 \item{value}{A vector to replace a slot in the object}
+
+\item{object}{Object, possibly derived from class \code{\link{eSet-class}}.}
 }
 \value{
 GenomicInteractions object
-
- @examples
+}
+\description{
+Use these functions to set data stored in each of the slots of a
+GenomicInteractions object.
+}
+\examples{
 
 library(GenomicRanges)
 
@@ -46,9 +52,6 @@ description(test)
 
 interactionCounts(test) <- c(2,3,8,5)
 interactionCounts(test)
-}
-\description{
-Use these functions to set data stored in each of the slots of a
-GenomicInteractions object.
+
 }
 

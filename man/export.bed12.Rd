@@ -34,4 +34,8 @@ invisible(1) if outputting to file or a data.frame containing all of the corresp
 \description{
 Export interactions in BED12 format.
 }
+\examples{
+data(hic_example_data)
+export.bed12(hic_example_data, fn = tempfile(), score = "counts", drop.trans=TRUE)
+}
 

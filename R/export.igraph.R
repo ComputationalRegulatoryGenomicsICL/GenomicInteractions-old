@@ -8,6 +8,10 @@
 #' non-overlapping regions before graph export.
 #' @param GIObject A GenomicInteractions object.
 #'
+#' @examples
+#' data(hic_example_data)
+#' ig <- export.igraph(hic_example_data)
+#' 
 #' @return a graph.data.frame representation of the GenomicInteractions object
 #' @importFrom igraph graph_from_data_frame
 #'
@@ -15,6 +19,7 @@
 #' @docType methods
 #' @rdname export.igraph
 #' @export
+#' 
 setGeneric("export.igraph",function(GIObject){standardGeneric ("export.igraph")})
 #' @rdname export.igraph
 #' @export

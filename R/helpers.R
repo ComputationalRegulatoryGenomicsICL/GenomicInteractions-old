@@ -50,6 +50,11 @@ setGeneric("is.cis",function(GIObject){standardGeneric ("is.cis")})
 #'           intra-chromosomal interactions, respectively }
 #' @param GIObject A GenomicInteractions object
 #' @return A logical vector
+#' @examples 
+#' data(hic_example_data)
+#' table(is.cis(hic_example_data))
+#' sum(interactionCounts(hic_example_data))
+#' 
 #' @name InteractionHelpers
 #' @rdname InteractionHelpers
 NULL

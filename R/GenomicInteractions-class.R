@@ -6,7 +6,7 @@
 #'  @slot anchor_one,anchor_two GRanges. Set of anchors of interactions.
 #'  @slot counts integer vector, contains raw counts
 #'  @slot elementMetadata DataFrame
-#'
+#'  
 #' This class is used to store information on which genomic regions are
 #' interacting with each other. Objects of this class contain information of
 #' the genomic coordinates of the interacting regions and the strength of these
@@ -29,8 +29,9 @@
 #' @import GenomicRanges
 #' @importFrom S4Vectors DataFrame setValidity2
 #' @import InteractionSet
+#' @import methods
 #'
-#' @export GenomicInteractions
+#' @exportClass GenomicInteractions
 
 setClass("GenomicInteractions", 
          contains="GInteractions",
@@ -64,13 +65,10 @@ setValidity2("GenomicInteractions", function(object) {
 #'
 #' Create GenomicInteractions objects from two GRanges ojects.
 #'
-#' @param anchor_one,anchor_two GRanges objects.
+#' @param anchor1,anchor2 GRanges objects.
 #' @param counts An integer vector, defaults to 1.
-#' @param experiment_name Experiment name.
-#' @param description Description of experiment.
 #' @param ... Additional data to be added to mcols
 #' @return a GenomicInteractions object
-#'
 #' @examples
 #' 
 #' library(GenomicRanges)
@@ -81,16 +79,17 @@ setValidity2("GenomicInteractions", function(object) {
 #' test <- GenomicInteractions(anchor.one, anchor.two, counts=interaction_counts)
 #'
 #' @export
-
-###############################################################
-# Constructors
 setGeneric("GenomicInteractions", function(anchor1, anchor2, counts, ...){ standardGeneric("GenomicInteractions")})
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("GRanges", "GRanges", "numeric"), 
           function(anchor1, anchor2, counts, ...){
             out <- GInteractions(anchor1, anchor2, counts = counts, ...)
             class(out) <- "GenomicInteractions"
             out
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("GInteractions"), 
           function(anchor1){
             out <- anchor1
@@ -103,6 +102,8 @@ setMethod("GenomicInteractions", c("GInteractions"),
             class(out) <- "GenomicInteractions"
             out
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("GInteractions", "numeric"), 
           function(anchor1, anchor2){
             out <- anchor1
@@ -110,10 +111,14 @@ setMethod("GenomicInteractions", c("GInteractions", "numeric"),
             class(out) <- "GenomicInteractions"
             out
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("numeric", "numeric", "GRanges"),
           function(anchor1, anchor2, counts, ...){
             GenomicInteractions(GInteractions(anchor1, anchor2, counts, ...))
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("GRanges", "GRanges", "GenomicRangesORmissing"),
           function(anchor1, anchor2, counts, ...){
             if(missing(counts)){
@@ -122,6 +127,8 @@ setMethod("GenomicInteractions", c("GRanges", "GRanges", "GenomicRangesORmissing
               GenomicInteractions(GInteractions(anchor1, anchor2, counts, ...))
             }
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("missing", "missing", "GenomicRangesORmissing"),
           function(anchor1, anchor2, counts, ...){
             if(missing(counts)){
@@ -130,6 +137,8 @@ setMethod("GenomicInteractions", c("missing", "missing", "GenomicRangesORmissing
               GenomicInteractions(GInteractions(integer(0), integer(0), counts))
             }
           })
+
+#' @rdname GenomicInteractions
 setMethod("GenomicInteractions", c("ANY", "ANY", "ANY"), 
           function(anchor1, anchor2, counts, ...){
             GenomicInteractions(GInteractions(anchor1, anchor2, counts, ...))
@@ -138,6 +147,8 @@ setMethod("GenomicInteractions", c("ANY", "ANY", "ANY"),
 ###############################################################################
 #' updateObject method for GenomicInteractions 1.3.7 and earlier
 #' 
+#' @inheritParams BiocGenerics::updateObject
+#' @return A GenomicInteractions object
 #' @importFrom Biobase updateObject
 #' @export
 
@@ -147,7 +158,7 @@ setMethod("updateObject", signature(object="GenomicInteractions"),
             
             anchor1 <- object@anchor_one
             anchor2 <- object@anchor_two
-            all_anchors <- c(object@anchor_one, object@anchor_two)
+            all_anchors <- unique(c(object@anchor_one, object@anchor_two))
             mcols(anchor1) <- NULL
             mcols(anchor2) <- NULL
             

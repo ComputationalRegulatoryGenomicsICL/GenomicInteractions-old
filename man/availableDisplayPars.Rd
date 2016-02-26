@@ -20,4 +20,8 @@ returns a list of the default display parameters.
 \description{
 The default display parameters for a track object class can be queries using the availableDisplayPars function.
 }
+\examples{
+availableDisplayPars("InteractionTrack")
+
+}
 

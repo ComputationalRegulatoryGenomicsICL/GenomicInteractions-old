@@ -16,6 +16,8 @@ setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBe
 #' @param ... Extra parameters to pass to findOverlaps
 #' @rdname countsBetweenAnchors-methods
 #' @docType methods
+#' 
+#' @importFrom IRanges overlapsAny
 #' @export
 setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
     #check anchors are unique
@@ -168,7 +170,7 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
 #' accepted values. Can also be NA for no adjustment.
 #' @param plot TRUE by default. Whether to plot the percentage of reads 
 #' on opposite strands vs difference and the binomial test p value vs distance.
-#'
+#' @importFrom stats binom.test complete.cases p.adjust sd
 #' @export
 #' @return The cutoff in base pairs below which an interaction is likely to be a self ligation.
 

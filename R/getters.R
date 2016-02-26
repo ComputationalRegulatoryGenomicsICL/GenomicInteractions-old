@@ -5,14 +5,15 @@
 #'
 #' @name getters
 #' @param GIObject A GenomicInteractions object
-#'
+#' @rdname getters
+#' 
 #' @return For 'anchorOne' and 'anchorTwo', a GRanges. For 'interactionCounts', 
 #' a numeric vector with counts for each interaction in the object. For
 #'   'description' and 'name',  a character vector with
 #'   length 1. For 'annotationFeatures', a character vector of features with
 #'   which the object was previously annotated, or 'NA' if the object is unannotated.
 #'
-#'  @examples
+#' @examples
 #'
 #' library(GenomicRanges)
 #'
@@ -58,6 +59,7 @@ setMethod("name", "GenomicInteractions", function(GIObject){
   return(GIObject@metadata$experiment_name) } )
 
 #' @rdname getters
+#' @inheritParams Biobase::description
 #' @importMethodsFrom Biobase description
 #' @export
 setMethod("description", c("GenomicInteractions"), function(object){ 

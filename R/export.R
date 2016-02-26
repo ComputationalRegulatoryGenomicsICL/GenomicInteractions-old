@@ -14,12 +14,16 @@
 #'
 #' @return invisible(1) if outputting to file or a data.frame containing all of the corresponding information
 #' @export
+#' @examples 
+#' data(hic_example_data)
+#' export.bed12(hic_example_data, fn = tempfile(), score = "counts", drop.trans=TRUE)
 #' @docType methods
 #' @rdname export.bed12
-#' @export
+
 setGeneric("export.bed12",function(GIObject, fn=NULL, score="counts", drop.trans=c(FALSE, TRUE)){standardGeneric ("export.bed12")})
 #' @rdname export.bed12
 #' @export
+#' @importFrom utils write.table
 setMethod("export.bed12", c("GenomicInteractions"),
         function(GIObject, fn=NULL, score="counts", drop.trans=c(FALSE, TRUE)){
             # drop.trans not used???
@@ -30,8 +34,8 @@ setMethod("export.bed12", c("GenomicInteractions"),
             trans = GIObject[is_trans]
 
             len = length(cis)
-            s1 = strand(anchorOne(cis))
-            s2 = strand(anchorTwo(cis))
+            s1 = as.vector(strand(anchorOne(cis)))
+            s2 = as.vector(strand(anchorTwo(cis)))
 
             output_cis = data.frame(
                 chr=as.character(seqnames(anchorOne(cis))),
@@ -46,7 +50,8 @@ setMethod("export.bed12", c("GenomicInteractions"),
                 blockCount=2,
                 blockSizes=paste(as.character(width(anchorOne(cis))),
                                  as.character(width(anchorTwo(cis))), sep=","),
-                                 blockStarts=paste(0, start(anchorTwo(cis)) - start(anchorOne(cis)), sep=","))
+                                 blockStarts=paste(0, start(anchorTwo(cis)) - start(anchorOne(cis)), sep=","),
+                stringsAsFactors = FALSE)
 
             output_trans = data.frame(
                 chr=c(as.character(seqnames(anchorOne(trans))),
@@ -66,7 +71,8 @@ setMethod("export.bed12", c("GenomicInteractions"),
                 itemRgb=rep("255,0,0", length(trans)),
                 blockCount=1,
                 blockSizes=c(as.character(width(anchorOne(trans))), as.character(width(anchorTwo(trans)))),
-                blockStarts=0)
+                blockStarts=0,
+                stringsAsFactors = FALSE)
 
             if (!is.null(fn)) {
                 write.table(output_cis, fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
@@ -104,6 +110,9 @@ setMethod("export.bed12", c("GenomicInteractions"),
 #' @docType methods
 #' @rdname export.bedpe
 #' @export
+#' @examples 
+#' data(hic_example_data)
+#' export.bedpe(hic_example_data, fn = tempfile(), score = "counts")
 setGeneric("export.bedpe", function(GIObject, fn=NULL, score="counts"){ standardGeneric("export.bedpe")} )
 #' @rdname export.bedpe
 #' @export
@@ -148,6 +157,9 @@ setMethod("export.bedpe", c("GenomicInteractions"), function(GIObject, fn=NULL, 
 #' @docType methods
 #' @rdname export.chiasig
 #' @export
+#' @examples 
+#' data(hic_example_data)
+#' export.chiasig(hic_example_data, fn = tempfile(), score = "counts")
 setGeneric("export.chiasig", function(GIObject, fn=NULL, score="counts"){ standardGeneric("export.chiasig")} )
 #' @rdname export.chiasig
 #' @export

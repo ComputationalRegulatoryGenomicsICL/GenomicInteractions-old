@@ -10,6 +10,8 @@ capitalize = function(x) {
     paste0(toupper(substr(x, 1, 1)), tolower(substring(x, 2)))
 }
 
+#' @importFrom GenomeInfoDb seqinfo seqlevels 'seqlevels<-' seqlengths genome isCircular 
+
 .isEqualSeqInfo = function(one, two) {
     seqinfo.one = seqinfo(one)
     seqinfo.two = seqinfo(two)

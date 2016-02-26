@@ -20,4 +20,8 @@ invisible(1)
 This function removes all annotations from a GenomicInteractions object by
 deleting  all of the metadata columns associated with both anchors.
 }
+\examples{
+data(hic_example_data)
+resetAnnotations(hic_example_data)
+}
 

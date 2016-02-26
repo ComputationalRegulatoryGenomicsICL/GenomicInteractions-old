@@ -24,8 +24,9 @@
 #'
 #' @examples
 #'
-#' k562.rep1 = makeGenomicInteractionsFromFile(file.path(system.file(package="GenomicInteractions"), "extdata", "k562.rep1.cluster.pet3+.txt"),
-#'              type="chiapet.tool", experiment_name="k562", description="k562 pol2 8wg16")
+#' k562.rep1 <- makeGenomicInteractionsFromFile(
+#'        system.file(package="GenomicInteractions", "extdata", "k562.rep1.cluster.pet3+.txt"),
+#'        type="chiapet.tool", experiment_name="k562", description="k562 pol2 8wg16")
 #'
 #' k562.rep1
 #'
@@ -187,7 +188,7 @@ makeGenomicInteractionsFromFile = function(fn, type, experiment_name="", descrip
 #'
 #' @param fn location of data exported by HOMER
 #' @return a data frame containing the relevant information
-#'
+#' @importFrom utils read.table
 .importHomer = function(fn){
   HOMER_int.df = read.table(fn, header=TRUE, stringsAsFactors=FALSE, sep="\t")
   #convert to closed format, already 1-based

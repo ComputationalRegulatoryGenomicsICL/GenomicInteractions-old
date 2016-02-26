@@ -8,6 +8,9 @@
 #' @docType methods
 #' @rdname resetAnnotations
 #' @export
+#' @examples
+#' data(hic_example_data)
+#' resetAnnotations(hic_example_data)
 setGeneric("resetAnnotations", function(GIObject){standardGeneric ("resetAnnotations")})
 #' @rdname resetAnnotations
 #' @export
@@ -34,23 +37,26 @@ setMethod("resetAnnotations", c("GenomicInteractions"), function(GIObject){
 #' @rdname annotateAnchors
 #' @docType methods
 #' @export
-setGeneric("annotateAnchors",function(GIObject, oneOrTwo, name, dat){standardGeneric ("annotateAnchors")})
+#' 
+setGeneric("annotateAnchors",function(GIObject, oneOrTwo, name, dat){
+  standardGeneric ("annotateAnchors")})
 #' @rdname annotateAnchors
 #' @export
 setMethod("annotateAnchors", c("GenomicInteractions", "numeric", "character", "vector"), 
             function(GIObject, oneOrTwo, name, dat){
+              .Deprecated("annotateRegions")
+              
                 # need to check the validity of the arguments
                 objName = deparse(substitute(GIObject))
-                print(objName)
                 elementMetadata(GIObject@regions)[[name]] <- NA
                 if(oneOrTwo == 1 ){
-                  if(length(dat) > length(unique(GIObject@anchor1))){
-                    warning("Annotation data longer than unique anchors! Try `annotateRegions` instead.")
+                  if(length(dat) > length(GIObject@anchor1)){
+                    warning("Annotation data longer than anchors! Try `annotateRegions` instead.")
                   }          
                   elementMetadata(GIObject@regions)[[name]][GIObject@anchor1] <- dat
                 }else if(oneOrTwo == 2){
-                  if(length(dat) > length(unique(GIObject@anchor2))){
-                    warning("Annotation data longer than unique anchors! Try `annotateRegions` instead.")
+                  if(length(dat) > length(GIObject@anchor2)){
+                    warning("Annotation data longer than anchors! Try `annotateRegions` instead.")
                   } 
                   elementMetadata(GIObject@regions)[[name]][GIObject@anchor2] <- dat
                   }else{
@@ -101,6 +107,7 @@ setMethod("annotateRegions", c("GenomicInteractions", "character", "vector"),
 setGeneric("annotateInteractions",function(GIObject, annotations){standardGeneric ("annotateInteractions")})
 #' @rdname annotateInteractions
 #' @export
+#' @importFrom S4Vectors queryHits subjectHits
 setMethod("annotateInteractions", c("GenomicInteractions", "list"), 
             function(GIObject, annotations){
                 objName = deparse(substitute(GIObject))

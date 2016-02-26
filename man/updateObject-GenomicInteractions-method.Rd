@@ -7,6 +7,29 @@
 \usage{
 \S4method{updateObject}{GenomicInteractions}(object, ..., verbose = FALSE)
 }
+\arguments{
+\item{object}{
+    Object to be updated for \code{updateObject} and
+    \code{updateObjectFromSlots}.
+
+    Object for slot information to be extracted from for
+    \code{getObjectSlots}.
+  }
+
+\item{...}{
+    Additional arguments, for use in specific \code{updateObject}
+    methods.
+  }
+
+\item{verbose}{
+    \code{TRUE} or \code{FALSE}, indicating whether information about
+    the update should be reported. Use \code{\link[base]{message}} to
+    report this information.
+  }
+}
+\value{
+A GenomicInteractions object
+}
 \description{
 updateObject method for GenomicInteractions 1.3.7 and earlier
 }
