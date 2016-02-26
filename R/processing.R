@@ -79,7 +79,6 @@ removeDups <- function(GIObject){
 #' @param GIObject A GenomicInteractions object
 #' @return A logical vector denoting with TRUE if both anchors of an interaction
 #'  are on the same strand and FALSE otherwise.
-
 sameStrand <- function(GIObject){
     return(strand(regions(GIObject)[GIObject@anchor1])==strand(regions(GIObject)[GIObject@anchor2]))
 }

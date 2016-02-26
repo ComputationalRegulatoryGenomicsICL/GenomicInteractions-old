@@ -9,5 +9,8 @@
 @name GenomicInteractions-package
  @docType package
  @import methods
+ @examples 
+ library(GenomicInteractions)
+ GenomicInteractions()
 }
 
