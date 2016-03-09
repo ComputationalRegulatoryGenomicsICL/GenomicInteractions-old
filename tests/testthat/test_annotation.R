@@ -66,15 +66,13 @@ test_that("resetting annotations removes mcols", {
 
 test_that("distance calculations work as expected", {
   expect_equal(calculateDistances(gi),
-               c(5, NA, 1, NA, 1))
+               c(6, NA, 2, NA, 2))
   expect_equal(calculateDistances(gi, method = "midpoint"),
-               c(5, NA, 1, NA, 1))
+               c(6, NA, 2, NA, 2))
   expect_equal(calculateDistances(gi, method = "inner"),
-               c(0, NA, 0, NA, 0))
-  expect_warning(calculateDistances(gi, method = "inner"),
-                 "setting negative distances to 0, this is due to the presence of overlapping anchors in your dataset")
+               c(-4, NA, -6, NA, -4))
   expect_equal(calculateDistances(gi, method = "outer"),
-               c(14, NA, 8, NA, 6))
+               c(16, NA, 10, NA, 8))
   expect_error(calculateDistances(gi, method = "my_method"))
 })
 

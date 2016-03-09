@@ -63,13 +63,13 @@ setMethod(".calculateDistances.df", c("data.frame", "data.frame"),
               midpt.two = (object2$start + object2$end) / 2
               distances = ifelse(object1$seqnames==object2$seqnames,
                                  ifelse(midpt.two > midpt.one,
-                                        midpt.two - midpt.one - 1, 
-                                        midpt.one - midpt.two - 1), NA)
+                                        midpt.two - midpt.one, 
+                                        midpt.one - midpt.two), NA)
             }else if(method=="outer"){
               distances = ifelse(object1$seqnames==object2$seqnames,
                                  ifelse(object2$start > object1$start, 
-                                        object2$end - object1$start -1 ,
-                                        object1$end - object2$start -1), NA)
+                                        object2$end - object1$start + 1,
+                                        object1$end - object2$start + 1), NA)
             }else if(method=="inner"){ 
               distances = ifelse(object1$seqnames==object2$seqnames,
                                  ifelse(object2$start > object1$start, 
@@ -77,10 +77,6 @@ setMethod(".calculateDistances.df", c("data.frame", "data.frame"),
                                         object1$start - object2$end - 1 ), NA)
             }else{
               stop( "method must be one of c(\"midpoint\", \"outer\", \"inner\")" )
-            }
-            if(sum(distances[!is.na(distances)] < 0) > 0){
-              #warning("setting negative distances to 0, this is due to the presence of overlapping anchors in your dataset")
-              distances = ifelse(distances < 0, 0, distances)
             }
             if(floor){
               return(floor(distances))
