@@ -54,8 +54,10 @@ setValidity2("GenomicInteractions", function(object) {
   if(!("counts" %in% names(object@elementMetadata))){
     stop("Valid GenomicInteractions object must contain counts")
   }
-  if (!is.integer(object@elementMetadata$counts) || !(all(is.finite(object@elementMetadata$counts)))){
-    stop("'counts' must be finite integers")
+  if (!is.integer(object@elementMetadata$counts) || 
+      !(all(is.finite(object@elementMetadata$counts))) ||
+      !all(object@elementMetadata$counts >=0)){
+    stop("'counts' must be finite positive integers")
   }
   return(TRUE)
 })
