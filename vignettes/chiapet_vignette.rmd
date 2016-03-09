@@ -285,7 +285,7 @@ cis-regulatory sites or certain categories of genes.
 The categories are generated automatically from the annotated `node.class`
 values in the object.
 
-```{r summarise, warning=F, eval = FALSE}
+```{r summarise, warning=F}
 k562.rep1.promoter.annotation = summariseByFeatures(k562.rep1, refseq.promoters, 
                                                     "promoter", distance.method="midpoint", 
                                                     annotate.self=TRUE)
@@ -300,7 +300,7 @@ common human genome annotations).
 
 Which promoters have the strongest Promoter-Promoter interactions based on PET-counts?
 
-```{r p.p.interactions,  eval = FALSE}
+```{r p.p.interactions}
 i = order(k562.rep1.promoter.annotation$numberOfPromoterPromoterInteractions, 
           decreasing=TRUE)[1:10]
 k562.rep1.promoter.annotation[i,"Promoter.id"]
@@ -308,7 +308,7 @@ k562.rep1.promoter.annotation[i,"Promoter.id"]
 
 Which promoters are contacting the largest number of distal elements?
 
-```{r enhancers,  eval = FALSE}
+```{r enhancers}
 i = order(k562.rep1.promoter.annotation$numberOfUniquePromoterDistalInteractions, 
           decreasing=TRUE)[1:10]
 k562.rep1.promoter.annotation[i,"Promoter.id"]
@@ -316,7 +316,7 @@ k562.rep1.promoter.annotation[i,"Promoter.id"]
 
 What percentage of promoters are in contact with transcription termination sites?
 
-```{r terminators,  eval = FALSE}
+```{r terminators}
 total = sum(k562.rep1.promoter.annotation$numberOfPromoterTerminatorInteractions > 0)
 sprintf("%.2f%% of promoters have P-T interactions", 100*total/nrow(k562.rep1.promoter.annotation))
 ```
