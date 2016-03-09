@@ -9,7 +9,6 @@ Author: Harmston, N., Ing-Simmons, E., Perry, M., Baresic, A., Lenhard,
 Maintainer: Malcolm Perry <mgperry32@gmail.com>,
     Liz Ing-Simmons <liz.ing-simmons12@csc.mrc.ac.uk>
 Imports:
-    InteractionSet,
     Rsamtools,
     GenomicRanges,
     IRanges,
@@ -40,5 +39,6 @@ Description: R package for handling Genomic interaction data, such as
 biocViews: Software,Infrastructure,DataImport,DataRepresentation,HiC
 License: GPL-3
 Depends:
-    R (>= 3.3)
+    R (>= 3.3),
+    InteractionSet
 RoxygenNote: 5.0.1
