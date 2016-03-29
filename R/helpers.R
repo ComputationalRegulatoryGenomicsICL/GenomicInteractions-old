@@ -38,7 +38,7 @@ setGeneric("is.cis",function(GIObject){standardGeneric ("is.cis")})
 
 #' Interaction Type Helpers
 #'
-#' Functions to classify interactions within GenomicInteractions objects.
+#' Functions to classify interactions within GInteractions objects.
 #' \itemize{
 #'     \item "isInteractionType" takes two character arguments which are
 #'           annotated node classes and returns interactions between them.
@@ -48,7 +48,7 @@ setGeneric("is.cis",function(GIObject){standardGeneric ("is.cis")})
 #'                \item{t}{terminator} }
 #'     \item "is.trans" & "is.cis" select trans-chromosomal and
 #'           intra-chromosomal interactions, respectively }
-#' @param GIObject A GenomicInteractions object
+#' @param GIObject A GInteractions object
 #' @return A logical vector
 #' @examples 
 #' data(hic_example_data)
@@ -61,7 +61,7 @@ NULL
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pp", "GenomicInteractions",
+setMethod("is.pp", "GInteractions",
             function(GIObject){
                 return(GIObject@regions$node.class[GIObject@anchor1] == "promoter" 
                       & GIObject@regions$node.class[GIObject@anchor2] == "promoter")
@@ -69,7 +69,7 @@ setMethod("is.pp", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pd", "GenomicInteractions",
+setMethod("is.pd", "GInteractions",
             function(GIObject){
                 return( (GIObject@regions$node.class[GIObject@anchor1] == "distal" & 
                            GIObject@regions$node.class[GIObject@anchor2] == "promoter" ) |
@@ -79,7 +79,7 @@ setMethod("is.pd", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.pt", "GenomicInteractions",
+setMethod("is.pt", "GInteractions",
             function(GIObject){
                 return( (GIObject@regions$node.class[GIObject@anchor1] == "terminator" & 
                            GIObject@regions$node.class[GIObject@anchor2] == "promoter" ) |
@@ -89,7 +89,7 @@ setMethod("is.pt", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.dd", "GenomicInteractions",
+setMethod("is.dd", "GInteractions",
             function(GIObject){
                 return( GIObject@regions$node.class[GIObject@anchor1] == "distal" & 
                           GIObject@regions$node.class[GIObject@anchor2] == "distal")
@@ -97,7 +97,7 @@ setMethod("is.dd", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.dt", "GenomicInteractions",
+setMethod("is.dt", "GInteractions",
             function(GIObject){
                 return( (GIObject@regions$node.class[GIObject@anchor1] == "distal" & 
                            GIObject@regions$node.class[GIObject@anchor2] == "terminator" ) |
@@ -107,7 +107,7 @@ setMethod("is.dt", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.tt", "GenomicInteractions",
+setMethod("is.tt", "GInteractions",
             function(GIObject){
                 return( GIObject@regions$node.class[GIObject@anchor1] == "terminator" 
                         & GIObject@regions$node.class[GIObject@anchor2] == "terminator")
@@ -115,7 +115,7 @@ setMethod("is.tt", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("isInteractionType", "GenomicInteractions",
+setMethod("isInteractionType", "GInteractions",
             function(GIObject, x, y){
                 return( (GIObject@regions$node.class[GIObject@anchor1] %in% x 
                          & GIObject@regions$node.class[GIObject@anchor2]  %in% y) |
@@ -125,7 +125,7 @@ setMethod("isInteractionType", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.trans", "GenomicInteractions",
+setMethod("is.trans", "GInteractions",
             function(GIObject){
                 return( as.character(seqnames(GIObject@regions[GIObject@anchor1])) != 
                           as.character(seqnames(GIObject@regions[GIObject@anchor2])) )
@@ -133,16 +133,16 @@ setMethod("is.trans", "GenomicInteractions",
 
 #' @rdname InteractionHelpers
 #' @export
-setMethod("is.cis", "GenomicInteractions",
+setMethod("is.cis", "GInteractions",
             function(GIObject){
                 return( as.character(seqnames(GIObject@regions[GIObject@anchor1])) == 
                           as.character(seqnames(GIObject@regions[GIObject@anchor2])) )
             })
 
-#' Return the total number of interactions in a GenomicInteractions GIObject
+#' Return the total number of interactions in a GInteractions GIObject
 #'
-#' @param x GenomicInteractions GIObject
+#' @param x GInteractions GIObject
 #' @return The sum of the counts in GIObject
 #' @docType methods
 #' @export
-setMethod("sum", "GenomicInteractions", function(x){ return( sum(interactionCounts(x))) })
+setMethod("sum", "GInteractions", function(x){ return( sum(interactionCounts(x))) })

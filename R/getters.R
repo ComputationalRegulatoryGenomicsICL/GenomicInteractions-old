@@ -4,7 +4,7 @@
 #' GenomicInteractions object.
 #'
 #' @name getters
-#' @param GIObject A GenomicInteractions object
+#' @param GIObject A Gnteractions object
 #' @rdname getters
 #' 
 #' @return For 'anchorOne' and 'anchorTwo', a GRanges. For 'interactionCounts', 
@@ -55,34 +55,38 @@ setGeneric("annotationFeatures",function(GIObject){standardGeneric ("annotationF
 #' @rdname getters
 #' @export
 #' @aliases name
-setMethod("name", "GenomicInteractions", function(GIObject){ 
+setMethod("name", "GInteractions", function(GIObject){ 
   return(GIObject@metadata$experiment_name) } )
 
 #' @rdname getters
 #' @inheritParams Biobase::description
 #' @importMethodsFrom Biobase description
 #' @export
-setMethod("description", c("GenomicInteractions"), function(object){ 
+setMethod("description", c("GInteractions"), function(object){ 
   return(object@metadata$description) } )
 
 #' @rdname getters
 #' @export
-setMethod("anchorOne", "GenomicInteractions", function(GIObject){ 
+setMethod("anchorOne", "GInteractions", function(GIObject){ 
   return(anchors(GIObject, type = "first")) } )
 
 #' @rdname getters
 #' @export
-setMethod("anchorTwo", "GenomicInteractions", function(GIObject){ 
+setMethod("anchorTwo", "GInteractions", function(GIObject){ 
   return(anchors(GIObject, type = "second")) } )
 
+## N.B. this may not apply to all GInteractions objects
 #' @rdname getters
 #' @export
-setMethod("interactionCounts", "GenomicInteractions", function(GIObject){ 
+setMethod("interactionCounts", "GInteractions", function(GIObject){
+  if (!"counts" %in% names(elementMetadata(GIObject))){
+    warning("'counts' not in mcols of object; will return NULL")
+  }
   return(GIObject@elementMetadata$counts) })
 
 #' @rdname getters
 #' @export
-setMethod("annotationFeatures", "GenomicInteractions", function(GIObject){
+setMethod("annotationFeatures", "GInteractions", function(GIObject){
   if( "node.class" %in% names(elementMetadata(GIObject@regions))) {
     annotation = unique(GIObject@regions$node.class)
   } else { annotation = NA_character_ }

@@ -1,13 +1,13 @@
 
 #' Calculate interaction distances
 #'
-#' This function takes a GenomicInteractions object and calculates the distances
+#' This function takes a GInteractions object and calculates the distances
 #' between the anchors according to the value of \code{method}. The distances returned
 #' follow the same convention as distance(x, y) in GenomicRanges where the
 #' distance between adjacent regions is 0. Note that if anchors are overlapping
 #' this method will print a warning and return the distance as 0.
 #' 
-#' @param GIObject A GenomicInteractions object
+#' @param GIObject A GInteractions object
 #' @param method Character vector indicating how to calculate distances, must
 #'        be one of `midpoint', `outer', `inner'.
 #' @param floor A logical specifying whether to round down distances to nearest 
@@ -34,7 +34,7 @@ setGeneric("calculateDistances", function(GIObject, method="midpoint", floor=TRU
 
 #' @rdname calculateDistances
 #' @export
-setMethod("calculateDistances", c("GenomicInteractions"), 
+setMethod("calculateDistances", c("GInteractions"), 
           function(GIObject, method="midpoint", floor=TRUE){ 
             if(method=="midpoint"){
               distances <- pairdist(GIObject, type = "mid")

@@ -7,7 +7,7 @@
 #' distances of interactions for all interactions of the feature, and for the 
 #' different interaction types e.g. promoter-distal.
 #'
-#' @param GIObject An annotated GenomicInteractions object
+#' @param GIObject An annotated GInteractions object
 #' @param features A GRanges object containing the feature set
 #' @param feature.name The name of the feature set
 #' @param distance.method Method for calculating distances between anchors, see
@@ -20,11 +20,17 @@
 #' @rdname summariseByFeatures
 #' @docType methods
 #' @import GenomicRanges
+#' @importFrom stats median
 #' @export
+#' @examples 
+#' data("hic_example_data")
+#' data("mm9_refseq_promoters")
+#' annotateInteractions(hic_example_data, list(promoter = mm9_refseq_promoters))
+#' summariseByFeatures(hic_example_data, mm9_refseq_promoters[1:10], "promoter")
 setGeneric("summariseByFeatures",function(GIObject, features, feature.name, distance.method="midpoint", annotate.self=FALSE){standardGeneric ("summariseByFeatures")})
 #' @rdname summariseByFeatures
 #' @export
-setMethod("summariseByFeatures", "GenomicInteractions", 
+setMethod("summariseByFeatures", "GInteractions", 
           function(GIObject, features, feature.name, distance.method="midpoint", annotate.self=FALSE){  
             if(!("node.class" %in% names(elementMetadata(regions(GIObject))))){
               stop("GIObject has not been annotated")}
@@ -199,7 +205,7 @@ setMethod("summariseByFeatures", "GenomicInteractions",
 #' of the number of features of a specific type a particular region is involved in 
 #' and how many interactions exist between them. 
 #'
-#' @param GIObject An annotated GenomicInteractions object
+#' @param GIObject An annotated GInteractions object
 #' @param features.one A GRanges object containing the feature set of interest
 #' @param feature.name.one The name of the first feature set of interest
 #' @param features.two A GRanges object containing the second feature set of interest
@@ -210,10 +216,23 @@ setMethod("summariseByFeatures", "GenomicInteractions",
 #' @docType methods
 #' @import GenomicRanges
 #' @export
+#' @examples
+#' data("hic_example_data")
+#' data("mm9_refseq_promoters")
+#' data("thymus_enhancers")
+#' annotateInteractions(hic_example_data, list(promoter = mm9_refseq_promoters, enhancer = thymus_enh))
+#' # can be slow so subset of features used for examples
+#' p <- unique(unlist(head(regions(hic_example_data)$promoter.id)))
+#' e <- unique(unlist(head(regions(hic_example_data)$enhancer.id)))
+#' p <- p[!is.na(p)]
+#' p <- mm9_refseq_promoters[p]
+#' e <- e[!is.na(e)]
+#' e <- thymus_enh[e]
+#' ep_summary <- summariseByFeaturePairs(hic_example_data, p, "promoter", e, "enhancer")
 setGeneric("summariseByFeaturePairs",function(GIObject, features.one, feature.name.one, features.two, feature.name.two){standardGeneric ("summariseByFeaturePairs")})
 #' @rdname summariseByFeaturePairs
 #' @export
-setMethod("summariseByFeaturePairs", "GenomicInteractions", 
+setMethod("summariseByFeaturePairs", "GInteractions", 
           function(GIObject, features.one, feature.name.one, features.two, feature.name.two){  
             if(!("node.class" %in% names(elementMetadata(regions(GIObject))))){
               stop("GIObject has not been annotated")}
@@ -276,7 +295,7 @@ setMethod("summariseByFeaturePairs", "GenomicInteractions",
                   #print(iss.two)
                   indexes = unique(intersect(interactions, unique(c(subjectHits(one.two.ol[ queryHits(one.two.ol) %in% iss.two]), 
                                                                     subjectHits(two.two.ol[ queryHits(two.two.ol) %in% iss.two])))))
-                  counts = sum(InteractionCounts(x.gi)[indexes])
+                  counts = sum(interactionCounts(x.gi)[indexes])
                   #print(counts)
                   results = rbind(results, c(fn, fn.two, counts))
                 }

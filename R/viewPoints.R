@@ -1,6 +1,6 @@
 #' Virtual 4C viewpoint
 #'
-#' This function creates a GenomicInteractions object representing interactions 
+#' This function creates a GInteractions object representing interactions 
 #' originating at a given viewpoint ("bait"), or set of viewpoints. This is 
 #' similar to the idea of a virtual 4C experiment where you are interested in 
 #' interactions with a specific region. 
@@ -17,13 +17,13 @@
 #' as a wig or bedgraph file.
 #' 
 #' 
-#' @param x A GenomicInteractions object.
+#' @param x A GInteractions object.
 #' @param bait A GRanges object describing bait regions.
-#' @param region If present, a GenomicInteractions object specifying the
+#' @param region If present, a GRanges object specifying the
 #'               region to look for bait interactions in.
 #' @param ... additional arguments to findoverlaps
 #' 
-#' @return A GenomicInteractions object.
+#' @return A GInteractions object.
 #' 
 #' @import GenomicRanges
 #' @export
@@ -57,7 +57,7 @@ viewPoint = function(x, bait, region=NULL, ...) {
 #' the output of `viewPoint()` as input. You should additionally specify the total 
 #' region you wish to plot. 
 #'
-#' @param x a GenomicInteractions object which is output from viewPoint
+#' @param x a GInteractions object which is output from viewPoint
 #' @param region The genomic region to plot
 #' @param ylab Y axis label.
 #' @param xlab X axis label. By default this is the chromosome of the region 
@@ -101,7 +101,7 @@ plotViewpoint = function(x, region, ylab="Signal", xlab=NULL, ...) {
 #' Plots summarised coverage of interactions around a set of viewpoints, 
 #' e.g. promoters. This function requires the output of `viewPoint()` as input. 
 #'
-#' @param x A GenomicInteractions object which is output from viewPoint
+#' @param x A GInteractions object which is output from viewPoint
 #' @param left_dist Distance 'left' of interactions to consider, in bp.
 #' @param right_dist Distance 'right' of interactions to consider, in bp.
 #' @param fix One of "center", "start", "end". Passed to `resize`. Interaction 

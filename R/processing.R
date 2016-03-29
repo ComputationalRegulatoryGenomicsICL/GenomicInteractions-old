@@ -1,15 +1,15 @@
-#' Summarise Interactions between defined anchors
+#' Summarise interactions between defined anchors
 #'
 #' Calculate the number of of paired-end reads mapping between a defined set of anchors.
 #' This function will ignore counts present in the input data.
 #'
-#' @return A GenomicInteractions object with annotated counts between anchors
+#' @return A GInteractions object with annotated counts between anchors
 #' @docType methods
 #' @rdname countsBetweenAnchors-methods
 #' @export
 setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBetweenAnchors")})
 
-#' @param x A GenomicInteractions object
+#' @param x A GInteractions object
 #' @param y A GenomicRanges object
 #' @param ignore_overlaps Allow overlapping anchors. Use this when you have overlapping anchors
 #'                        but be careful with multi-mapping. The "within" option can help with this.
@@ -19,7 +19,7 @@ setGeneric("countsBetweenAnchors",function(x, y, ...){standardGeneric ("countsBe
 #' 
 #' @importFrom IRanges overlapsAny
 #' @export
-setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
+setMethod("countsBetweenAnchors", list("GInteractions", "GRanges"), function(x, y, ignore_overlaps=FALSE, ...) {
     #check anchors are unique
     if (ignore_overlaps == FALSE && any(countOverlaps(y, y) > 1)) stop("anchors are not unique")
     
@@ -56,8 +56,8 @@ setMethod("countsBetweenAnchors", list("GenomicInteractions", "GRanges"), functi
 #' the total counts of all the duplicates. It is designed for removing potential
 #' PCR duplicates after reading in .bam files.
 #'
-#' @param GIObject A GenomicInteractions object.
-#' @return A GenomicInteractions object that is a subset of the input object.
+#' @param GIObject A GInteractions object.
+#' @return A GInteractions object that is a subset of the input object.
 #' @export
 
 removeDups <- function(GIObject){
@@ -76,7 +76,7 @@ removeDups <- function(GIObject){
 #'
 #' This is designed for processing .bam files.
 #'
-#' @param GIObject A GenomicInteractions object
+#' @param GIObject A GInteractions object
 #' @return A logical vector denoting with TRUE if both anchors of an interaction
 #'  are on the same strand and FALSE otherwise.
 sameStrand <- function(GIObject){
@@ -93,7 +93,7 @@ sameStrand <- function(GIObject){
 #' this ratio at high distances is used a cutoff to determine which bins 
 #' are likely to contain mostly self-liagted reads.
 #' 
-#' @param GIObject a GenomicInteractions object of paired end reads
+#' @param GIObject a GInteractions object of paired end reads
 #' @param bins Number of evenly sized bins to use.
 #' @param distance_th The threshold, in base pairs, to use as a cutoff to 
 #' pick which bins to use to determine the standard deviation.
@@ -159,7 +159,7 @@ get_self_ligation_threshold <- function(GIObject, bins=100, distance_th=400000, 
 #' if this is significantly different from the 50:50 ratio expected by 
 #' chance if all reads are real interactions. 
 #' 
-#' @param GIObject a GenomicInteractions object of paired end reads
+#' @param GIObject a GInteractions object of paired end reads
 #' @param bin.size Bin size in base pairs.
 #' @param max.distance The maximum distance to consider between reads. 
 #' Reads further apart than this distance should be very unlikely to be

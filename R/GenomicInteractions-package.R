@@ -6,4 +6,5 @@
 #'  @examples 
 #'  library(GenomicInteractions)
 #'  GenomicInteractions()
+#'  
 "_PACKAGE"

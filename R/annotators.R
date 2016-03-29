@@ -1,9 +1,9 @@
-#' Reset annotations made to a GenomicInteractions object
+#' Reset annotations made to a GInteractions object
 #'
-#' This function removes all annotations from a GenomicInteractions object by
+#' This function removes all annotations from a GInteractions object by
 #' deleting  all of the metadata columns associated with both anchors.
 #'
-#' @param GIObject An annotated GenomicInteractions object
+#' @param GIObject An annotated GInteractions object
 #' @return invisible(1)
 #' @docType methods
 #' @rdname resetAnnotations
@@ -14,7 +14,7 @@
 setGeneric("resetAnnotations", function(GIObject){standardGeneric ("resetAnnotations")})
 #' @rdname resetAnnotations
 #' @export
-setMethod("resetAnnotations", c("GenomicInteractions"), function(GIObject){ 
+setMethod("resetAnnotations", c("GInteractions"), function(GIObject){ 
       objName = deparse(substitute(GIObject))
       elementMetadata(GIObject@regions)=NULL
       assign(objName, GIObject, envir = parent.frame())
@@ -66,8 +66,29 @@ setMethod("annotateAnchors", c("GenomicInteractions", "numeric", "character", "v
                 return(invisible(1)) 
           })
 
+#' Annotate regions
+#'
+#' Use this function to add metadata parallel to the `regions` slot of a 
+#' GenomicInteractions or GInteractions object.
+#' 
+#' @param GIObject A GenomicInteractions or GInteractions object
+#' @param name Character. Will be used as a column name.
+#' @param dat Vector of the same length as the GInteractions object,
+#' containing data with which to annotate the object. 
+#' @return invisible(1)
+#' 
+#' @rdname annotateRegions
+#' @docType methods
+#' @export
+#' 
+#' @examples 
+#' data(hic_example_data)
+#' chip <- runif(n = length(regions(hic_example_data)), max = 1000)
+#' annotateRegions(hic_example_data, "chip", chip)
 setGeneric("annotateRegions", function(GIObject, name, dat){standardGeneric ("annotateRegions")})
-setMethod("annotateRegions", c("GenomicInteractions", "character", "vector"),
+#' @rdname annotateRegions
+#' @export
+setMethod("annotateRegions", c("GInteractions", "character", "vector"),
   function(GIObject, name, dat){
     objName = deparse(substitute(GIObject))
     GIObject@regions@elementMetadata[[name]] <- dat
@@ -75,7 +96,7 @@ setMethod("annotateRegions", c("GenomicInteractions", "character", "vector"),
     return(invisible(1))
 })
 
-#' Annotate the interactions in a GenomicInteractions object
+#' Annotate the interactions in a GInteractions object
 #'
 #' This function will annotate both anchors with a list of named GRanges
 #' objects. Each metadata column is labeled "name.id" and contains the id of
@@ -89,9 +110,9 @@ setMethod("annotateRegions", c("GenomicInteractions", "character", "vector"),
 #' case of a GRangesList or from either the names of a the provided GRanges or an id column 
 #' in its associated metadata.
 #'
-#' @param GIObject A GenomicInteractions object to be annotated
+#' @param GIObject A GInteractions object to be annotated
 #' @param annotations A list containing GRanges (or GRangesList) objects with which to annotate
-#'             the GenomicInteractions object.
+#'             the GInteractions object.
 #' @return invisible(1)
 #' @rdname annotateInteractions
 #' @docType methods
@@ -108,7 +129,7 @@ setGeneric("annotateInteractions",function(GIObject, annotations){standardGeneri
 #' @rdname annotateInteractions
 #' @export
 #' @importFrom S4Vectors queryHits subjectHits
-setMethod("annotateInteractions", c("GenomicInteractions", "list"), 
+setMethod("annotateInteractions", c("GInteractions", "list"), 
             function(GIObject, annotations){
                 objName = deparse(substitute(GIObject))
                 mcols.reg <- mcols(GIObject@regions)

@@ -1,7 +1,7 @@
-#' Functions to set data held in a GenomicInteractions object.
+#' Functions to set data held in a GInteractions object.
 #'
 #' Use these functions to set data stored in each of the slots of a
-#' GenomicInteractions object.
+#' GInteractions object.
 #'
 #' @name setters
 #' @param GIObject A GenomicInteractions object
@@ -41,7 +41,7 @@ setGeneric("interactionCounts<-",function(GIObject, value){standardGeneric ("int
 
 #' @rdname setters
 #' @export
-setReplaceMethod("name", "GenomicInteractions", function(GIObject, value){
+setReplaceMethod("name", "GInteractions", function(GIObject, value){
     GIObject@metadata$experiment_name = value
     GIObject
     })
@@ -50,7 +50,7 @@ setReplaceMethod("name", "GenomicInteractions", function(GIObject, value){
 #' @inheritParams Biobase::'description<-'
 #' @importMethodsFrom Biobase 'description<-'
 #' @export
-setReplaceMethod("description", "GenomicInteractions", function(object, value){
+setReplaceMethod("description", "GInteractions", function(object, value){
     object@metadata$description = value
     object
 })
@@ -58,7 +58,7 @@ setReplaceMethod("description", "GenomicInteractions", function(object, value){
 #' @rdname setters
 #' @import BiocGenerics
 #' @export
-setReplaceMethod("interactionCounts", "GenomicInteractions", function(GIObject, value){
+setReplaceMethod("interactionCounts", "GInteractions", function(GIObject, value){
     if (!all(value == floor(value)))
         stop("value must contain integer values")
     value = as.integer(value)
