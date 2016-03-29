@@ -7,20 +7,20 @@
 viewPoint(x, bait, region = NULL, ...)
 }
 \arguments{
-\item{x}{A GenomicInteractions object.}
+\item{x}{A GInteractions object.}
 
 \item{bait}{A GRanges object describing bait regions.}
 
-\item{region}{If present, a GenomicInteractions object specifying the
+\item{region}{If present, a GRanges object specifying the
 region to look for bait interactions in.}
 
 \item{...}{additional arguments to findoverlaps}
 }
 \value{
-A GenomicInteractions object.
+A GInteractions object.
 }
 \description{
-This function creates a GenomicInteractions object representing interactions 
+This function creates a GInteractions object representing interactions 
 originating at a given viewpoint ("bait"), or set of viewpoints. This is 
 similar to the idea of a virtual 4C experiment where you are interested in 
 interactions with a specific region.

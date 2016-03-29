@@ -3,17 +3,17 @@
 \docType{methods}
 \name{export.bed12}
 \alias{export.bed12}
-\alias{export.bed12,GenomicInteractions-method}
+\alias{export.bed12,GInteractions-method}
 \title{Export interactions in BED12 format.}
 \usage{
 export.bed12(GIObject, fn = NULL, score = "counts", drop.trans = c(FALSE,
   TRUE))
 
-\S4method{export.bed12}{GenomicInteractions}(GIObject, fn = NULL,
+\S4method{export.bed12}{GInteractions}(GIObject, fn = NULL,
   score = "counts", drop.trans = c(FALSE, TRUE))
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object.}
+\item{GIObject}{A GInteractions object.}
 
 \item{fn}{A filename to write the object to}
 
@@ -21,7 +21,7 @@ export.bed12(GIObject, fn = NULL, score = "counts", drop.trans = c(FALSE,
 
 \item{drop.trans}{Logical indicating whether to drop trans interactions.
 
-Exports a GenomicInteractions object to BED12 format, and writes to a specified file. If filename is not specified,
+Exports a GInteractions object to BED12 format, and writes to a specified file. If filename is not specified,
 then a data.frame containing the information is returned.
 
 Bed12 files provide a method for visualising interactions, it is not a good format for storing all of the data associated

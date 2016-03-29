@@ -3,17 +3,17 @@
 \docType{methods}
 \name{summariseByFeatures}
 \alias{summariseByFeatures}
-\alias{summariseByFeatures,GenomicInteractions-method}
+\alias{summariseByFeatures,GInteractions-method}
 \title{Summary statistics of interactions for a given feature set}
 \usage{
 summariseByFeatures(GIObject, features, feature.name,
   distance.method = "midpoint", annotate.self = FALSE)
 
-\S4method{summariseByFeatures}{GenomicInteractions}(GIObject, features,
-  feature.name, distance.method = "midpoint", annotate.self = FALSE)
+\S4method{summariseByFeatures}{GInteractions}(GIObject, features, feature.name,
+  distance.method = "midpoint", annotate.self = FALSE)
 }
 \arguments{
-\item{GIObject}{An annotated GenomicInteractions object}
+\item{GIObject}{An annotated GInteractions object}
 
 \item{features}{A GRanges object containing the feature set}
 
@@ -36,5 +36,11 @@ interaction counts), number of unique interactions and number of trans-
 (interchromosomal) interations.  It also returns some statistics for the 
 distances of interactions for all interactions of the feature, and for the 
 different interaction types e.g. promoter-distal.
+}
+\examples{
+data("hic_example_data")
+data("mm9_refseq_promoters")
+annotateInteractions(hic_example_data, list(promoter = mm9_refseq_promoters))
+summariseByFeatures(hic_example_data, mm9_refseq_promoters[1:10], "promoter")
 }
 

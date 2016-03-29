@@ -2,13 +2,13 @@
 % Please edit documentation in R/plotSummaryStats.R
 \name{plotInteractionAnnotations}
 \alias{plotInteractionAnnotations}
-\title{Plot a donut plot of interaction types for an annotated GenomicInteractions object}
+\title{Plot a donut plot of interaction types for an annotated GInteractions object}
 \usage{
 plotInteractionAnnotations(GIObject, node.classes = NULL, viewpoints = NULL,
   other = 0, keep.order = FALSE, legend = FALSE)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A GInteractions object}
 
 \item{node.classes}{Optional. All node.classes to include in the analysis.
 Default: all node classes.}
@@ -29,7 +29,7 @@ plot. If FALSE, donut plot is annotated with category names.}
 A ggplot2 plot
 }
 \description{
-Plot a donut plot of interaction types for an annotated GenomicInteractions object
+Plot a donut plot of interaction types for an annotated GInteractions object
 }
 \examples{
 library("GenomicRanges")

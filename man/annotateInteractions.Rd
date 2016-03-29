@@ -3,18 +3,18 @@
 \docType{methods}
 \name{annotateInteractions}
 \alias{annotateInteractions}
-\alias{annotateInteractions,GenomicInteractions,list-method}
-\title{Annotate the interactions in a GenomicInteractions object}
+\alias{annotateInteractions,GInteractions,list-method}
+\title{Annotate the interactions in a GInteractions object}
 \usage{
 annotateInteractions(GIObject, annotations)
 
-\S4method{annotateInteractions}{GenomicInteractions,list}(GIObject, annotations)
+\S4method{annotateInteractions}{GInteractions,list}(GIObject, annotations)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object to be annotated}
+\item{GIObject}{A GInteractions object to be annotated}
 
 \item{annotations}{A list containing GRanges (or GRangesList) objects with which to annotate
-the GenomicInteractions object.}
+the GInteractions object.}
 }
 \value{
 invisible(1)

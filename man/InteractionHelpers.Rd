@@ -4,23 +4,23 @@
 \name{is.pp}
 \alias{InteractionHelpers}
 \alias{is.cis}
-\alias{is.cis,GenomicInteractions-method}
+\alias{is.cis,GInteractions-method}
 \alias{is.dd}
-\alias{is.dd,GenomicInteractions-method}
+\alias{is.dd,GInteractions-method}
 \alias{is.dt}
-\alias{is.dt,GenomicInteractions-method}
+\alias{is.dt,GInteractions-method}
 \alias{is.pd}
-\alias{is.pd,GenomicInteractions-method}
+\alias{is.pd,GInteractions-method}
 \alias{is.pp}
-\alias{is.pp,GenomicInteractions-method}
+\alias{is.pp,GInteractions-method}
 \alias{is.pt}
-\alias{is.pt,GenomicInteractions-method}
+\alias{is.pt,GInteractions-method}
 \alias{is.trans}
-\alias{is.trans,GenomicInteractions-method}
+\alias{is.trans,GInteractions-method}
 \alias{is.tt}
-\alias{is.tt,GenomicInteractions-method}
+\alias{is.tt,GInteractions-method}
 \alias{isInteractionType}
-\alias{isInteractionType,GenomicInteractions-method}
+\alias{isInteractionType,GInteractions-method}
 \title{Interaction Type Helpers}
 \usage{
 is.pp(GIObject)
@@ -41,26 +41,26 @@ is.trans(GIObject)
 
 is.cis(GIObject)
 
-\S4method{is.pp}{GenomicInteractions}(GIObject)
+\S4method{is.pp}{GInteractions}(GIObject)
 
-\S4method{is.pd}{GenomicInteractions}(GIObject)
+\S4method{is.pd}{GInteractions}(GIObject)
 
-\S4method{is.pt}{GenomicInteractions}(GIObject)
+\S4method{is.pt}{GInteractions}(GIObject)
 
-\S4method{is.dd}{GenomicInteractions}(GIObject)
+\S4method{is.dd}{GInteractions}(GIObject)
 
-\S4method{is.dt}{GenomicInteractions}(GIObject)
+\S4method{is.dt}{GInteractions}(GIObject)
 
-\S4method{is.tt}{GenomicInteractions}(GIObject)
+\S4method{is.tt}{GInteractions}(GIObject)
 
-\S4method{isInteractionType}{GenomicInteractions}(GIObject, x, y)
+\S4method{isInteractionType}{GInteractions}(GIObject, x, y)
 
-\S4method{is.trans}{GenomicInteractions}(GIObject)
+\S4method{is.trans}{GInteractions}(GIObject)
 
-\S4method{is.cis}{GenomicInteractions}(GIObject)
+\S4method{is.cis}{GInteractions}(GIObject)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A GInteractions object}
 
 \item{x, y}{Names of annotated node classes}
 }
@@ -68,7 +68,7 @@ is.cis(GIObject)
 A logical vector
 }
 \description{
-Functions to classify interactions within GenomicInteractions objects.
+Functions to classify interactions within GInteractions objects.
 \itemize{
     \item "isInteractionType" takes two character arguments which are
           annotated node classes and returns interactions between them.

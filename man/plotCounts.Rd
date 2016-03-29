@@ -7,7 +7,7 @@
 plotCounts(GIObject, normalise = FALSE, cut = 10)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object.}
+\item{GIObject}{A GInteractions object.}
 
 \item{normalise}{Logical. If TRUE, plots proportion of total reads instead of count.}
 

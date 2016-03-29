@@ -7,10 +7,10 @@
 removeDups(GIObject)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object.}
+\item{GIObject}{A GInteractions object.}
 }
 \value{
-A GenomicInteractions object that is a subset of the input object.
+A GInteractions object that is a subset of the input object.
 }
 \description{
 Removes all but the first occurence of a duplicated interaction (defined as

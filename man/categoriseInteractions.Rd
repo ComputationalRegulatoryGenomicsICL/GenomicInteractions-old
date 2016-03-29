@@ -7,7 +7,7 @@
 categoriseInteractions(GIObject, node.classes = NULL, viewpoints = NULL)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A GInteractions object}
 
 \item{node.classes}{Optional. All node.classes to include in the analysis.
 Default: all node classes.}

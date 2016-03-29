@@ -7,7 +7,7 @@
 sameStrand(GIObject)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A GInteractions object}
 }
 \value{
 A logical vector denoting with TRUE if both anchors of an interaction

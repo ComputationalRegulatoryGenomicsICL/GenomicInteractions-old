@@ -3,16 +3,16 @@
 \docType{methods}
 \name{calculateDistances}
 \alias{calculateDistances}
-\alias{calculateDistances,GenomicInteractions-method}
+\alias{calculateDistances,GInteractions-method}
 \title{Calculate interaction distances}
 \usage{
 calculateDistances(GIObject, method = "midpoint", floor = TRUE)
 
-\S4method{calculateDistances}{GenomicInteractions}(GIObject,
-  method = "midpoint", floor = TRUE)
+\S4method{calculateDistances}{GInteractions}(GIObject, method = "midpoint",
+  floor = TRUE)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A GInteractions object}
 
 \item{method}{Character vector indicating how to calculate distances, must
 be one of `midpoint', `outer', `inner'.}
@@ -25,7 +25,7 @@ An vector containing the distances between anchors/GRanges,
         NA if on different chromosomes, rounded down to the nearest bp.
 }
 \description{
-This function takes a GenomicInteractions object and calculates the distances
+This function takes a GInteractions object and calculates the distances
 between the anchors according to the value of \code{method}. The distances returned
 follow the same convention as distance(x, y) in GenomicRanges where the
 distance between adjacent regions is 0. Note that if anchors are overlapping

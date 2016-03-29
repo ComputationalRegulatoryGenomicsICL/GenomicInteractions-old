@@ -3,17 +3,17 @@
 \docType{methods}
 \name{getters}
 \alias{anchorOne}
-\alias{anchorOne,GenomicInteractions-method}
+\alias{anchorOne,GInteractions-method}
 \alias{anchorTwo}
-\alias{anchorTwo,GenomicInteractions-method}
+\alias{anchorTwo,GInteractions-method}
 \alias{annotationFeatures}
-\alias{annotationFeatures,GenomicInteractions-method}
-\alias{description,GenomicInteractions-method}
+\alias{annotationFeatures,GInteractions-method}
+\alias{description,GInteractions-method}
 \alias{getters}
 \alias{interactionCounts}
-\alias{interactionCounts,GenomicInteractions-method}
+\alias{interactionCounts,GInteractions-method}
 \alias{name}
-\alias{name,GenomicInteractions-method}
+\alias{name,GInteractions-method}
 \title{Functions to access data held in a GenomicInteractions object.}
 \usage{
 name(GIObject)
@@ -26,20 +26,20 @@ interactionCounts(GIObject)
 
 annotationFeatures(GIObject)
 
-\S4method{name}{GenomicInteractions}(GIObject)
+\S4method{name}{GInteractions}(GIObject)
 
-\S4method{description}{GenomicInteractions}(object)
+\S4method{description}{GInteractions}(object)
 
-\S4method{anchorOne}{GenomicInteractions}(GIObject)
+\S4method{anchorOne}{GInteractions}(GIObject)
 
-\S4method{anchorTwo}{GenomicInteractions}(GIObject)
+\S4method{anchorTwo}{GInteractions}(GIObject)
 
-\S4method{interactionCounts}{GenomicInteractions}(GIObject)
+\S4method{interactionCounts}{GInteractions}(GIObject)
 
-\S4method{annotationFeatures}{GenomicInteractions}(GIObject)
+\S4method{annotationFeatures}{GInteractions}(GIObject)
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object}
+\item{GIObject}{A Gnteractions object}
 
 \item{object}{Object, possibly derived from class \code{\link{eSet-class}}.}
 }

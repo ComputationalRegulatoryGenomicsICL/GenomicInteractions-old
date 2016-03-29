@@ -2,23 +2,23 @@
 % Please edit documentation in R/setters.R
 \docType{methods}
 \name{setters}
-\alias{description<-,GenomicInteractions,ANY-method}
+\alias{description<-,GInteractions,ANY-method}
 \alias{interactionCounts<-}
-\alias{interactionCounts<-,GenomicInteractions-method}
+\alias{interactionCounts<-,GInteractions-method}
 \alias{name<-}
-\alias{name<-,GenomicInteractions-method}
+\alias{name<-,GInteractions-method}
 \alias{setters}
-\title{Functions to set data held in a GenomicInteractions object.}
+\title{Functions to set data held in a GInteractions object.}
 \usage{
 name(GIObject) <- value
 
 interactionCounts(GIObject) <- value
 
-\S4method{name}{GenomicInteractions}(GIObject) <- value
+\S4method{name}{GInteractions}(GIObject) <- value
 
-\S4method{description}{GenomicInteractions,ANY}(object) <- value
+\S4method{description}{GInteractions,ANY}(object) <- value
 
-\S4method{interactionCounts}{GenomicInteractions}(GIObject) <- value
+\S4method{interactionCounts}{GInteractions}(GIObject) <- value
 }
 \arguments{
 \item{GIObject}{A GenomicInteractions object}
@@ -32,7 +32,7 @@ GenomicInteractions object
 }
 \description{
 Use these functions to set data stored in each of the slots of a
-GenomicInteractions object.
+GInteractions object.
 }
 \examples{
 

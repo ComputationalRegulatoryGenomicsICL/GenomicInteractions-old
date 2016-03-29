@@ -3,16 +3,16 @@
 \docType{methods}
 \name{export.bedpe}
 \alias{export.bedpe}
-\alias{export.bedpe,GenomicInteractions-method}
+\alias{export.bedpe,GInteractions-method}
 \title{Export interactions in BED Paired-End format.}
 \usage{
 export.bedpe(GIObject, fn = NULL, score = "counts")
 
-\S4method{export.bedpe}{GenomicInteractions}(GIObject, fn = NULL,
+\S4method{export.bedpe}{GInteractions}(GIObject, fn = NULL,
   score = "counts")
 }
 \arguments{
-\item{GIObject}{A GenomicInteractions object.}
+\item{GIObject}{A GInteractions object.}
 
 \item{fn}{A filename to write the interactions data to}
 
@@ -22,7 +22,7 @@ export.bedpe(GIObject, fn = NULL, score = "counts")
 invisible(1) if outputting to file or a data.frame containing all of the corresponding information
 }
 \description{
-#' Exports a GenomicInteractions object to BED-PE format, and writes to a specified file. If filename is not specified,
+#' Exports a GInteractions object to BED-PE format, and writes to a specified file. If filename is not specified,
 then a data.frame containing the information is returned. The value of the score parameter defines which field is used
 to populate the score field.
 }

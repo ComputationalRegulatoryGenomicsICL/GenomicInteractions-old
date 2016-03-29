@@ -8,7 +8,7 @@ get_binom_ligation_threshold(GIObject, max.distance = 20000, bin.size = 500,
   p.cutoff = 0.05, adjust = "fdr", plot = TRUE)
 }
 \arguments{
-\item{GIObject}{a GenomicInteractions object of paired end reads}
+\item{GIObject}{a GInteractions object of paired end reads}
 
 \item{max.distance}{The maximum distance to consider between reads. 
 Reads further apart than this distance should be very unlikely to be

@@ -3,21 +3,21 @@
 \docType{methods}
 \name{resetAnnotations}
 \alias{resetAnnotations}
-\alias{resetAnnotations,GenomicInteractions-method}
-\title{Reset annotations made to a GenomicInteractions object}
+\alias{resetAnnotations,GInteractions-method}
+\title{Reset annotations made to a GInteractions object}
 \usage{
 resetAnnotations(GIObject)
 
-\S4method{resetAnnotations}{GenomicInteractions}(GIObject)
+\S4method{resetAnnotations}{GInteractions}(GIObject)
 }
 \arguments{
-\item{GIObject}{An annotated GenomicInteractions object}
+\item{GIObject}{An annotated GInteractions object}
 }
 \value{
 invisible(1)
 }
 \description{
-This function removes all annotations from a GenomicInteractions object by
+This function removes all annotations from a GInteractions object by
 deleting  all of the metadata columns associated with both anchors.
 }
 \examples{

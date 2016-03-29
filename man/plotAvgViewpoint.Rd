@@ -4,12 +4,12 @@
 \alias{plotAvgViewpoint}
 \title{Plot coverage around a set of virtual 4C viewpoints}
 \usage{
-plotAvgViewpoint(x, left_dist = 100000, right_dist = 100000,
+plotAvgViewpoint(x, left_dist = 1e+05, right_dist = 1e+05,
   ylab = "Average signal", xlab = "Relative position", fix = "center",
   ...)
 }
 \arguments{
-\item{x}{A GenomicInteractions object which is output from viewPoint}
+\item{x}{A GInteractions object which is output from viewPoint}
 
 \item{left_dist}{Distance 'left' of interactions to consider, in bp.}
 
