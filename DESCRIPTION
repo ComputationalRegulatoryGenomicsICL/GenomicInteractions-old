@@ -10,6 +10,7 @@ Maintainer: Malcolm Perry <mgperry32@gmail.com>,
     Liz Ing-Simmons <liz.ing-simmons12@csc.mrc.ac.uk>
 Imports:
     Rsamtools,
+    rtracklayer,
     GenomicRanges,
     IRanges,
     BiocGenerics (>= 0.15.3),
