@@ -24,11 +24,13 @@ setGeneric("export.bed12",function(GIObject, fn=NULL, score="counts", drop.trans
 #' @rdname export.bed12
 #' @export
 #' @importFrom utils write.table
+#' @importFrom rtracklayer export
 setMethod("export.bed12", c("GInteractions"),
         function(GIObject, fn=NULL, score="counts", drop.trans=c(FALSE, TRUE)){
             bed = asBED(GIObject)
             if (!is.null(fn)) {
-                write.table(as.data.frame(bed), fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
+                # write.table(as.data.frame(bed), fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
+                export(bed, fn, format="bed")
                 return(invisible(1))
 			} else {
                 return(bed)
@@ -190,11 +192,13 @@ setMethod("asBED", c("GInteractions"),
             x$color = "#000000"
         }
 
+        names = .exportName(x, scores)
+
         output_cis = GRanges(
             seqnames=as.character(seqnames(x@regions)[a1_cis]),
             IRanges(start=start(x@regions)[a1_cis]-1,
                     end=end(x@regions)[a2_cis]),
-            name=.exportName(x[!is_trans]),
+            name=names[!is_trans],
             score=scores[!is_trans],
             strand=ifelse(
                 strand(x@regions)[a1_cis] == strand(x@regions)[a2_cis] &
@@ -217,7 +221,7 @@ setMethod("asBED", c("GInteractions"),
                             start(x@regions)[a2_trans]),
                     end=c(end(x@regions)[a1_trans],
                             end(x@regions)[a2_trans])),
-            name=rep(.exportName(x[is_trans]), 2),
+            name=rep(names[is_trans], 2),
             score=rep(scores[is_trans], 2),
             strand=c(as.character(strand(x@regions)[a1_trans]),
                         as.character(strand(x@regions)[a2_trans])),
@@ -225,7 +229,7 @@ setMethod("asBED", c("GInteractions"),
                          start(x@regions)[a2_trans]),
             thickEnd=c(end(x@regions)[a1_trans],
                        end(x@regions)[a2_trans]),
-            itemRgb=x$color[a1_trans],
+            itemRgb=c(x$color[a1_trans], x$color[a2_trans]),
             blockCount=1,
             blockSizes=c(as.character(width(x@regions)[a1_trans]),
                          as.character(width(x@regions)[a2_trans])),
@@ -243,12 +247,13 @@ setMethod("asBED", c("GInteractions"),
         return(sort(c(output_cis, output_trans)))
 })
 
-.exportName = function(gi) {
+.exportName = function(gi, score=0) {
     paste0(
         seqnames(gi@regions)[gi@anchor1], ":",
         start(gi@regions)[gi@anchor1] - 1 , "..",
         end(gi@regions)[gi@anchor1], "-",
         seqnames(gi@regions)[gi@anchor2], ":",
         start(gi@regions)[gi@anchor2] - 1, "..",
-        end(gi@regions)[gi@anchor2])
+        end(gi@regions)[gi@anchor2], ",",
+        score)
 }

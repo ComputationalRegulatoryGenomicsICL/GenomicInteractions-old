@@ -5,10 +5,17 @@
 \alias{asBED,GInteractions-method}
 \title{Coerce to BED structure}
 \usage{
-\S4method{asBED}{GInteractions}(x, keep.mcols = TRUE)
+\S4method{asBED}{GInteractions}(x, keep.mcols = FALSE, score = "score")
 }
 \arguments{
 \item{x}{Generally, a tabular object to structure as BED}
+
+\item{keep.mcols}{logical whether to keep non-BED12 columns in final
+output (may cause problems with some parsers).}
+
+\item{score}{character, which field to export as "score" in BED12.
+Defaults to "auto" which will choose score, then counts,
+if present, or fill column with zeros.}
 
 \item{...}{Arguments to pass to methods
 
