@@ -156,16 +156,16 @@ setMethod("export.chiasig", c("GInteractions"), function(GIObject, fn=NULL, scor
 #'
 #' @param ... Arguments to pass to methods
 #'
-#'      The exact behavior depends on the class of ‘object’.
+#'      The exact behavior depends on the class of `object`.
 #'
-#'      ‘GRangesList’ This treats ‘object’ as if it were a list of
+#'      `GRangesList` This treats `object` as if it were a list of
 #'           transcripts, i.e., each element contains the exons of a
-#'           transcript. The ‘blockStarts’ and ‘blockSizes’ columns are
-#'           derived from the ranges in each element. Also, add ‘name’
-#'           column from ‘names(object)’.
+#'           transcript. The `blockStarts` and `blockSizes` columns are
+#'           derived from the ranges in each element. Also, add `name`
+#'           column from `names(object)`.
 #'
-#' @return A ‘GRanges’, with the columns ‘name’, ‘blockStarts’ and
-#'         ‘blockSizes’ added.
+#' @return A `GRanges`, with the metadata columns `name`, `blockStarts` and
+#'         `blockSizes` added.
 #'
 #' @importFrom rtracklayer asBED
 #' @export
