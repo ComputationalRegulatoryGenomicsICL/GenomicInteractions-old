@@ -26,10 +26,9 @@ setGeneric("export.bed12",function(GIObject, fn=NULL, score="counts", drop.trans
 #' @importFrom utils write.table
 #' @importFrom rtracklayer export
 setMethod("export.bed12", c("GInteractions"),
-        function(GIObject, fn=NULL, score="counts", drop.trans=c(FALSE, TRUE)){
-            bed = asBED(GIObject)
+        function(GIObject, fn=NULL, score="counts"){
+            bed = asBED(GIObject, score)
             if (!is.null(fn)) {
-                # write.table(as.data.frame(bed), fn, sep="\t", col.names=FALSE, quote=FALSE, row.names=FALSE )
                 export(bed, fn, format="bed")
                 return(invisible(1))
 			} else {
@@ -207,11 +206,12 @@ setMethod("asBED", c("GInteractions"),
                 "*"),
             thickStart=start(x@regions)[a1_cis],
             thickEnd=end(x@regions)[a2_cis],
-            itemRgb=x$color[a1_cis],
+            itemRgb=x$color[!is_trans],
             blockCount=rep(2, length(a1_cis)),
             blockSizes=paste(as.character(width(x@regions)[a1_cis]),
                                 as.character(width(x@regions)[a2_cis]), sep=","),
-            blockStarts=paste(0, start(x@regions)[a2_cis] - start(x@regions)[a1_cis], sep=",")
+            blockStarts = paste(rep(0, length(a1_cis)), start(x@regions)[a2_cis] - start(x@regions)[a1_cis], sep=",")
+            
         )
 
         output_trans = GRanges(
@@ -229,11 +229,11 @@ setMethod("asBED", c("GInteractions"),
                          start(x@regions)[a2_trans]),
             thickEnd=c(end(x@regions)[a1_trans],
                        end(x@regions)[a2_trans]),
-            itemRgb=c(x$color[a1_trans], x$color[a2_trans]),
-            blockCount=1,
+            itemRgb=rep(x$color[is_trans], 2),
+            blockCount=rep(1, length(a1_trans) + length(a2_trans)),
             blockSizes=c(as.character(width(x@regions)[a1_trans]),
                          as.character(width(x@regions)[a2_trans])),
-            blockStarts=0)
+            blockStarts=as.character(rep(0, length(a1_trans) + length(a2_trans))))
 
         extra_cols = setdiff(colnames(mcols(x)), c("score", "name"))
 

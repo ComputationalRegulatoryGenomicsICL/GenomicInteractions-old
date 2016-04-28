@@ -14,6 +14,13 @@ drop_strand <- function(gi){
   return(gi)
   }
 
+test_that("asBED works with just cis and just trans interactions", {
+  expect_silent(asBED(gi))
+  b <- asBED(gi)
+  expect_equal(asBED(gi[is.cis(gi)]), b[c(2,4,6)])
+  expect_equal(asBED(gi[is.trans(gi)]), b[c(1,3,5,7)])
+})
+
 test_that("bed12 export/import is consistent", {
   tmp <- tempfile()
   export.bed12(gi, fn = tmp)
